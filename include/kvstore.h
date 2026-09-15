@@ -9,9 +9,21 @@ struct Error {
     std::string description;
 };
 
+struct Key {};
+struct Value {};
+
+struct Record {
+    uint64_t timeStamp;
+    uint32_t keySize;
+    uint32_t valSize;
+    Key key;
+    Value val;
+};
+
 struct KVStoreHandle {
     int activeFileID{-1};
     std::string absDirPath;
+    // hash table pointer.
 };
 
 class KVStore {
@@ -33,4 +45,5 @@ class KVStore {
 
         std::optional<KVStoreHandle> openReadOnlyStore();
 
+        void put(KVStoreHandle, Record rec);
 };
