@@ -1,5 +1,8 @@
 build/
 .vscode/
+bin/
 
+*.out
+*.o
 *.db
 *.log
