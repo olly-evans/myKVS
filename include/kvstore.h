@@ -9,8 +9,9 @@ struct Error {
     std::string description;
 };
 
-enum struct Key {};
-enum struct Value {};
+// Lookup enum class.
+enum class Key {};
+enum class Value {};
 
 struct Record {
     uint64_t timeStamp{-1};
@@ -21,7 +22,7 @@ struct Record {
 };
 
 struct KVStoreHandle {
-    int activeFileID{-1};
+    uint64_t activeFileID{-1};
     std::string absDirPath;
     // hash table pointer.
 };
@@ -39,7 +40,7 @@ class KVStore {
         std::optional<KVStoreHandle> openStore(std::filesystem::path dirPath);
 
         /* 
-            Open a new or existing Bitcask datastore for read-only access.
+            Open a new or existing datastore for read-only access.
             The directory and all files in it must be readable by this process.
         */
 
