@@ -5,17 +5,17 @@
 #include <filesystem>
 
 struct Error {
-    int val{0};
+    uint8_t val{0};
     std::string description;
 };
 
-struct Key {};
-struct Value {};
+enum struct Key {};
+enum struct Value {};
 
 struct Record {
-    uint64_t timeStamp;
-    uint32_t keySize;
-    uint32_t valSize;
+    uint64_t timeStamp{-1};
+    uint32_t keySize{-1};
+    uint32_t valSize{-1};
     Key key;
     Value val;
 };
