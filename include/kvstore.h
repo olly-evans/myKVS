@@ -5,7 +5,7 @@
 #include <filesystem>
 
 struct Error {
-    uint8_t val{0};
+    uint8_t val;
     std::string description;
 };
 
@@ -15,14 +15,14 @@ class Value {};
 struct Record {    
     Key key;
     Value val;
-    uint32_t keySize{-1};
-    uint32_t valSize{-1};
-    uint64_t timeStamp{-1};
+    uint32_t keySize;
+    uint32_t valSize;
+    uint64_t timeStamp;
 };
 
 class KVStoreHandle {
     private:
-        uint64_t activeFileID{-1};
+        uint64_t activeFileID;
         std::filesystem::path absDirPath;
         // hash table pointer.
 

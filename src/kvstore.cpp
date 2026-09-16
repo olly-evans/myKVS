@@ -11,7 +11,7 @@ void KVStoreHandle::setActiveFileID(uint64_t newID) {
 }
 
 std::filesystem::path KVStoreHandle::getAbsDirPath() {
-    return absDirPath;
+    return this->absDirPath;
 }
 
 void KVStoreHandle::setAbsDirPath() {
@@ -20,8 +20,9 @@ void KVStoreHandle::setAbsDirPath() {
 
 void KVStore::put(KVStoreHandle storeHandle, Record rec) {
 
+    
     // Get the active datafile
-    if (storeHandle.getActiveFileID() == -1)
+    if (storeHandle.getActiveFileID() == -1ULL)
         // initialise a new file to write to.
 
         // need root dir.

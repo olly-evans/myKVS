@@ -23,4 +23,4 @@ set_target_properties(myLSFS PROPERTIES
 target_include_directories(myLSFS PRIVATE include)
 
 enable_testing()
-include_directories(test)
+add_subdirectory(test)
