@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "kvstore.h"
 
 /* KVStore Methods */
@@ -16,10 +18,16 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
     // int fd = open(new datafile);
 
-    stH.setAbsDirPath();
-    stH.setActiveFileID(12);
+    
 
+
+    stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath());
+
+    std::ofstream datafile ("test.txt");
+    datafile.close();
+
+    stH.setActiveFileID(0);
 
     return stH;
     // if (!std::filesystem::exists(this->dataDir))

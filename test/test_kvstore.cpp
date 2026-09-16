@@ -9,8 +9,9 @@ void test_open_store() {
 
     KVStoreHandle h = kvs.openStore(SOURCE_ROOT);
 
-    assert(h.getActiveFileID());
+    assert(h.getActiveFileID() == 0);
     assert(std::filesystem::exists(kvs.getDataDir()));
+    assert()
 
     return;
 }
