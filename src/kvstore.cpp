@@ -1,5 +1,8 @@
 #include "kvstore.h"
 
+
+/* HVStoreHandle Methods */
+
 uint64_t KVStoreHandle::getActiveFileID() {
     return this->activeFileID;
 }
@@ -16,19 +19,25 @@ void KVStoreHandle::setAbsDirPath() {
     this->absDirPath = std::filesystem::u8path(SOURCE_ROOT);
 }
 
+/* KVStore Methods */
+
 std::filesystem::path KVStore::getDataDir() {
     return this->dataDir;
 }
 
 void KVStore::setDataDir(std::filesystem::path root) {
-    this->dataDir = root.append("/data/");
+    this->dataDir = root.append("data/");
 }
 
-std::optional<KVStoreHandle> KVStore::openStore(std::filesystem::path dirPath) {
+KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
     KVStoreHandle stH; // Store handle.
 
+    // int fd = open(new datafile);
+
     stH.setAbsDirPath();
+    stH.setActiveFileID(12);
+
     this->setDataDir(stH.getAbsDirPath());
 
     return stH;
@@ -36,7 +45,7 @@ std::optional<KVStoreHandle> KVStore::openStore(std::filesystem::path dirPath) {
 
 }
 
-void KVStore::put(KVStoreHandle storeHandle, Record rec) {
+void KVStore::put(KVStoreHandle stH, Record rec) {
 
 
     // data folder empty? or datafile dir empty? where is this stored. probably in KVStore.
@@ -48,11 +57,11 @@ void KVStore::put(KVStoreHandle storeHandle, Record rec) {
 
 
     // Get the active datafile
-    if (storeHandle.getActiveFileID() == -1ULL)
+    if (stH.getActiveFileID() == -1ULL)
         // initialise a new file to write to.
 
         // need root dir.
         // int id = open();
         // storeHandle.setActiveFileID(2);
-    uint64_t id = storeHandle.getActiveFileID();
+    uint64_t id = stH.getActiveFileID();
 }

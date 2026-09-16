@@ -13,19 +13,21 @@
 //     assert(false);
 // }
 
-void test_open_store_sets_creates_data_dir() {
+void test_open_store() {
 
-    KVStore st;
+    KVStore kvs;
 
-    std::optional<KVStoreHandle> handle = st.openStore(SOURCE_ROOT);
-    assert(std::filesystem::exists(st.getDataDir()));
+    KVStoreHandle h = kvs.openStore(SOURCE_ROOT);
+
+    assert(h.getActiveFileID());
+    assert(std::filesystem::exists(kvs.getDataDir()));
 
     return;
 }
 
 int main() {
 
-    test_open_store_sets_creates_data_dir();
+    test_open_store();
 
     return 0;
 }
