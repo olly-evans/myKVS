@@ -9,9 +9,8 @@ struct Error {
     std::string description;
 };
 
-// Lookup enum class.
-enum class Key {};
-enum class Value {};
+class Key {};
+class Value {};
 
 struct Record {
     uint64_t timeStamp{-1};
@@ -21,10 +20,15 @@ struct Record {
     Value val;
 };
 
-struct KVStoreHandle {
-    uint64_t activeFileID{-1};
-    std::string absDirPath;
-    // hash table pointer.
+class KVStoreHandle {
+    private:
+        uint64_t activeFileID{-1};
+        std::string absDirPath;
+        // hash table pointer.
+
+    public:
+        uint64_t getActiveFileID();
+        void setActiveFileID(uint64_t newID);
 };
 
 class KVStore {
@@ -46,5 +50,5 @@ class KVStore {
 
         std::optional<KVStoreHandle> openReadOnlyStore();
 
-        void put(KVStoreHandle, Record rec);
+        void put(KVStoreHandle h, Record rec);
 };
