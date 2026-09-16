@@ -3,8 +3,6 @@
 #include <assert.h>
 #include <iostream>
 
-
-
 void test_open_store() {
 
     KVStore kvs;
@@ -14,7 +12,6 @@ void test_open_store() {
     assert(h.getActiveFileID());
     assert(std::filesystem::exists(kvs.getDataDir()));
 
-    std::cout << kvs.getDataDir() << "\n";
     return;
 }
 
