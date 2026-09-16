@@ -15,22 +15,20 @@ void KVStore::setDataDir(std::filesystem::path root) {
 KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
     KVStoreHandle stH; // Store handle.
-
-    // int fd = open(new datafile);
-
     
-
-
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath());
 
-    std::ofstream datafile ("test.txt");
+    // setup naming system for datafiles, stored in KVStore.
+
+    // get/set activeDataFileStream stored in KVStore.
+    std::ofstream datafile (this->getDataDir().append("test.log"));
     datafile.close();
 
+    // not zero but just number 00000 or something.
     stH.setActiveFileID(0);
 
     return stH;
-    // if (!std::filesystem::exists(this->dataDir))
 
 }
 
