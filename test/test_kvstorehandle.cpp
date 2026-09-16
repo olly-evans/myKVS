@@ -1,5 +1,3 @@
-#pragma once
-
 #include <assert.h>
 
 #include "kvstorehandle.h"
