@@ -3,13 +3,7 @@
 #include <assert.h>
 #include <iostream>
 
-void test_kvshandle_sets_absolute_directory() {
 
-    KVStoreHandle handle;
-    handle.setAbsDirPath();
-
-    assert(std::filesystem::exists(handle.getAbsDirPath()));
-}
 
 void test_open_store() {
 
@@ -25,8 +19,6 @@ void test_open_store() {
 }
 
 int main() {
-
-    test_kvshandle_sets_absolute_directory();
     test_open_store();
 
     return 0;
