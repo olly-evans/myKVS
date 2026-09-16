@@ -1,21 +1,31 @@
 #include "kvstore.h"
 
 #include <assert.h>
-#include <iostream>
 
-void test_set_absolute_directory() {
+// void test_set_absolute_directory() {
 
-    KVStoreHandle handle;
-    handle.setAbsDirPath();
+//     KVStoreHandle handle;
+//     handle.setAbsDirPath();
 
-    std::cout << handle.getAbsDirPath() << "\n";
+//     // myLSFS
+//     // std::cout << handle.getAbsDirPath() << "\n";
 
-    assert(false);
+//     assert(false);
+// }
+
+void test_open_store_sets_creates_data_dir() {
+
+    KVStore st;
+
+    std::optional<KVStoreHandle> handle = st.openStore(SOURCE_ROOT);
+    assert(std::filesystem::exists(st.getDataDir()));
+
+    return;
 }
 
 int main() {
 
-    test_set_absolute_directory();
+    test_open_store_sets_creates_data_dir();
 
     return 0;
 }

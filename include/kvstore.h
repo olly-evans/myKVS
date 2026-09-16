@@ -20,6 +20,7 @@ struct Record {
     uint64_t timeStamp;
 };
 
+// Seperate file.
 class KVStoreHandle {
     private:
         uint64_t activeFileID;
@@ -35,12 +36,15 @@ class KVStoreHandle {
 };
 
 class KVStore {
+    private:
+        std::filesystem::path dataDir;
 
     public:
-        KVStore();
-        ~KVStore();
+        // KVStore();
+        // ~KVStore();
 
-    private:
+        void setDataDir(std::filesystem::path dir);
+        std::filesystem::path getDataDir();
 
         /* Open a new or existing datastore with additional options */
 
