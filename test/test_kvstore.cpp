@@ -2,16 +2,13 @@
 
 #include <assert.h>
 
-// void test_set_absolute_directory() {
+void test_ksvhandle_sets_absolute_directory() {
 
-//     KVStoreHandle handle;
-//     handle.setAbsDirPath();
+    KVStoreHandle handle;
+    handle.setAbsDirPath();
 
-//     // myLSFS
-//     // std::cout << handle.getAbsDirPath() << "\n";
-
-//     assert(false);
-// }
+    assert(std::filesystem::exists(handle.getAbsDirPath()));
+}
 
 void test_open_store() {
 
@@ -27,6 +24,7 @@ void test_open_store() {
 
 int main() {
 
+    test_ksvhandle_sets_absolute_directory();
     test_open_store();
 
     return 0;
