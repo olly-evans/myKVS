@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <optional>
-#include <filesystem>
+
+#include "kvstorehandle.h"
 
 struct Error {
     uint8_t val;
@@ -20,20 +20,7 @@ struct Record {
     uint64_t timeStamp;
 };
 
-// Seperate file.
-class KVStoreHandle {
-    private:
-        uint64_t activeFileID;
-        std::filesystem::path absDirPath;
-        // hash table pointer.
 
-    public:
-        uint64_t getActiveFileID();
-        void setActiveFileID(uint64_t newID);
-
-        std::filesystem::path getAbsDirPath();
-        void setAbsDirPath();
-};
 
 class KVStore {
     private:
@@ -55,7 +42,7 @@ class KVStore {
             The directory and all files in it must be readable by this process.
         */
 
-        std::optional<KVStoreHandle> openReadOnlyStore();
+        // std::optional<KVStoreHandle> openReadOnlyStore();
 
         void put(KVStoreHandle h, Record rec);
 };
