@@ -15,12 +15,7 @@ std::filesystem::path KVStoreHandle::getAbsDirPath() {
 }
 
 void KVStoreHandle::setAbsDirPath() {
-
-    // TODO: get executing path.
-    // find path called myLSFS.
-
     absDirPath = std::filesystem::u8path(SOURCE_ROOT);
-
 }
 
 void KVStore::put(KVStoreHandle storeHandle, Record rec) {
@@ -30,7 +25,7 @@ void KVStore::put(KVStoreHandle storeHandle, Record rec) {
         // initialise a new file to write to.
 
         // need root dir.
-        int id = open();
-        storeHandle.setActiveFileID()
+        // int id = open();
+        // storeHandle.setActiveFileID(2);
     uint64_t id = storeHandle.getActiveFileID();
 }
