@@ -12,23 +12,26 @@ struct Error {
 class Key {};
 class Value {};
 
-struct Record {
-    uint64_t timeStamp{-1};
-    uint32_t keySize{-1};
-    uint32_t valSize{-1};
+struct Record {    
     Key key;
     Value val;
+    uint32_t keySize{-1};
+    uint32_t valSize{-1};
+    uint64_t timeStamp{-1};
 };
 
 class KVStoreHandle {
     private:
         uint64_t activeFileID{-1};
-        std::string absDirPath;
+        std::filesystem::path absDirPath;
         // hash table pointer.
 
     public:
         uint64_t getActiveFileID();
         void setActiveFileID(uint64_t newID);
+
+        std::filesystem::path getAbsDirPath();
+        void setAbsDirPath();
 };
 
 class KVStore {

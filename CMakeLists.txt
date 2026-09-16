@@ -4,6 +4,7 @@ project(myapp VERSION 0.0.1 LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 add_compile_options(-g -O0 -Wall)
+add_compile_definitions(SOURCE_ROOT="${CMAKE_SOURCE_DIR}")
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
