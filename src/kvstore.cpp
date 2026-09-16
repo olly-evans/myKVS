@@ -1,5 +1,3 @@
-#include <fstream>
-
 #include "kvstore.h"
 
 /* KVStore Methods */
@@ -41,8 +39,6 @@ void KVStore::put(KVStoreHandle stH, Record rec) {
 
     // lets assume our KVStoreHandle has been init properly with -1 by default.
     
-
-
     // Get the active datafile
     if (stH.getActiveFileID() == -1ULL)
         // initialise a new file to write to.
