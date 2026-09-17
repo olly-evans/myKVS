@@ -18,7 +18,7 @@ std::ofstream& KVStore::getActiveFilestream() {
     return this->activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
+KVStoreHandle KVStore::openStore(std::filesystem::path dirPath, StoreOptions stOp) {
 
     KVStoreHandle stH; // Store handle.
     
@@ -52,7 +52,7 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
 void KVStore::put(KVStoreHandle& stH, Record rec) {
 
-    
+
     // data folder empty? or datafile dir empty? where is this stored. probably in KVStore.
     // if (!std::filesystem::exists(storeHandle.getAbsDirPath().append("/data/")))
     //     return;

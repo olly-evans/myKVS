@@ -19,6 +19,11 @@ struct Record {
     uint64_t timeStamp;
 };
 
+struct StoreOptions {
+    bool readWrite = false;
+    bool syncOnPut = false;
+};
+
 class KVStore {
     private:
         std::filesystem::path dataDir;
@@ -39,7 +44,7 @@ class KVStore {
             Will eventually need to add additional options.           
         */
 
-        KVStoreHandle openStore(std::filesystem::path dirPath);
+        KVStoreHandle openStore(std::filesystem::path dirPath, StoreOptions stOp);
 
         /* 
             Open a new or existing datastore for read-only access.
