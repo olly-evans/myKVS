@@ -20,11 +20,15 @@ std::ofstream& KVStore::getActiveFilestream() {
 
 KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
+    /* Establish a new or existing datastore in CMAKE_SOURCE_DIR */
+
     KVStoreHandle stH; // Store handle.
     
+    // Setup variable, doesn't create dir.
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath());
 
+    // Create dir if needed.
     if (!std::filesystem::exists(this->getDataDir()))
         std::filesystem::create_directories(this->getDataDir());
 
