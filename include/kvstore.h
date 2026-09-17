@@ -22,7 +22,7 @@ struct Record {
 class KVStore {
     private:
         std::filesystem::path dataDir;
-        std::ofstream ActiveFilestream;
+        std::ofstream activeFilestream;
 
     public:
         // KVStore();
@@ -33,7 +33,7 @@ class KVStore {
 
         void setActiveFilestream(std::ofstream stream);
         std::ofstream& getActiveFilestream();
-        
+
         /* Open a new or existing datastore with additional options */
 
         KVStoreHandle openStore(std::filesystem::path dirPath);

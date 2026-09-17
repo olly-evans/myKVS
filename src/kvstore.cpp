@@ -41,12 +41,10 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
     // filename as string.
     std::string datafileName = strActiveFileID + ".log";
 
-
     // get/set activeDataFileStream stored in KVStore.
     std::ofstream datafile (this->getDataDir() / datafileName);
+    this->setActiveFilestream(std::move(datafile));
     datafile.close();
-
-    // not zero but just number 00000 or something.
 
     return stH;
 }
