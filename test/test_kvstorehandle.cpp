@@ -17,7 +17,7 @@ void test_kvshandle_sets_activefile_id() {
     KVStoreHandle stH;
 
     std::filesystem::path path = SOURCE_ROOT;
-    std::filesystem::path dataDir = path / "data";
+    std::filesystem::path dataDir = path / "test_data";
     
     // make dummy files.
     std::ofstream mockFile1 (dataDir / "0.log");

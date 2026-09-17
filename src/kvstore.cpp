@@ -22,14 +22,13 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
     KVStoreHandle stH; // Store handle.
     
-    stH.setAbsDirPath();
-
     if (std::filesystem::exists(this->getDataDir()))
-        std::perror("Directory is already and open store.");
+        std::perror("Directory is already a datastore.");
+        // we can have this.
 
+    stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath());
 
-    // setup naming system for datafiles, stored in KVStore.
     stH.setActiveFileID(this->getDataDir());
 
     // Turn active id into string.
@@ -41,7 +40,7 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
     // filename as string.
     std::string datafileName = strActiveFileID + ".log";
 
-    // get/set activeDataFileStream stored in KVStore.
+    // Establish our KVStore stream.
     std::ofstream datafile (this->getDataDir() / datafileName);
     this->setActiveFilestream(std::move(datafile));
     datafile.close();
