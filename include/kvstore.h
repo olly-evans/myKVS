@@ -7,11 +7,6 @@
 
 constexpr uint8_t MAX_DATAFILE_BYTES = 4096;
 
-struct Error {
-    uint8_t val;
-    std::string description;
-};
-
 class Key {};
 class Value {};
 

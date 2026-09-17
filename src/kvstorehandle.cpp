@@ -8,7 +8,7 @@ uint64_t KVStoreHandle::getActiveFileID() {
 
 void KVStoreHandle::setActiveFileID(std::filesystem::path dataDir) {
 
-    /* Set the ID of the active data file in the data directory to KVStoreHandle private member. */
+    /* Set the ID of the active data file in the data directory */
 
     if (!std::filesystem::exists(dataDir))
         std::perror("setActiveFileID -> Data directory doesn't exist.");
