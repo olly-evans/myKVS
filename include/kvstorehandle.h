@@ -11,9 +11,6 @@ class KVStoreHandle {
 
     public:
         uint32_t getActiveFileID();
-
-        /* Set the ID of the active data file in the data directory */
-
         void setActiveFileID(std::filesystem::path dataDir);
 
         std::filesystem::path getAbsDirPath();

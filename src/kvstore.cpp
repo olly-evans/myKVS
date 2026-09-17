@@ -20,8 +20,6 @@ std::ofstream& KVStore::getActiveFilestream() {
 
 KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
-    /* Establish a new or existing datastore in CMAKE_SOURCE_DIR */
-
     KVStoreHandle stH; // Store handle.
     
     // Setup variable, doesn't create dir.
@@ -32,15 +30,16 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
     if (!std::filesystem::exists(this->getDataDir()))
         std::filesystem::create_directories(this->getDataDir());
 
+    // Get the active ID (highest) in dataDir.
     stH.setActiveFileID(this->getDataDir());
 
-    // Turn active id into string.
+    // Turn active ID into string.
     std::stringstream ss;
     std::string strActiveFileID;
     ss << stH.getActiveFileID();
     ss >> strActiveFileID;
 
-    // filename as string.
+    // Filename as string.
     std::string datafileName = strActiveFileID + ".log";
 
     // Establish our KVStore stream.
@@ -51,9 +50,9 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
     return stH;
 }
 
-void KVStore::put(KVStoreHandle stH, Record rec) {
+void KVStore::put(KVStoreHandle& stH, Record rec) {
 
-
+    
     // data folder empty? or datafile dir empty? where is this stored. probably in KVStore.
     // if (!std::filesystem::exists(storeHandle.getAbsDirPath().append("/data/")))
     //     return;

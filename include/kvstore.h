@@ -34,7 +34,10 @@ class KVStore {
         void setActiveFilestream(std::ofstream stream);
         std::ofstream& getActiveFilestream();
 
-        /* Open a new or existing datastore with additional options */
+        /* 
+            Establish a new or existing datastore in CMAKE_SOURCE_DIR 
+            Will eventually need to add additional options.           
+        */
 
         KVStoreHandle openStore(std::filesystem::path dirPath);
 
@@ -45,5 +48,5 @@ class KVStore {
 
         // std::optional<KVStoreHandle> openReadOnlyStore();
 
-        void put(KVStoreHandle h, Record rec);
+        void put(KVStoreHandle& h, Record rec);
 };
