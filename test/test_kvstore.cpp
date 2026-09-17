@@ -5,10 +5,11 @@
 void test_open_store() {
 
     KVStore kvs;
+    StoreOptions storeOp;
 
     assert(!std::filesystem::exists(kvs.getDataDir()));
 
-    KVStoreHandle h = kvs.openStore(SOURCE_ROOT);
+    KVStoreHandle h = kvs.openStore(SOURCE_ROOT, storeOp);
 
     assert(std::filesystem::exists(kvs.getDataDir()));
 
