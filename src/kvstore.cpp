@@ -10,21 +10,43 @@ void KVStore::setDataDir(std::filesystem::path root) {
     this->dataDir = root.append("data/");
 }
 
+void KVStore::setActiveFilestream(std::ofstream stream) {
+    this->activeFilestream = std::move(stream);
+}
+
+std::ofstream& KVStore::getActiveFilestream() {
+    return this->activeFilestream;
+}
+
 KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
     KVStoreHandle stH; // Store handle.
     
     stH.setAbsDirPath();
+
+    if (std::filesystem::exists(this->getDataDir()))
+        std::perror("Directory is already and open store.");
+
     this->setDataDir(stH.getAbsDirPath());
 
     // setup naming system for datafiles, stored in KVStore.
+    stH.setActiveFileID(this->getDataDir());
+
+    // Turn active id into string.
+    std::stringstream ss;
+    std::string strActiveFileID;
+    ss << stH.getActiveFileID();
+    ss >> strActiveFileID;
+
+    // filename as string.
+    std::string datafileName = strActiveFileID + ".log";
+
 
     // get/set activeDataFileStream stored in KVStore.
-    std::ofstream datafile (this->getDataDir() / "3.log");
+    std::ofstream datafile (this->getDataDir() / datafileName);
     datafile.close();
 
     // not zero but just number 00000 or something.
-    stH.setActiveFileID(this->getDataDir());
 
     return stH;
 }

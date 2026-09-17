@@ -10,7 +10,7 @@ class KVStoreHandle {
         // hash table pointer.
 
     public:
-        uint64_t getActiveFileID();
+        uint32_t getActiveFileID();
 
         /* Set the ID of the active data file in the data directory */
 

@@ -2,7 +2,7 @@
 
 /* HVStoreHandle Methods */
 
-uint64_t KVStoreHandle::getActiveFileID() {
+uint32_t KVStoreHandle::getActiveFileID() {
     return this->activeFileID;
 }
 
