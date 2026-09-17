@@ -20,7 +20,7 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
     // setup naming system for datafiles, stored in KVStore.
 
     // get/set activeDataFileStream stored in KVStore.
-    std::ofstream datafile (this->getDataDir().append("test.log"));
+    std::ofstream datafile (this->getDataDir().append("3.log"));
     datafile.close();
 
     // not zero but just number 00000 or something.

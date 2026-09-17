@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <fstream>
+#include <iostream>
 
 #include "kvstorehandle.h"
 
@@ -16,18 +17,21 @@ void test_kvshandle_sets_activefile_id() {
     KVStoreHandle stH;
 
     std::filesystem::path path = SOURCE_ROOT;
-    path.append("data/");
+    std::filesystem::path dataDir = path / "data";
     
     // make dummy files.
-    std::ofstream mockFile1 (path.append("0.log"));
-    std::ofstream mockFile2 (path.append("5.log"));
+    std::ofstream mockFile1 (dataDir / "0.log");
+    mockFile1.close();
 
-    stH.setActiveFileID(path);
+    std::ofstream mockFile2 (dataDir / "5.log");
+    mockFile2.close();
 
+    stH.setActiveFileID(dataDir);
+
+    std::cout << stH.getActiveFileID() << "\n";
     assert(stH.getActiveFileID() == 5);
 
-    mockFile1.close();
-    mockFile2.close();
+    
 
     return;
 }

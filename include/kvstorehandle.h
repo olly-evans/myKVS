@@ -5,7 +5,7 @@
 // Seperate file.
 class KVStoreHandle {
     private:
-        uint64_t activeFileID;
+        uint32_t activeFileID;
         std::filesystem::path absDirPath;
         // hash table pointer.
 
