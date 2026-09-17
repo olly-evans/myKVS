@@ -18,10 +18,14 @@ std::ofstream& KVStore::getActiveFilestream() {
     return this->activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(std::filesystem::path dirPath, StoreOptions stOp) {
+KVStoreHandle KVStore::openStore(std::filesystem::path dirPath, StoreOptions sOptions) {
 
     KVStoreHandle stH; // Store handle.
     
+    // if sOptions.syncOnPut ...
+    // if sOptions.readWrite ... -> reading and writing permitted.
+
+
     // Setup variable, doesn't create dir.
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath());
