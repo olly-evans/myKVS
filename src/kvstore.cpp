@@ -24,10 +24,11 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
     datafile.close();
 
     // not zero but just number 00000 or something.
-    stH.setActiveFileID(0);
+
+
+    stH.setActiveFileID(this->getDataDir());
 
     return stH;
-
 }
 
 void KVStore::put(KVStoreHandle stH, Record rec) {
@@ -40,11 +41,10 @@ void KVStore::put(KVStoreHandle stH, Record rec) {
     // lets assume our KVStoreHandle has been init properly with -1 by default.
     
     // Get the active datafile
-    if (stH.getActiveFileID() == -1ULL)
+    // if (stH.getActiveFileID() == -1ULL)
         // initialise a new file to write to.
 
         // need root dir.
         // int id = open();
         // storeHandle.setActiveFileID(2);
-    uint64_t id = stH.getActiveFileID();
 }

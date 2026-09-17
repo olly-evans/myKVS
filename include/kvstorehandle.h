@@ -11,7 +11,7 @@ class KVStoreHandle {
 
     public:
         uint64_t getActiveFileID();
-        void setActiveFileID(uint64_t newID);
+        void setActiveFileID(std::filesystem::path dataDir);
 
         std::filesystem::path getAbsDirPath();
         void setAbsDirPath();
