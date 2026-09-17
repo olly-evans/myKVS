@@ -18,8 +18,8 @@ void test_kvshandle_sets_activefile_id() {
 
     std::filesystem::path path = SOURCE_ROOT;
     std::filesystem::path dataDir = path / "test_data";
-    
-    // make dummy files.
+    std::filesystem::create_directories(dataDir);
+
     std::ofstream mockFile1 (dataDir / "0.log");
     mockFile1.close();
 

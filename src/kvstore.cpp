@@ -22,12 +22,11 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath) {
 
     KVStoreHandle stH; // Store handle.
     
-    if (std::filesystem::exists(this->getDataDir()))
-        std::perror("Directory is already a datastore.");
-        // we can have this.
-
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath());
+
+    if (!std::filesystem::exists(this->getDataDir()))
+        std::filesystem::create_directories(this->getDataDir());
 
     stH.setActiveFileID(this->getDataDir());
 
