@@ -2,10 +2,11 @@
 
 #include <string>
 #include <fstream>
+#include <mutex>
 
 #include "kvstorehandle.h"
 
-constexpr uint8_t MAX_DATAFILE_BYTES = 4096;
+// constexpr uint8_t MAX_DATAFILE_BYTES = 4096;
 
 class Key {};
 class Value {};
@@ -28,6 +29,7 @@ class KVStore {
     private:
         std::filesystem::path dataDir;
         std::ofstream activeFilestream;
+        std::mutex putLock;
 
     public:
         // KVStore();

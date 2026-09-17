@@ -22,8 +22,10 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath, StoreOptions sOp
 
     KVStoreHandle stH; // Store handle.
     
-    // if sOptions.syncOnPut ...
-    // if sOptions.readWrite ... -> reading and writing permitted.
+    // if sOptions.syncOnPut ... -> mutex in put function???
+    // if sOptions.readWrite ... -> find way to allow read and write to dir.
+
+    // Only one datastore can write at once... dir must become a mutex to put().
 
 
     // Setup variable, doesn't create dir.
@@ -56,6 +58,8 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath, StoreOptions sOp
 
 void KVStore::put(KVStoreHandle& stH, Record rec) {
 
+    // where stLock a mutex.
+    // this->putLock.lock();
 
     // data folder empty? or datafile dir empty? where is this stored. probably in KVStore.
     // if (!std::filesystem::exists(storeHandle.getAbsDirPath().append("/data/")))
@@ -70,4 +74,6 @@ void KVStore::put(KVStoreHandle& stH, Record rec) {
         // need root dir.
         // int id = open();
         // storeHandle.setActiveFileID(2);
+
+    // this->putLock.unlock()
 }
