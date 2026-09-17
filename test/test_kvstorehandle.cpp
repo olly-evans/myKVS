@@ -28,10 +28,7 @@ void test_kvshandle_sets_activefile_id() {
 
     stH.setActiveFileID(dataDir);
 
-    std::cout << stH.getActiveFileID() << "\n";
     assert(stH.getActiveFileID() == 5);
-
-    
 
     return;
 }
