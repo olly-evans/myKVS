@@ -2,7 +2,7 @@
 
 /* KVStore Methods */
 
-std::filesystem::path KVStore::getDataDir() {
+std::filesystem::path KVStore::getDataDir() const {
     return this->dataDir;
 }
 

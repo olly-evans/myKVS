@@ -31,7 +31,7 @@ class KVStore {
         // ~KVStore();
 
         void setDataDir(std::filesystem::path dir, std::string dirName);
-        std::filesystem::path getDataDir();
+        std::filesystem::path getDataDir() const;
 
         void setActiveFilestream(std::ofstream stream);
         std::ofstream& getActiveFilestream();
