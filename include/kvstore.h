@@ -2,22 +2,18 @@
 
 #include <string>
 #include <fstream>
-#include <mutex>
 
 #include "kvstorehandle.h"
 
 // constexpr uint8_t MAX_DATAFILE_BYTES = 4096;
 
-class Key {};
-class Value {};
-
-struct Record {    
-    Key key;
-    Value val;
-
+struct Record {
+    uint32_t crc;
+    uint32_t timeStamp;
     uint32_t keySize;
     uint32_t valSize;
-    uint64_t timeStamp;
+    std::string key;
+    std::string val;    
 };
 
 struct StoreOptions {
@@ -34,7 +30,7 @@ class KVStore {
         // KVStore();
         // ~KVStore();
 
-        void setDataDir(std::filesystem::path dir);
+        void setDataDir(std::filesystem::path dir, std::string dirName);
         std::filesystem::path getDataDir();
 
         void setActiveFilestream(std::ofstream stream);
@@ -54,5 +50,5 @@ class KVStore {
 
         // std::optional<KVStoreHandle> openReadOnlyStore();
 
-        void put(KVStoreHandle& h, Record rec);
+        void put(const KVStoreHandle& h, const Record& rec);
 };

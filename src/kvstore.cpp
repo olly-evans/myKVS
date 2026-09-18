@@ -6,8 +6,8 @@ std::filesystem::path KVStore::getDataDir() {
     return this->dataDir;
 }
 
-void KVStore::setDataDir(std::filesystem::path root) {
-    this->dataDir = root.append("data/");
+void KVStore::setDataDir(std::filesystem::path root, std::string dirName) {
+    this->dataDir = root.append(dirName);
 }
 
 void KVStore::setActiveFilestream(std::ofstream stream) {
@@ -29,7 +29,7 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath, StoreOptions sOp
 
     // Setup variable, doesn't create dir.
     stH.setAbsDirPath();
-    this->setDataDir(stH.getAbsDirPath());
+    this->setDataDir(stH.getAbsDirPath(), dirPath);
 
     // Create dir if needed.
     if (!std::filesystem::exists(this->getDataDir()))
@@ -48,31 +48,44 @@ KVStoreHandle KVStore::openStore(std::filesystem::path dirPath, StoreOptions sOp
     std::string datafileName = strActiveFileID + ".log";
 
     // Establish our KVStore stream.
-    std::ofstream datafile (this->getDataDir() / datafileName);
+    std::ofstream datafile (this->getDataDir() / datafileName, std::ofstream::binary);
     this->setActiveFilestream(std::move(datafile));
     datafile.close();
 
     return stH;
 }
 
-void KVStore::put(KVStoreHandle& stH, Record rec) {
+void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
 
     // lock and mutex is bound to our KVStoreHandle. RAII
 
     // std::lock_guard<std::mutex> guard(mutex);
 
+    // okay so Record is formatted beforehand when we take user input from terminal.
 
-    // data folder empty? or datafile dir empty? where is this stored. probably in KVStore.
-    // if (!std::filesystem::exists(storeHandle.getAbsDirPath().append("/data/")))
-    //     return;
+    // Do we have a data directory?
+    if (!std::filesystem::exists(this->getDataDir()))
+        return;
     
-    // Get the active datafile
-    // if (stH.getActiveFileID() == -1ULL)
-        // initialise a new file to write to.
+    // we do have a data directory.
 
-        // need root dir.
-        // int id = open();
-        // storeHandle.setActiveFileID(2);
+    // ofstream and activefileid.
+    
+    // is file too big.
 
-    // this->putLock.unlock();
+    auto& out = this->getActiveFilestream();
+    // rec.crc = computeCRC32(rec.timeStamp, rec.keySize, rec.valSize, rec.key, rec.val);
+
+    out.write(reinterpret_cast<const char*>(&rec.crc), sizeof(rec.crc));
+    out.write(reinterpret_cast<const char*>(&rec.timeStamp), sizeof(rec.timeStamp));
+    out.write(reinterpret_cast<const char*>(&rec.keySize), sizeof(rec.keySize));
+    out.write(reinterpret_cast<const char*>(&rec.valSize), sizeof(rec.valSize));
+    out.write(reinterpret_cast<const char*>(&rec.key), rec.keySize);
+    out.write(reinterpret_cast<const char*>(&rec.val), rec.valSize);
+
+
+
+    // stH.setActiveFileID(this->dataDir);
+
+    // append to hashtable.
 }

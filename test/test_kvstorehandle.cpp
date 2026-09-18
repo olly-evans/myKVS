@@ -17,7 +17,7 @@ void test_kvshandle_sets_activefile_id() {
     KVStoreHandle stH;
 
     std::filesystem::path path = SOURCE_ROOT;
-    std::filesystem::path dataDir = path / "test_data";
+    std::filesystem::path dataDir = path / "test_data/";
     std::filesystem::create_directories(dataDir);
 
     std::ofstream mockFile1 (dataDir / "0.log");
@@ -29,6 +29,8 @@ void test_kvshandle_sets_activefile_id() {
     stH.setActiveFileID(dataDir);
 
     assert(stH.getActiveFileID() == 5);
+
+    std::filesystem::remove_all(dataDir);
 
     return;
 }
