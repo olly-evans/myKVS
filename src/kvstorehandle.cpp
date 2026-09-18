@@ -11,10 +11,6 @@ void KVStoreHandle::setActiveFileID(std::filesystem::path dataDir) {
     if (!std::filesystem::exists(dataDir))
         std::perror("setActiveFileID -> Data directory doesn't exist.");
 
-    if (std::filesystem::is_empty(dataDir))
-        // Should not be if we've called from openStore().
-        std::perror("setActiveFileID -> Data directory is empty.");
-
     uint32_t maxID = 0;
     bool found = false;
 

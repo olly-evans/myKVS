@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-void test_open_store(KVStore& kvs, KVStoreHandle stH) {
+void test_open_store(KVStore& kvs, KVStoreHandle& stH) {
 
     // assert(!std::filesystem::exists(kvs.getDataDir()));
 
@@ -16,7 +16,7 @@ void test_open_store(KVStore& kvs, KVStoreHandle stH) {
 
 // Want to test with threads whether we can write to a locked dir.
 // Simulate two processes.
-void test_put(KVStore& kvs, KVStoreHandle stH) {
+void test_put(KVStore& kvs, KVStoreHandle& stH) {
 
     Record rec = {
         .crc = 0,                  // placeholder — real Bitcask computes this over the rest of the record
@@ -36,11 +36,15 @@ int main() {
 
     KVStore kvs;
     StoreOptions stOp;
-    KVStoreHandle stH = kvs.openStore("test_kvstore/", stOp);
+
+    std::filesystem::path dataDir = "test_kvstore/";
+    KVStoreHandle stH = kvs.openStore(dataDir, stOp);
 
 
     test_open_store(kvs, stH);
     test_put(kvs, stH);
+
+    std::filesystem::remove_all(dataDir);
 
     return 0;
 }
