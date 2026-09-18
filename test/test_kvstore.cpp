@@ -19,6 +19,12 @@ void test_open_store() {
     return;
 }
 
+// Want to test with threads whether we can write to a locked dir.
+// Simulate two processes.
+void test_sync_on_put() {
+    return;
+}
+
 int main() {
     test_open_store();
 

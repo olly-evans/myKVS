@@ -29,7 +29,6 @@ class KVStore {
     private:
         std::filesystem::path dataDir;
         std::ofstream activeFilestream;
-        std::mutex putLock;
 
     public:
         // KVStore();

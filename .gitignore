@@ -2,6 +2,7 @@ build/
 .vscode/
 bin/
 data/
+test_data/
 
 *.out
 *.o
