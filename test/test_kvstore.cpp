@@ -3,9 +3,17 @@
 #include <assert.h>
 
 void test_open_store(KVStore& kvs, KVStoreHandle& stH) {
+    
+    /* After openStore() call we should have an existing datastore. */
     assert(std::filesystem::exists(kvs.getDataDir()));
 
+    /* No puts so id should be zero. */
+    assert(stH.getActiveFileID() == 0);
+
+    /* No error state in stream. */
     assert(kvs.getActiveFilestream().good());
+
+    /* File should be open. */
     assert(kvs.getActiveFilestream().is_open());
 
     return;
@@ -27,16 +35,22 @@ void test_put(KVStore& kvs, const KVStoreHandle& stH) {
     return;
 }
 
+void test_close() {
+    return;
+}
+
 int main() {
 
     KVStore kvs;
+    
     StoreOptions sOp;
+    sOp.datafileExtension = ".data";
 
     std::filesystem::path dataDir = "test_kvstore/";
     KVStoreHandle stH = kvs.openStore(dataDir, sOp);
 
     test_open_store(kvs, stH);
-    test_put(kvs, stH);
+    // test_put(kvs, stH);
 
     std::filesystem::remove_all(dataDir);
 

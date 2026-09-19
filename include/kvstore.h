@@ -19,6 +19,7 @@ struct Record {
 struct StoreOptions {
     bool readWrite = false; // Reading and writing permitted in directory.
     bool syncOnPut = false;
+    std::string datafileExtension;
 };
 
 class KVStore {

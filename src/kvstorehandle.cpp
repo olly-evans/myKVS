@@ -8,9 +8,6 @@ uint32_t KVStoreHandle::getActiveFileID() {
 
 void KVStoreHandle::setActiveFileID(std::filesystem::path dataDir) {
 
-    if (!std::filesystem::exists(dataDir))
-        std::perror("setActiveFileID -> Data directory doesn't exist.");
-
     uint32_t maxID = 0;
     bool found = false;
 

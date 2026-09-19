@@ -45,10 +45,13 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreOptions 
     ss >> strActiveFileID;
 
     // Filename as string.
-    std::string datafileName = strActiveFileID + ".log";
+    std::string datafileName = strActiveFileID + sOptions.datafileExtension;
 
     // Establish our KVStore stream.
-    std::ofstream datafile (this->getDataDir() / datafileName, std::ofstream::binary);
+    std::ofstream datafile (this->getDataDir() / datafileName, 
+                            std::ios::binary | 
+                            std::ios::app);
+
     this->setActiveFilestream(std::move(datafile));
     datafile.close();
 
@@ -64,6 +67,7 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
     // okay so Record is formatted beforehand when we take user input from terminal.
 
     // Do we have a data directory?
+    // user must make one if not. return back to main loop perhaps.
     if (!std::filesystem::exists(this->getDataDir()))
         return;
     
