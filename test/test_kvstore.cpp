@@ -7,6 +7,8 @@ void test_open_store(KVStore& kvs, KVStoreHandle& stH) {
     /* After openStore() call we should have an existing datastore. */
     assert(std::filesystem::exists(kvs.getDataDir()));
 
+    assert(!stH.getDatafileExt().empty());
+
     /* No puts so id should be zero. */
     assert(stH.getActiveFileID() == 0);
 

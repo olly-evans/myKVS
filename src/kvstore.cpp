@@ -21,10 +21,8 @@ std::ofstream& KVStore::getActiveFilestream() {
 KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const StoreFlags stFlags) {
 
     using namespace std;
-    
-    KVStoreHandle stH; // Store handle.
 
-    // store owns handle of course.
+    KVStoreHandle stH;
     
     // if sOptions.syncOnPut ... -> mutex in put function???
     // if sOptions.readWrite ... -> find way to allow read and write to dir.
