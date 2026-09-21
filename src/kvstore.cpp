@@ -18,7 +18,7 @@ std::ofstream& KVStore::getActiveFilestream() {
     return this->activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sFlags) {
+KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, const StoreFlags sFlags) {
 
     
     KVStoreHandle stH; // Store handle.
@@ -48,9 +48,6 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sF
 
     // Turn active ID into string.
     std::string strActiveFileID = std::to_string(stH.getActiveFileID());
-
-    // Filename as string.
-
     std::string datafileName = strActiveFileID + sFlags.datafileExtension;
 
     // Establish our KVStore stream.
