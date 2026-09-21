@@ -12,7 +12,7 @@ void KVStoreHandle::setActiveFileID(std::filesystem::path dataDir) {
     bool found = false;
 
     for (const auto& datafile : std::filesystem::directory_iterator(dataDir)) {
-        if (datafile.path().extension() == ".log") {
+        if (datafile.path().extension() == this->datafileExtension) {
             uint32_t currentID = std::stoul(datafile.path().stem().string());
             maxID = std::max(maxID, currentID);
             found = true;
@@ -28,4 +28,12 @@ std::filesystem::path KVStoreHandle::getAbsDirPath() {
 
 void KVStoreHandle::setAbsDirPath() {
     this->absDirPath = std::filesystem::path(SOURCE_ROOT);
+}
+
+std::string KVStoreHandle::getDatafileExt() {
+    return datafileExtension;
+}
+
+void KVStoreHandle::setDatafileExt(std::string fileExtension) {
+    datafileExtension = fileExtension;
 }

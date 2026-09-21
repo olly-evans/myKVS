@@ -22,6 +22,8 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sF
 
     
     KVStoreHandle stH; // Store handle.
+
+    // store owns handle of course.
     
     // if sOptions.syncOnPut ... -> mutex in put function???
     // if sOptions.readWrite ... -> find way to allow read and write to dir.
@@ -31,6 +33,11 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sF
     // Setup variable, doesn't create dir.
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath(), relDataDir);
+
+    stH.setDatafileExt(sFlags.datafileExtension);
+    if (stH.getDatafileExt().empty())
+        stH.setDatafileExt(".data");
+
 
     // Create dir if needed.
     if (!std::filesystem::exists(this->getDataDir()))
@@ -47,9 +54,6 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sF
 
     // Filename as string.
 
-    if (sFlags.datafileExtension.empty())
-        sFlags.datafileExtension = ".data";
-
     std::string datafileName = strActiveFileID + sFlags.datafileExtension;
 
     // Establish our KVStore stream.
@@ -58,7 +62,6 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sF
         std::ios::binary | std::ios::app
     );
    
-
     return stH;
 }
 

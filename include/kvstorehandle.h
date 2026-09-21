@@ -7,6 +7,7 @@ class KVStoreHandle {
     private:
         uint32_t activeFileID;
         std::filesystem::path absDirPath;
+        std::string datafileExtension;
         // hash table pointer.
 
     public:
@@ -18,4 +19,8 @@ class KVStoreHandle {
 
         std::filesystem::path getAbsDirPath();
         void setAbsDirPath();
+
+        std::string KVStoreHandle::getDatafileExt();
+        void setDatafileExt(std::string fileExtension);
+
 };
