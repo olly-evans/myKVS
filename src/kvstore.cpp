@@ -47,10 +47,7 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sF
     stH.setActiveFileID(this->getDataDir());
 
     // Turn active ID into string.
-    std::stringstream ss;
-    std::string strActiveFileID;
-    ss << stH.getActiveFileID();
-    ss >> strActiveFileID;
+    std::string strActiveFileID = std::to_string(stH.getActiveFileID());
 
     // Filename as string.
 
