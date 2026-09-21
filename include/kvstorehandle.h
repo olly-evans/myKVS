@@ -20,7 +20,7 @@ class KVStoreHandle {
         std::filesystem::path getAbsDirPath();
         void setAbsDirPath();
 
-        std::string KVStoreHandle::getDatafileExt();
+        std::string getDatafileExt();
         void setDatafileExt(std::string fileExtension);
 
 };
