@@ -18,8 +18,9 @@ std::ofstream& KVStore::getActiveFilestream() {
     return this->activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const StoreFlags sFlags) {
+KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const StoreFlags stFlags) {
 
+    using namespace std;
     
     KVStoreHandle stH; // Store handle.
 
@@ -28,32 +29,28 @@ KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const S
     // if sOptions.syncOnPut ... -> mutex in put function???
     // if sOptions.readWrite ... -> find way to allow read and write to dir.
 
-    // Only one datastore process can write at once... dir must become a mutex to put().
 
-    // Setup variable, doesn't create dir.
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath(), relDataDir);
 
     // Create dir if needed.
-    if (!std::filesystem::exists(this->getDataDir()))
-        std::filesystem::create_directories(this->getDataDir());
+    if (!filesystem::exists(this->getDataDir()))
+        filesystem::create_directories(this->getDataDir());
 
-    stH.setDatafileExt(sFlags.datafileExtension);
+    stH.setDatafileExt(stFlags.datafileExtension);
     if (stH.getDatafileExt().empty())
         stH.setDatafileExt(".data");
 
 
-    // Get the active ID (highest) in dataDir.
+    // Get the active datafile ID (highest) in dataDir.
     stH.setActiveFileID(this->getDataDir());
 
-    // Turn active ID into string.
-    std::string strActiveFileID = std::to_string(stH.getActiveFileID());
-    std::string datafileName = strActiveFileID + sFlags.datafileExtension;
+    string strActiveFileID = to_string(stH.getActiveFileID());
+    string datafileName = strActiveFileID + stFlags.datafileExtension;
 
-    // Establish our KVStore stream.
     this->activeFilestream.open(
         this->getDataDir() / datafileName, 
-        std::ios::binary | std::ios::app
+        ios::binary | ios::app
     );
    
     return stH;

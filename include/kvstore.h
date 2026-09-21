@@ -43,7 +43,7 @@ class KVStore {
             Will eventually need to add additional options.           
         */
 
-        KVStoreHandle openStore(std::filesystem::path relDataDir, StoreFlags sFlags);
+        KVStoreHandle openStore(std::filesystem::path relDataDir, StoreFlags stFlags);
 
         /* 
             Open a new or existing datastore for read-only access.
