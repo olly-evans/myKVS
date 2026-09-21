@@ -3,6 +3,7 @@ build/
 bin/
 data/
 test_data/
+test_kvstore/
 
 *.out
 *.o
