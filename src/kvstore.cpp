@@ -18,7 +18,7 @@ std::ofstream& KVStore::getActiveFilestream() {
     return this->activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, const StoreFlags sFlags) {
+KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const StoreFlags sFlags) {
 
     
     KVStoreHandle stH; // Store handle.
@@ -34,14 +34,14 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, const StoreFl
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath(), relDataDir);
 
+    // Create dir if needed.
+    if (!std::filesystem::exists(this->getDataDir()))
+        std::filesystem::create_directories(this->getDataDir());
+
     stH.setDatafileExt(sFlags.datafileExtension);
     if (stH.getDatafileExt().empty())
         stH.setDatafileExt(".data");
 
-
-    // Create dir if needed.
-    if (!std::filesystem::exists(this->getDataDir()))
-        std::filesystem::create_directories(this->getDataDir());
 
     // Get the active ID (highest) in dataDir.
     stH.setActiveFileID(this->getDataDir());
