@@ -15,7 +15,8 @@ void test_kvshandle_sets_absolute_directory() {
 void test_kvshandle_sets_activefile_id() {
 
     KVStoreHandle stH;
-
+    stH.setDatafileExt(".log");
+    
     std::filesystem::path path = SOURCE_ROOT;
     std::filesystem::path dataDir = path / "test_data/";
     std::filesystem::create_directories(dataDir);
