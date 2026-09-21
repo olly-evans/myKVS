@@ -16,7 +16,7 @@ struct Record {
     std::string val;    
 };
 
-struct StoreOptions {
+struct StoreFlags {
     bool readWrite = false; // Reading and writing permitted in directory.
     bool syncOnPut = false;
     std::string datafileExtension;
@@ -26,6 +26,7 @@ class KVStore {
     private:
         std::filesystem::path dataDir;
         std::ofstream activeFilestream;
+
 
     public:
         // KVStore();
@@ -42,7 +43,7 @@ class KVStore {
             Will eventually need to add additional options.           
         */
 
-        KVStoreHandle openStore(std::filesystem::path relDataDir, StoreOptions sOptions);
+        KVStoreHandle openStore(std::filesystem::path relDataDir, StoreFlags sFlags);
 
         /* 
             Open a new or existing datastore for read-only access.

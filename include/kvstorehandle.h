@@ -10,6 +10,9 @@ class KVStoreHandle {
         // hash table pointer.
 
     public:
+        // KVStoreHandle(mutex.lock());
+        // ~KVStoreHandle();
+
         uint32_t getActiveFileID();
         void setActiveFileID(std::filesystem::path dataDir);
 

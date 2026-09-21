@@ -18,8 +18,9 @@ std::ofstream& KVStore::getActiveFilestream() {
     return this->activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreOptions sOptions) {
+KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreFlags sFlags) {
 
+    
     KVStoreHandle stH; // Store handle.
     
     // if sOptions.syncOnPut ... -> mutex in put function???
@@ -45,15 +46,18 @@ KVStoreHandle KVStore::openStore(std::filesystem::path relDataDir, StoreOptions 
     ss >> strActiveFileID;
 
     // Filename as string.
-    std::string datafileName = strActiveFileID + sOptions.datafileExtension;
+
+    if (sFlags.datafileExtension.empty())
+        sFlags.datafileExtension = ".data";
+
+    std::string datafileName = strActiveFileID + sFlags.datafileExtension;
 
     // Establish our KVStore stream.
-    std::ofstream datafile (this->getDataDir() / datafileName, 
-                            std::ios::binary | 
-                            std::ios::app);
-
-    this->setActiveFilestream(std::move(datafile));
-    datafile.close();
+    this->activeFilestream.open(
+        this->getDataDir() / datafileName, 
+        std::ios::binary | std::ios::app
+    );
+   
 
     return stH;
 }
@@ -71,13 +75,13 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
     if (!std::filesystem::exists(this->getDataDir()))
         return;
     
-    // we do have a data directory.
 
     // ofstream and activefileid.
     
     // is file too big.
-
+    
     // auto& out = this->getActiveFilestream();
+
     // // rec.crc = computeCRC32(rec.timeStamp, rec.keySize, rec.valSize, rec.key, rec.val);
 
     // out.write(reinterpret_cast<const char*>(&rec.crc), sizeof(rec.crc));
@@ -86,7 +90,6 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
     // out.write(reinterpret_cast<const char*>(&rec.valSize), sizeof(rec.valSize));
     // out.write(reinterpret_cast<const char*>(&rec.key), rec.keySize);
     // out.write(reinterpret_cast<const char*>(&rec.val), rec.valSize);
-
     // out.close();
 
     // stH.setActiveFileID(this->dataDir);

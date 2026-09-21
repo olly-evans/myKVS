@@ -43,11 +43,12 @@ int main() {
 
     KVStore kvs;
     
-    StoreOptions sOp;
-    sOp.datafileExtension = ".data";
+    StoreFlags flags;
 
     std::filesystem::path dataDir = "test_kvstore/";
-    KVStoreHandle stH = kvs.openStore(dataDir, sOp);
+
+    
+    KVStoreHandle stH = kvs.openStore(dataDir, flags);
 
     test_open_store(kvs, stH);
     // test_put(kvs, stH);
