@@ -41,8 +41,7 @@ KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const S
     if (stH.getDatafileExt().empty())
         stH.setDatafileExt(".data");
 
-
-    // Get the active datafile ID (highest) in dataDir.
+    // Get the active datafiles ID (highest filename) in dataDir.
     stH.setActiveFileID(this->getDataDir());
 
     string strActiveFileID = to_string(stH.getActiveFileID());

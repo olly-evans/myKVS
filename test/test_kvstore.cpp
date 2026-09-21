@@ -45,8 +45,9 @@ int main() {
     
     StoreFlags flags;
 
-    std::filesystem::path dataDir = "test_kvstore/";
-
+    std::filesystem::path path = SOURCE_ROOT;
+    std::filesystem::path dataDir = path / "test_kvstore/";
+    std::filesystem::create_directories(dataDir);
     
     KVStoreHandle stH = kvs.openStore(dataDir, flags);
 
