@@ -24,9 +24,8 @@ KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const S
 
     KVStoreHandle stH;
     
-    // if sOptions.syncOnPut ... -> mutex in put function???
-    // if sOptions.readWrite ... -> find way to allow read and write to dir.
-
+    // if stFlags.syncOnPut ... -> mutex in put function???
+    // if stFlags.readWrite ... -> find way to allow read and write to dir.
 
     stH.setAbsDirPath();
     this->setDataDir(stH.getAbsDirPath(), relDataDir);
@@ -71,19 +70,27 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
     
     // is file too big.
     
-    // auto& out = this->getActiveFilestream();
+    std::ofstream& out = this->getActiveFilestream();
 
     // // rec.crc = computeCRC32(rec.timeStamp, rec.keySize, rec.valSize, rec.key, rec.val);
 
-    // out.write(reinterpret_cast<const char*>(&rec.crc), sizeof(rec.crc));
-    // out.write(reinterpret_cast<const char*>(&rec.timeStamp), sizeof(rec.timeStamp));
-    // out.write(reinterpret_cast<const char*>(&rec.keySize), sizeof(rec.keySize));
-    // out.write(reinterpret_cast<const char*>(&rec.valSize), sizeof(rec.valSize));
-    // out.write(reinterpret_cast<const char*>(&rec.key), rec.keySize);
-    // out.write(reinterpret_cast<const char*>(&rec.val), rec.valSize);
-    // out.close();
+    // perhaps rec.setCRC32();
 
-    // stH.setActiveFileID(this->dataDir);
+
+    // while (activefilelen != eof) {
+    //     out.write()
+    // }
+
+    // calculate the crc first so we can check how many total bytes to append
+    // and if we need a new datafile.
+
+    out.write(reinterpret_cast<const char*>(&rec.crc), sizeof(rec.crc));
+    out.write(reinterpret_cast<const char*>(&rec.timeStamp), sizeof(rec.timeStamp));
+    out.write(reinterpret_cast<const char*>(&rec.keySize), sizeof(rec.keySize));
+    out.write(reinterpret_cast<const char*>(&rec.valSize), sizeof(rec.valSize));
+    out.write((rec.key.data()), rec.keySize);
+    out.write((rec.val.data()), rec.valSize);
+
 
     // append to hashtable.
 }

@@ -36,6 +36,7 @@ void test_kvshandle_sets_activefile_id() {
 }
 
 void test_kvshandle_set_datafile_ext() {
+    
     KVStoreHandle stH;
     stH.setDatafileExt(".data");
 
