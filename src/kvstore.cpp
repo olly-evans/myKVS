@@ -41,6 +41,7 @@ KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const S
     // Get the active datafiles ID (highest filename) in dataDir.
     stH.setActiveFileID(this->getDataDir());
 
+    // createNewDatafile()
     string strActiveFileID = to_string(stH.getActiveFileID());
     string datafileName = strActiveFileID + stFlags.datafileExtension;
 
@@ -84,12 +85,12 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
     // calculate the crc first so we can check how many total bytes to append
     // and if we need a new datafile.
 
-    out.write(reinterpret_cast<const char*>(&rec.crc), sizeof(rec.crc));
-    out.write(reinterpret_cast<const char*>(&rec.timeStamp), sizeof(rec.timeStamp));
-    out.write(reinterpret_cast<const char*>(&rec.keySize), sizeof(rec.keySize));
-    out.write(reinterpret_cast<const char*>(&rec.valSize), sizeof(rec.valSize));
-    out.write((rec.key.data()), rec.keySize);
-    out.write((rec.val.data()), rec.valSize);
+    // out.write(reinterpret_cast<const char*>(&rec.crc), sizeof(rec.crc));
+    out.write(reinterpret_cast<const char*>(rec.getTimestamp()), sizeof(rec.getTimestamp()));
+    out.write(reinterpret_cast<const char*>(rec.getKeySize()), sizeof(rec.getKeySize()));
+    out.write(reinterpret_cast<const char*>(rec.getValueSize()), sizeof(rec.getValueSize()));
+    out.write((rec.getKey().data()), rec.getKeySize());
+    out.write((rec.getValue().data()), rec.getValueSize());
 
 
     // append to hashtable.
