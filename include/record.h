@@ -3,9 +3,11 @@
 #include <string>
 #include <cstdint>
 
+constexpr uint32_t CRC32_POLY = 0xEDB88320;
+
 class Record {
     private:
-        uint32_t crc;
+        uint32_t crc32;
         uint64_t timestamp;
         uint32_t keySize;
         uint32_t valSize;
@@ -16,6 +18,9 @@ class Record {
         Record(std::string key, std::string value);
         ~Record();
         
+        void computeSetCRC32(uint64_t polynomial);
+        uint32_t getCRC32();
+
         void setTimestampNow();
         uint64_t getTimestamp() const;
 

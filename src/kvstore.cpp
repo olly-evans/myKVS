@@ -85,7 +85,9 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
     // calculate the crc first so we can check how many total bytes to append
     // and if we need a new datafile.
 
-    // out.write(reinterpret_cast<const char*>(&rec.crc), sizeof(rec.crc));
+    // if fileid = activestream.something_file_related()
+
+    // out.write(reinterpret_cast<const char*>(rec.crc), sizeof(rec.crc));
     out.write(reinterpret_cast<const char*>(rec.getTimestamp()), sizeof(rec.getTimestamp()));
     out.write(reinterpret_cast<const char*>(rec.getKeySize()), sizeof(rec.getKeySize()));
     out.write(reinterpret_cast<const char*>(rec.getValueSize()), sizeof(rec.getValueSize()));

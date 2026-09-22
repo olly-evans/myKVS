@@ -2,6 +2,8 @@
 
 #include <chrono>
 
+constexpr uint32_t CRC32_POLY = 0x15a0849e7;
+
 Record::Record(std::string key, std::string value) : 
     val(value), key(key) {
 
@@ -10,6 +12,22 @@ Record::Record(std::string key, std::string value) :
     setValueSize(sizeof(value));
 
     // computeSetCRC16();
+}
+
+void Record::computeSetCRC32(uint64_t polynomial) {
+
+    
+
+
+    /* We can technically use 33 bits for our polynomial as we know msb is 1. Hence 64-bit argument. */
+    uint32_t poly = polynomial >> 1; // remove last bit, 32 bit 
+
+
+    // this->crc32
+}
+
+uint32_t Record::getCRC32() {
+    return this->crc32;
 }
 
 void Record::setTimestampNow() {

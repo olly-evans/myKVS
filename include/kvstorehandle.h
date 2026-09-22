@@ -2,7 +2,6 @@
 
 #include <filesystem>
 
-// Seperate file.
 class KVStoreHandle {
     private:
         uint32_t activeFileID;
