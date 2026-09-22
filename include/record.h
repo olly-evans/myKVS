@@ -6,16 +6,17 @@
 class Record {
     private:
         uint32_t crc;
-        uint64_t timeStamp;
+        uint64_t timestamp;
         uint32_t keySize;
         uint32_t valSize;
         std::string key;
         std::string val;  
+        
     public:
-        Record();
+        Record(std::string key, std::string value);
         ~Record();
         
-        void setTimestamp(uint64_t ts);
+        void setTimestampNow();
         uint64_t getTimestamp();
 
         void setKeySize(uint32_t ks);
