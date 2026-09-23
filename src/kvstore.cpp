@@ -87,6 +87,16 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
 
 /* File */
 
+fs::path KVStore::getNextDatafilePath(const KVStoreHandle& stH) {
+
+    uint32_t newID = stH.getActiveFileID() + 1;
+    std::string newDatafileID = std::to_string(newID);
+    std::string newDatafileName = newDatafileID + ".aol" + stH.getDatafileExt();
+
+    fs::path nextDatafilePath = dataDir / newDatafileName;
+    return nextDatafilePath;
+}
+
 void KVStore::createSetNewDatafile(KVStoreHandle& stH) {
 
     // Both as we can be writing to a non-full 0 ID file.

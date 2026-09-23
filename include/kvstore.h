@@ -32,6 +32,8 @@ class KVStore {
 
         /* File */
 
+        [[nodiscard]] std::filesystem::path getNextDatafilePath(const KVStoreHandle& stH);
+
         void createSetNewDatafile(KVStoreHandle& stH);
 
         /* Getters/Setters */
