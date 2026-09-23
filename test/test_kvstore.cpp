@@ -12,7 +12,8 @@ void test_open_new_store() {
     fs::path path = SOURCE_ROOT;
     fs::path dataDir = path / "test_open_initial/";
     fs::create_directories(dataDir);
-    
+
+    flags.datafileExtension = ".data";
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
     assert(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
@@ -20,8 +21,10 @@ void test_open_new_store() {
     assert(kvs.getActiveFilestream().good());       /* No error state in stream. */
     assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
-    /* No puts so id should be zero. */
-    assert(stH.getActiveFileID() == 0);
+    assert(stH.getActiveFileID() == 0);             /* No puts so id should be zero. */
+
+    assert(kvs.getActiveDatafilePath() == 
+           dataDir / "0.aol.data");
 
     fs::remove_all(dataDir);
 
