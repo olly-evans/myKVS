@@ -19,7 +19,7 @@ void KVStoreHandle::setActiveFileID(std::filesystem::path dataDir) {
         }
     }
 
-    activeFileID = found ? maxID : 0;  // 0 if this is a brand new store
+    activeFileID = found ? maxID : 0;
 }
 
 std::filesystem::path KVStoreHandle::getAbsDirPath() {

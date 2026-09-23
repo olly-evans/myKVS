@@ -48,5 +48,5 @@ class KVStore {
 
         // std::optional<KVStoreHandle> openReadOnlyStore();
 
-        void put(const KVStoreHandle& h, const Record& rec);
+        void put(const KVStoreHandle& h, const std::string key, const std::string val);
 };

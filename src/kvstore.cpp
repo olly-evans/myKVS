@@ -1,26 +1,28 @@
 #include "kvstore.h"
 
+using namespace std;
+
 /* KVStore Methods */
 
-std::filesystem::path KVStore::getDataDir() const {
+
+filesystem::path KVStore::getDataDir() const {
     return dataDir;
 }
 
-void KVStore::setDataDir(std::filesystem::path root, std::string dirName) {
+void KVStore::setDataDir(filesystem::path root, string dirName) {
     dataDir = root.append(dirName);
 }
 
-void KVStore::setActiveFilestream(std::ofstream stream) {
-    activeFilestream = std::move(stream);
+void KVStore::setActiveFilestream(ofstream stream) {
+    activeFilestream = move(stream);
 }
 
 std::ofstream& KVStore::getActiveFilestream() {
     return activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const StoreFlags stFlags) {
+KVStoreHandle KVStore::openStore(const filesystem::path relDataDir, const StoreFlags stFlags) {
 
-    using namespace std;
 
     KVStoreHandle stH;
     
@@ -53,36 +55,29 @@ KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const S
     return stH;
 }
 
-void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
+void KVStore::put(const KVStoreHandle& stH, const string key, const string val) {
 
     // lock and mutex is bound to our KVStoreHandle. RAII
-
-    // std::lock_guard<std::mutex> guard(mutex);
-
     // okay so Record is formatted beforehand when we take user input from terminal.
 
     // Do we have a data directory?
     // user must make one if not. return back to main loop perhaps.
-    if (!std::filesystem::exists(getDataDir()))
+    if (!filesystem::exists(getDataDir()))
         return;
     
-
+    Record rec(key, val);
     // ofstream and activefileid.
     
     // is file too big.
     
-    std::ofstream& out = getActiveFilestream();
-
-    // // rec.crc = computeCRC32(rec.timeStamp, rec.keySize, rec.valSize, rec.key, rec.val);
-
-    // perhaps rec.setCRC32();
-
+    ofstream& out = getActiveFilestream();
 
     // while (activefilelen != eof) {
     //     out.write()
     // }
 
     // calculate the crc first so we can check how many total bytes to append
+    // total bytes.
     // and if we need a new datafile.
 
     // if fileid = activestream.something_file_related()
