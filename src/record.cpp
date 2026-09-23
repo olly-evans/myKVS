@@ -3,14 +3,12 @@
 
 #include <chrono>
 
-constexpr uint32_t CRC32_POLY = 0x15a0849e7;
-
 Record::Record(std::string k, std::string v) : 
-    val(v), key(k) {
+    key(std::move(k)), val(std::move(v)) {
 
     setTimestampNow();
-    setKeySize(sizeof(k));
-    setValueSize(sizeof(v));
+    setKeySize(sizeof(key));
+    setValueSize(sizeof(val));
     
     computeSetCRC32();
 }

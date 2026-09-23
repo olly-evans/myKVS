@@ -3,8 +3,6 @@
 #include <string>
 #include <cstdint>
 
-constexpr uint32_t CRC32_POLY = 0xEDB88320;
-
 class Record {
     private:
         uint32_t crc32;
@@ -16,7 +14,7 @@ class Record {
 
     public:
         Record(std::string key, std::string value);
-        ~Record();
+        // ~Record();
         
         void computeSetCRC32();
         uint32_t getCRC32();

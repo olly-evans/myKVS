@@ -7,3 +7,7 @@ add_test(NAME kvstore_test COMMAND test_kvstore)
 add_executable(test_kvstorehandle test_kvstorehandle.cpp)
 target_link_libraries(test_kvstorehandle PRIVATE app_lib)
 add_test(NAME kvstorehandle_test COMMAND test_kvstorehandle)
+
+add_executable(test_record test_record.cpp)
+target_link_libraries(test_record PRIVATE app_lib)
+add_test(NAME record_test COMMAND test_record)
