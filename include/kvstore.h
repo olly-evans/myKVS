@@ -20,27 +20,17 @@ struct StoreFlags {
 };
 
 class KVStore {
-    private:
-        std::filesystem::path dataDir;
-        std::ofstream activeFilestream;
-
 
     public:
         // KVStore();
         // ~KVStore();
-
-        void setDataDir(std::filesystem::path dir, std::string dirName);
-        [[nodiscard]] std::filesystem::path getDataDir() const;
-
-        void setActiveFilestream(std::ofstream stream);
-        [[nodiscard]] std::ofstream& getActiveFilestream();
 
         /* 
             Establish a new or existing datastore in CMAKE_SOURCE_DIR 
             Will eventually need to add additional options.           
         */
 
-        KVStoreHandle openStore(std::filesystem::path relDataDir, StoreFlags stFlags);
+        KVStoreHandle open(std::filesystem::path relDataDir, StoreFlags stFlags);
 
         /* 
             Open a new or existing datastore for read-only access.
@@ -50,4 +40,19 @@ class KVStore {
         // std::optional<KVStoreHandle> openReadOnlyStore();
 
         void put(const KVStoreHandle& h, const std::string key, const std::string val);
+
+        void setDataDir(std::filesystem::path dir, std::string dirName);
+        [[nodiscard]] std::filesystem::path getDataDir() const;
+
+        void setActiveFilestream(std::ofstream stream);
+        [[nodiscard]] std::ofstream& getActiveFilestream();
+
+        void setActiveDatafilePath(std::filesystem::path path);
+        [[nodiscard]] std::filesystem::path getActiveDatafilePath();
+
+    private:
+        std::filesystem::path dataDir;
+        std::filesystem::path activeDatafilePath;
+
+        std::ofstream activeFilestream;
 };

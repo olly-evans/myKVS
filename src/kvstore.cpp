@@ -4,30 +4,12 @@ namespace fs = std::filesystem;
 
 /* KVStore Methods */
 
+KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags) {
 
-fs::path KVStore::getDataDir() const {
-    return dataDir;
-}
-
-void KVStore::setDataDir(fs::path root, std::string dirName) {
-    dataDir = root.append(dirName);
-}
-
-void KVStore::setActiveFilestream(std::ofstream stream) {
-    activeFilestream = std::move(stream);
-}
-
-std::ofstream& KVStore::getActiveFilestream() {
-    return activeFilestream;
-}
-
-KVStoreHandle KVStore::openStore(const fs::path relDataDir, const StoreFlags stFlags) {
-
-
-    KVStoreHandle stH;
-    
     // if stFlags.syncOnPut ... -> mutex in put function???
     // if stFlags.readWrite ... -> find way to allow read and write to dir.
+
+    KVStoreHandle stH;
 
     stH.setAbsDirPath();
     setDataDir(stH.getAbsDirPath(), relDataDir);
@@ -46,6 +28,8 @@ KVStoreHandle KVStore::openStore(const fs::path relDataDir, const StoreFlags stF
     // createNewDatafile()
     std::string strActiveFileID = std::to_string(stH.getActiveFileID());
     std::string datafileName = strActiveFileID + stFlags.datafileExtension;
+
+    // setActiveDatafilePath(getDataDir() / datafileName);
 
     activeFilestream.open(
         getDataDir() / datafileName, 
@@ -69,6 +53,9 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
     Record rec(key, val);
 
     // if file is not full and the active id matches filename.
+    
+    // stH.getActiveDatafilePath();
+
     rec.serialize(getActiveFilestream());
     
     // ofstream and activefileid.
@@ -83,4 +70,28 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
     // and if we need a new datafile.
 
     // append to hashtable.
+}
+
+fs::path KVStore::getDataDir() const {
+    return dataDir;
+}
+
+void KVStore::setDataDir(fs::path root, std::string dirName) {
+    dataDir = root.append(dirName);
+}
+
+void KVStore::setActiveFilestream(std::ofstream stream) {
+    activeFilestream = std::move(stream);
+}
+
+std::ofstream& KVStore::getActiveFilestream() {
+    return activeFilestream;
+}
+
+void KVStore::setActiveDatafilePath(std::filesystem::path path) {
+    activeDatafilePath = path;
+}
+
+std::filesystem::path KVStore::getActiveDatafilePath() {
+    return activeDatafilePath;
 }

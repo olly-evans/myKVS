@@ -52,7 +52,7 @@ int main() {
     std::filesystem::path dataDir = path / "test_kvstore/";
     std::filesystem::create_directories(dataDir);
     
-    KVStoreHandle stH = kvs.openStore(dataDir, flags);
+    KVStoreHandle stH = kvs.open(dataDir, flags);
 
     test_open_store(kvs, stH);
     // test_put(kvs, stH);
