@@ -29,10 +29,10 @@ class KVStore {
         // ~KVStore();
 
         void setDataDir(std::filesystem::path dir, std::string dirName);
-        std::filesystem::path getDataDir() const;
+        [[nodiscard]] std::filesystem::path getDataDir() const;
 
         void setActiveFilestream(std::ofstream stream);
-        std::ofstream& getActiveFilestream();
+        [[nodiscard]] std::ofstream& getActiveFilestream();
 
         /* 
             Establish a new or existing datastore in CMAKE_SOURCE_DIR 

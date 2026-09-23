@@ -13,13 +13,13 @@ class KVStoreHandle {
         // KVStoreHandle(mutex.lock());
         // ~KVStoreHandle();
 
-        uint32_t getActiveFileID();
+        [[nodiscard]] uint32_t getActiveFileID();
         void setActiveFileID(std::filesystem::path dataDir);
 
-        std::filesystem::path getAbsDirPath();
+        [[nodiscard]] std::filesystem::path getAbsDirPath();
         void setAbsDirPath();
 
-        std::string getDatafileExt();
+        [[nodiscard]] std::string getDatafileExt();
         void setDatafileExt(std::string fileExtension);
 
 };

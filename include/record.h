@@ -17,20 +17,20 @@ class Record {
         // ~Record();
         
         void computeSetCRC32();
-        uint32_t getCRC32();
+        [[nodiscard]] uint32_t getCRC32();
 
         void setTimestampNow();
-        uint64_t getTimestamp() const;
+        [[nodiscard]] uint64_t getTimestamp() const;
 
         void setKeySize(uint32_t ks);
-        uint32_t getKeySize() const;
+        [[nodiscard]] uint32_t getKeySize() const;
 
         void setValueSize(uint32_t vs);
-        uint32_t getValueSize() const;
+        [[nodiscard]] uint32_t getValueSize() const;
 
         void setKey(std::string k);
-        std::string getKey() const;
+        [[nodiscard]] std::string getKey() const;
 
         void setValue(std::string v);
-        std::string getValue() const;
+        [[nodiscard]] std::string getValue() const;
 };
