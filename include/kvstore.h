@@ -5,6 +5,7 @@
 
 #include "kvstorehandle.h"
 #include "record.h"
+namespace fs = std::filesystem;
 
 constexpr uint16_t MAX_DATAFILE_BYTES = 65535;
 
@@ -27,29 +28,32 @@ class KVStore {
 
         /* Main API */
 
-        KVStoreHandle open(std::filesystem::path relDataDir, StoreFlags stFlags);
+        KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags);
         void put(const KVStoreHandle& h, const std::string key, const std::string val);
 
         /* File */
 
-        [[nodiscard]] std::filesystem::path getNextDatafilePath(const KVStoreHandle& stH);
+        [[nodiscard]] fs::path getNextDatafilePath(const KVStoreHandle& stH);
+
+        void setActiveDatafile(fs::path path);
+        void restoreActiveDatafile(fs::path path);
 
         void createSetNewDatafile(KVStoreHandle& stH);
 
         /* Getters/Setters */
 
-        void setDataDir(std::filesystem::path dir, std::string dirName);
-        [[nodiscard]] std::filesystem::path getDataDir() const;
+        void setDataDir(fs::path dir, std::string dirName);
+        [[nodiscard]] fs::path getDataDir() const;
 
         void setActiveFilestream(std::ofstream stream);
         [[nodiscard]] std::ofstream& getActiveFilestream();
 
-        void setActiveDatafilePath(std::filesystem::path path);
-        [[nodiscard]] std::filesystem::path getActiveDatafilePath();
+        void setActiveDatafilePath(fs::path path);
+        [[nodiscard]] fs::path getActiveDatafilePath();
 
     private:
-        std::filesystem::path dataDir;
-        std::filesystem::path activeDatafilePath;
+        fs::path dataDir;
+        fs::path activeDatafilePath;
 
         std::ofstream activeFilestream;
 };

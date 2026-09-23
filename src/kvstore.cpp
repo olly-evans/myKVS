@@ -15,31 +15,21 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     setDataDir(stH.getAbsDirPath(), relDataDir);
 
     // Create dir if needed.
-    if (!fs::exists(getDataDir()))
-        fs::create_directories(getDataDir());
+    if (!fs::exists(dataDir)) 
+        fs::create_directories(dataDir);
 
     stH.setDatafileExt(stFlags.datafileExtension);
     if (stH.getDatafileExt().empty())
         stH.setDatafileExt(".data");
 
     // Get the active datafiles ID (highest filename) in dataDir.
-    stH.setActiveFileID(getDataDir());
+    stH.setActiveFileID(dataDir); // no datafiles then 0;
 
-    // either this is our first run and we have no datafiles
-        // Create datafile name.
-        // Set stream to path.
-        // Set path
-        // set read/write.
+    std::string strID = std::to_string(stH.getActiveFileID());
+    fs::path appendOnlyDatafileExtension(strID + ".aol" + stH.getDatafileExt());
+    activeDatafilePath = dataDir / appendOnlyDatafileExtension;
 
-    // or its not and we have an active datafile we just need to set things.
-        // 
-
-
-    // establishDatafile();
-    
-        // nextDatafileName(old id);
-        // createDatafile(); // getNewDatafileName(old id);
-        // rebootSetDatafile();
+    setActiveDatafile(activeDatafilePath);
 
     // in put(), don't need to roll over in open().
     // rollOverDatafile(); // calls createDatafile() within.
@@ -52,7 +42,7 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
     // lock and mutex is bound to our KVStoreHandle. RAII
 
     // Do we have a data directory?
-    if (!fs::exists(getDataDir())) {
+    if (!fs::exists(dataDir)) {
         std::cout << "[WARNING] You must open a store before using put." << "\n";
         return;
     }
@@ -66,7 +56,7 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
 
     // bool matchingFileID = stH.getActiveFileID() == std::to_integer(getActiveDatafilePath().filename());
 
-    if (fs::file_size(getActiveDatafilePath()) < MAX_DATAFILE_BYTES) {
+    if (fs::file_size(activeDatafilePath) < MAX_DATAFILE_BYTES) {
         rec.serialize(activeFilestream);
     } 
 
@@ -96,6 +86,60 @@ fs::path KVStore::getNextDatafilePath(const KVStoreHandle& stH) {
     fs::path nextDatafilePath = dataDir / newDatafileName;
     return nextDatafilePath;
 }
+
+void KVStore::setActiveDatafile(fs::path path) {
+
+    activeFilestream.open(path, 
+                        std::ios::binary | std::ios::app);
+
+    fs::permissions(path,
+                fs::perms::owner_write  | fs::perms::group_write | 
+                fs::perms::others_write | fs::perms::owner_read  |  
+                fs::perms::group_read   | fs::perms::others_read, 
+                fs::perm_options::replace);
+
+    return;
+}
+
+void KVStore::restoreActiveDatafile(fs::path path) {
+
+    // Open stream with new file.
+    activeFilestream.open(path, 
+                          std::ios::binary |
+                          std::ios::app);
+    
+    fs::permissions(path,
+                    fs::perms::owner_write  | fs::perms::group_write | 
+                    fs::perms::others_write | fs::perms::owner_read  |  
+                    fs::perms::group_read   | fs::perms::others_read, 
+                    fs::perm_options::replace);
+
+
+    // Set new datafile path and scan for the new highest ID in the dir.
+    // We scan the dir incase we reload executable and need to rebuild.
+    setActiveDatafilePath(path);
+    // stH.setActiveFileID(dataDir); 
+     
+
+    return;
+}
+
+// void KVStore::rollOverDatafile() {
+
+        // activeFilestream.close(); // Close old file.
+
+
+//     // fs::path readOnlyExtension(".rol" + stH.getDatafileExt());
+//     // currentDatafilePath.replace_extension(readOnlyExtension);
+
+    // Replace old datafile extension with .
+    // Make old file read-only.
+    // fs::permissions(currentDatafilePath,
+    //                 fs::perms::owner_read | fs::perms::group_read | 
+    //                 fs::perms::others_read, fs::perm_options::replace);
+
+//     return;
+// }
 
 void KVStore::createSetNewDatafile(KVStoreHandle& stH) {
 
@@ -130,7 +174,7 @@ void KVStore::createSetNewDatafile(KVStoreHandle& stH) {
     
     activeFilestream.close(); // Close old file.
 
-    fs::path currentDatafilePath = getActiveDatafilePath();
+    fs::path currentDatafilePath = activeDatafilePath;
 
     // Replace old datafile extension with .rol.
     fs::path readOnlyExtension(".rol" + stH.getDatafileExt());
