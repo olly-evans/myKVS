@@ -1,27 +1,27 @@
 #include "kvstore.h"
 
-using namespace std;
+namespace fs = std::filesystem;
 
 /* KVStore Methods */
 
 
-filesystem::path KVStore::getDataDir() const {
+fs::path KVStore::getDataDir() const {
     return dataDir;
 }
 
-void KVStore::setDataDir(filesystem::path root, string dirName) {
+void KVStore::setDataDir(fs::path root, std::string dirName) {
     dataDir = root.append(dirName);
 }
 
-void KVStore::setActiveFilestream(ofstream stream) {
-    activeFilestream = move(stream);
+void KVStore::setActiveFilestream(std::ofstream stream) {
+    activeFilestream = std::move(stream);
 }
 
 std::ofstream& KVStore::getActiveFilestream() {
     return activeFilestream;
 }
 
-KVStoreHandle KVStore::openStore(const filesystem::path relDataDir, const StoreFlags stFlags) {
+KVStoreHandle KVStore::openStore(const fs::path relDataDir, const StoreFlags stFlags) {
 
 
     KVStoreHandle stH;
@@ -33,8 +33,8 @@ KVStoreHandle KVStore::openStore(const filesystem::path relDataDir, const StoreF
     setDataDir(stH.getAbsDirPath(), relDataDir);
 
     // Create dir if needed.
-    if (!filesystem::exists(getDataDir()))
-        filesystem::create_directories(getDataDir());
+    if (!fs::exists(getDataDir()))
+        fs::create_directories(getDataDir());
 
     stH.setDatafileExt(stFlags.datafileExtension);
     if (stH.getDatafileExt().empty())
@@ -44,25 +44,25 @@ KVStoreHandle KVStore::openStore(const filesystem::path relDataDir, const StoreF
     stH.setActiveFileID(getDataDir());
 
     // createNewDatafile()
-    string strActiveFileID = to_string(stH.getActiveFileID());
-    string datafileName = strActiveFileID + stFlags.datafileExtension;
+    std::string strActiveFileID = std::to_string(stH.getActiveFileID());
+    std::string datafileName = strActiveFileID + stFlags.datafileExtension;
 
     activeFilestream.open(
         getDataDir() / datafileName, 
-        ios::binary | ios::app
+        std::ios::binary | std::ios::app
     );
    
     return stH;
 }
 
-void KVStore::put(const KVStoreHandle& stH, const string key, const string val) {
+void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::string val) {
 
     // lock and mutex is bound to our KVStoreHandle. RAII
 
     // Do we have a data directory?
     // user must make one if not. return back to main loop perhaps.
-    if (!filesystem::exists(getDataDir())) {
-        cout << "[WARNING] Cannot use put as there is no open store." << "\n";
+    if (!fs::exists(getDataDir())) {
+        std::cout << "[WARNING] You must create an open store before using put." << "\n";
         return;
     }
     
@@ -70,6 +70,7 @@ void KVStore::put(const KVStoreHandle& stH, const string key, const string val) 
 
     // if file is not full and the active id matches filename.
     rec.serialize(getActiveFilestream());
+    
     // ofstream and activefileid.
 
     // else
