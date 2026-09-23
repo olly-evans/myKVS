@@ -36,9 +36,6 @@ class KVStore {
         [[nodiscard]] fs::path getNextDatafilePath(const KVStoreHandle& stH);
 
         void setActiveDatafile(fs::path path);
-        void restoreActiveDatafile(fs::path path);
-
-        void createSetNewDatafile(KVStoreHandle& stH);
 
         /* Getters/Setters */
 

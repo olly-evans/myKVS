@@ -101,29 +101,6 @@ void KVStore::setActiveDatafile(fs::path path) {
     return;
 }
 
-void KVStore::restoreActiveDatafile(fs::path path) {
-
-    // Open stream with new file.
-    activeFilestream.open(path, 
-                          std::ios::binary |
-                          std::ios::app);
-    
-    fs::permissions(path,
-                    fs::perms::owner_write  | fs::perms::group_write | 
-                    fs::perms::others_write | fs::perms::owner_read  |  
-                    fs::perms::group_read   | fs::perms::others_read, 
-                    fs::perm_options::replace);
-
-
-    // Set new datafile path and scan for the new highest ID in the dir.
-    // We scan the dir incase we reload executable and need to rebuild.
-    setActiveDatafilePath(path);
-    // stH.setActiveFileID(dataDir); 
-     
-
-    return;
-}
-
 // void KVStore::rollOverDatafile() {
 
         // activeFilestream.close(); // Close old file.
@@ -140,62 +117,6 @@ void KVStore::restoreActiveDatafile(fs::path path) {
 
 //     return;
 // }
-
-void KVStore::createSetNewDatafile(KVStoreHandle& stH) {
-
-    // Both as we can be writing to a non-full 0 ID file.
-    bool noDatafiles = stH.getActiveFileID() == 0 && fs::is_empty(dataDir);
-    
-    uint32_t newID = noDatafiles ? stH.getActiveFileID() : stH.getActiveFileID() + 1;
-
-    std::string newDatafileID = std::to_string(newID);
-    std::string newDatafileName = newDatafileID + ".aol" + stH.getDatafileExt();
-
-    fs::path newDatafilePath = dataDir / newDatafileName;
-
-    // noDatafiles should mean no activeFilestream file.
-    if (noDatafiles && !activeFilestream.is_open()) {
-
-        setActiveDatafilePath(newDatafilePath);
-        activeFilestream.open(newDatafilePath, 
-                              std::ios::binary | std::ios::app);
-        
-        fs::permissions(newDatafilePath,
-                        fs::perms::owner_write | fs::perms::group_write | 
-                        fs::perms::others_write | fs::perms::owner_read | 
-                        fs::perms::group_read | fs::perms::others_read, 
-                        fs::perm_options::replace);
-
-        // Don't need to setActiveFileID here, remains zero.
-        return;
-    }
-
-    // We have an active datafile.
-    
-    activeFilestream.close(); // Close old file.
-
-    fs::path currentDatafilePath = activeDatafilePath;
-
-    // Replace old datafile extension with .rol.
-    fs::path readOnlyExtension(".rol" + stH.getDatafileExt());
-    currentDatafilePath.replace_extension(readOnlyExtension);
-
-    // Make old file read-only.
-    fs::permissions(currentDatafilePath,
-                    fs::perms::owner_read | fs::perms::group_read | 
-                    fs::perms::others_read, fs::perm_options::replace);
-
-    // Open stream with new file.
-    activeFilestream.open(newDatafilePath, 
-                            std::ios::binary | std::ios::app);
-
-    // Set new datafile path and scan for the new highest ID in the dir.
-    // We scan the dir incase we reload executable and need to rebuild.
-    setActiveDatafilePath(newDatafilePath);
-    stH.setActiveFileID(dataDir);
-
-    return;
-}
 
 fs::path KVStore::getDataDir() const {
     return dataDir;
