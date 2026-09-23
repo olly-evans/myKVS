@@ -11,16 +11,16 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_library(app_lib STATIC ${SOURCES})
 target_include_directories(app_lib PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-add_executable(myLSFS src/main.cpp)
-target_link_libraries(myLSFS PRIVATE app_lib)
+add_executable(myKVS src/main.cpp)
+target_link_libraries(myKVS PRIVATE app_lib)
 
-set_target_properties(myLSFS PROPERTIES
+set_target_properties(myKVS PROPERTIES
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
 )
 
-target_include_directories(myLSFS PRIVATE include)
+target_include_directories(myKVS PRIVATE include)
 
 enable_testing()
 add_subdirectory(test)
