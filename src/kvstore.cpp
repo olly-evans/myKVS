@@ -35,12 +35,14 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
         // 
 
 
-    // nextDatafileName();
-    // createDatafile();
-    // rebootSetDatafile();
+    // establishDatafile();
+    
+        // nextDatafileName(old id);
+        // createDatafile(); // getNewDatafileName(old id);
+        // rebootSetDatafile();
 
-    // in put().
-    // rollOverDatafile();
+    // in put(), don't need to roll over in open().
+    // rollOverDatafile(); // calls createDatafile() within.
 
     return stH;
 }
@@ -51,7 +53,7 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
 
     // Do we have a data directory?
     if (!fs::exists(getDataDir())) {
-        std::cout << "[WARNING] You must create an open store before using put." << "\n";
+        std::cout << "[WARNING] You must open a store before using put." << "\n";
         return;
     }
     
