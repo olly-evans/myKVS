@@ -23,7 +23,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
         stH.setDatafileExt(".data");
 
     // Get the active datafiles ID (highest filename) in dataDir.
-    stH.setActiveFileID(dataDir); // no datafiles then 0;
+    stH.setActiveFileID(dataDir); // If no datafiles then 0;
 
     std::string strID = std::to_string(stH.getActiveFileID());
     fs::path appendOnlyDatafileExtension(strID + ".aol" + stH.getDatafileExt());
@@ -31,8 +31,6 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     setActiveDatafile(activeDatafilePath);
 
-    // in put(), don't need to roll over in open().
-    // rollOverDatafile(); // calls createDatafile() within.
 
     return stH;
 }
@@ -65,12 +63,17 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
     // don't write.
 
     // create new file
+
+
     // setActiveFileID
     
 
     // calculate the crc first so we can check how many total bytes to append
     // total bytes.
     // and if we need a new datafile.
+
+    // in put(), don't need to roll over in open().
+    // rollOverDatafile(); // calls createDatafile() within.
 
     // append to hashtable.
 }

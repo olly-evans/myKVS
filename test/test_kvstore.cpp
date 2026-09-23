@@ -3,7 +3,7 @@
 #include <assert.h>
 namespace fs = std::filesystem;
 
-void test_open_initial() {
+void test_open_new_store() {
     
 
     KVStore kvs;
@@ -35,7 +35,7 @@ void test_open_initial() {
     return;
 }
 
-void test_open_restore() {
+void test_open_existing_store() {
     
     KVStore kvs;
 
@@ -103,8 +103,8 @@ void test_put(KVStore& kvs, const KVStoreHandle& stH) {
 
 int main() {
 
-    test_open_initial();
-    test_open_restore();
+    test_open_new_store();
+    test_open_existing_store();
 
     return 0;
 }
