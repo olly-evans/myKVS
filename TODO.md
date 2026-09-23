@@ -1,0 +1,1 @@
+- If you open an existing store you cannot use a new datafile extension. Or maybe you can...?

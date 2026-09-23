@@ -15,21 +15,14 @@ void test_open_new_store() {
     
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-    /* After openStore() call we should have an existing datastore. */
-    assert(fs::exists(kvs.getDataDir()));
-
-    /* Datafile extension cannot be empty. */
-    assert(!stH.getDatafileExt().empty());
+    assert(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
+    assert(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
+    assert(kvs.getActiveFilestream().good());       /* No error state in stream. */
+    assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
     /* No puts so id should be zero. */
     assert(stH.getActiveFileID() == 0);
 
-    /* No error state in stream. */
-    assert(kvs.getActiveFilestream().good());
-
-    /* File should be open. */
-    assert(kvs.getActiveFilestream().is_open());
-    
     fs::remove_all(dataDir);
 
     return;
@@ -38,12 +31,6 @@ void test_open_new_store() {
 void test_open_existing_store() {
     
     KVStore kvs;
-
-
-    // DIFFERENT FILE EXTENSIONS??!
-    // ACTIVEID DOESNT CARE.
-
-    // IF YOU RESTORE YOU CANNOT CHANGE DATAFILE EXTENSION.
 
     fs::path path = SOURCE_ROOT;
     fs::path dataDir = path / "test_open_restore/";
@@ -62,21 +49,12 @@ void test_open_existing_store() {
     flags.datafileExtension = ".log";
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-    /* After openStore() call we should have an existing datastore. */
-    assert(fs::exists(kvs.getDataDir()));
+    assert(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
+    assert(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
+    assert(kvs.getActiveFilestream().good());       /* No error state in stream. */
+    assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
-    /* Datafile extension cannot be empty. */
-    assert(!stH.getDatafileExt().empty());
-
-    /* No puts so id should be zero. */
-    assert(stH.getActiveFileID() == 2);
-
-    /* No error state in stream. */
-    assert(kvs.getActiveFilestream().good());
-
-    /* File should be open. */
-    assert(kvs.getActiveFilestream().is_open());
-
+    assert(stH.getActiveFileID() == 2);           
     assert(kvs.getActiveDatafilePath() == dataDir / "2.aol.log");
     
     fs::remove_all(dataDir);
