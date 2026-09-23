@@ -13,6 +13,17 @@ Record::Record(std::string k, std::string v) :
     computeSetCRC32();
 }
 
+void Record::serialize(std::ostream& out) const {
+
+    out.write(reinterpret_cast<const char*>(&crc32), sizeof(crc32));
+    out.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
+    out.write(reinterpret_cast<const char*>(&keySize), sizeof(keySize));
+    out.write(reinterpret_cast<const char*>(&valSize), sizeof(valSize));
+
+    out.write(key.data(), key.size());
+    out.write(val.data(), val.size());
+}
+
 void Record::computeSetCRC32() {
 
     uint32_t crc = 0xFFFFFFFFu;

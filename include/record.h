@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+#include <ostream>
 
 class Record {
     private:
@@ -16,6 +17,10 @@ class Record {
         Record(std::string key, std::string value);
         // ~Record();
         
+        void serialize(std::ostream& out) const;
+
+        // static Record deserialize(std::istream& in);
+
         void computeSetCRC32();
         [[nodiscard]] uint32_t getCRC32();
 
