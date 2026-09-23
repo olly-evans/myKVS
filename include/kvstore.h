@@ -30,6 +30,10 @@ class KVStore {
         KVStoreHandle open(std::filesystem::path relDataDir, StoreFlags stFlags);
         void put(const KVStoreHandle& h, const std::string key, const std::string val);
 
+        /* File */
+
+        void createSetNewDatafile(KVStoreHandle& stH);
+
         /* Getters/Setters */
 
         void setDataDir(std::filesystem::path dir, std::string dirName);

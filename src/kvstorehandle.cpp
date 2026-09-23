@@ -2,7 +2,7 @@
 
 /* HVStoreHandle Methods */
 
-uint32_t KVStoreHandle::getActiveFileID() {
+uint32_t KVStoreHandle::getActiveFileID() const {
     return activeFileID;
 }
 
@@ -22,7 +22,7 @@ void KVStoreHandle::setActiveFileID(std::filesystem::path dataDir) {
     activeFileID = found ? maxID : 0;
 }
 
-std::filesystem::path KVStoreHandle::getAbsDirPath() {
+std::filesystem::path KVStoreHandle::getAbsDirPath() const {
     return absDirPath;
 }
 
@@ -30,7 +30,7 @@ void KVStoreHandle::setAbsDirPath() {
     absDirPath = std::filesystem::path(SOURCE_ROOT);
 }
 
-std::string KVStoreHandle::getDatafileExt() {
+std::string KVStoreHandle::getDatafileExt() const {
     return datafileExtension;
 }
 

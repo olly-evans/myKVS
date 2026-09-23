@@ -26,15 +26,15 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     stH.setActiveFileID(getDataDir());
 
     // createNewDatafile()
-    std::string strActiveFileID = std::to_string(stH.getActiveFileID());
-    std::string datafileName = strActiveFileID + stFlags.datafileExtension;
+    // std::string strActiveFileID = std::to_string(stH.getActiveFileID());
+    // std::string datafileName = strActiveFileID + ".aof" + stH.getDatafileExt();
 
     // setActiveDatafilePath(getDataDir() / datafileName);
 
-    activeFilestream.open(
-        getDataDir() / datafileName, 
-        std::ios::binary | std::ios::app
-    );
+    // activeFilestream.open(
+    //     getDataDir() / datafileName, 
+    //     std::ios::binary | std::ios::app
+    // );
    
     return stH;
 }
@@ -44,7 +44,6 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
     // lock and mutex is bound to our KVStoreHandle. RAII
 
     // Do we have a data directory?
-    // user must make one if not. return back to main loop perhaps.
     if (!fs::exists(getDataDir())) {
         std::cout << "[WARNING] You must create an open store before using put." << "\n";
         return;
@@ -53,22 +52,79 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
     Record rec(key, val);
 
     // if file is not full and the active id matches filename.
-    
-    if (fs::file_size(getActiveDatafilePath()) < MAX_DATAFILE_BYTES)
-        rec.serialize(activeFilestream);
-    
-    // ofstream and activefileid.
 
-    // else
+    // size of total write.
+    // are we writing to the correct file.
+
+    // bool matchingFileID = stH.getActiveFileID() == std::to_integer(getActiveDatafilePath().filename());
+
+    if (fs::file_size(getActiveDatafilePath()) < MAX_DATAFILE_BYTES) {
+        rec.serialize(activeFilestream);
+    } 
+
+    // file is too big.
+
+    // don't write.
+
     // create new file
     // setActiveFileID
- 
+    
 
     // calculate the crc first so we can check how many total bytes to append
     // total bytes.
     // and if we need a new datafile.
 
     // append to hashtable.
+}
+
+void KVStore::createSetNewDatafile(KVStoreHandle& stH) {
+
+    // if aol ".aol" else then ".rol"
+    bool noDatafiles = fs::is_empty(dataDir);
+    uint32_t newID = noDatafiles ? stH.getActiveFileID() : stH.getActiveFileID() + 1;
+
+    std::string newDatafileID = std::to_string(newID);
+    std::string newDatafileName = newDatafileID + ".aol" + stH.getDatafileExt();
+
+    fs::path newDatafilePath = dataDir / newDatafileName; // into ofstream.open().
+    
+    // noDatafiles should mean no activeFilestream file.
+
+    if (noDatafiles && !activeFilestream.is_open()) {
+
+        setActiveDatafilePath(newDatafilePath);
+        activeFilestream.open(newDatafilePath, 
+                              std::ios::binary | std::ios::app);
+
+        // Don't need to setActiveFileID here, remains zero.
+        return;
+    }
+
+    // Filestream is open, datafile path must be set, dataDir isnt empty.
+
+    activeFilestream.close(); // Close old file.
+
+    fs::path currentDatafilePath = getActiveDatafilePath();
+
+    // Make old file read only.
+    fs::permissions(currentDatafilePath,
+                    fs::perms::owner_read | fs::perms::group_read | 
+                    fs::perms::others_read, fs::perm_options::replace);
+
+    // Replace old datafile extension with .rol.
+    fs::path readOnlyExtension(".rol" + stH.getDatafileExt());
+    currentDatafilePath.replace_extension(readOnlyExtension);
+
+    // Open stream with new file.
+    activeFilestream.open(newDatafilePath, 
+                            std::ios::binary | std::ios::app);
+
+    // Set new datafile path and scan for the new highest ID in the dir.
+    // We scan the dir incase we reload executable.
+    setActiveDatafilePath(newDatafilePath);
+    stH.setActiveFileID(dataDir);
+
+    return;
 }
 
 fs::path KVStore::getDataDir() const {
@@ -87,10 +143,10 @@ std::ofstream& KVStore::getActiveFilestream() {
     return activeFilestream;
 }
 
-void KVStore::setActiveDatafilePath(std::filesystem::path path) {
+void KVStore::setActiveDatafilePath(fs::path path) {
     activeDatafilePath = path;
 }
 
-std::filesystem::path KVStore::getActiveDatafilePath() {
+fs::path KVStore::getActiveDatafilePath() {
     return activeDatafilePath;
 }
