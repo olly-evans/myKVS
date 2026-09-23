@@ -25,8 +25,23 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     // Get the active datafiles ID (highest filename) in dataDir.
     stH.setActiveFileID(getDataDir());
 
-    createSetNewDatafile(stH);
-   
+    // either this is our first run and we have no datafiles
+        // Create datafile name.
+        // Set stream to path.
+        // Set path
+        // set read/write.
+
+    // or its not and we have an active datafile we just need to set things.
+        // 
+
+
+    // nextDatafileName();
+    // createDatafile();
+    // rebootSetDatafile();
+
+    // in put().
+    // rollOverDatafile();
+
     return stH;
 }
 
@@ -68,6 +83,8 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
     // append to hashtable.
 }
 
+/* File */
+
 void KVStore::createSetNewDatafile(KVStoreHandle& stH) {
 
     // Both as we can be writing to a non-full 0 ID file.
@@ -89,7 +106,9 @@ void KVStore::createSetNewDatafile(KVStoreHandle& stH) {
         
         fs::permissions(newDatafilePath,
                         fs::perms::owner_write | fs::perms::group_write | 
-                        fs::perms::others_write, fs::perm_options::replace);
+                        fs::perms::others_write | fs::perms::owner_read | 
+                        fs::perms::group_read | fs::perms::others_read, 
+                        fs::perm_options::replace);
 
         // Don't need to setActiveFileID here, remains zero.
         return;

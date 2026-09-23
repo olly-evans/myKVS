@@ -61,7 +61,7 @@ int main() {
     test_open();
     // test_create_set_new_datafile();
 
-    // test_put(kvs, stH);
+    // test_put();
 
 
     return 0;
