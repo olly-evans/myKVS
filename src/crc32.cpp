@@ -2,14 +2,13 @@
 #include <cstdint>
 #include <array>
 
-
-constexpr uint32_t CRC32_POLY = 0xEDB88320;
+#include "crc32.h"
 
 namespace {
     std::array<uint32_t, 256> makeCrcTable() {
         std::array<uint32_t, 256> table{};
         for (uint32_t i = 0; i < 256; ++i) {
-            uint32_t c = i;
+            uint32_t c = i; // 0-255
             for (int k = 0; k < 8; ++k)
                 c = (c & 1) ? (CRC32_POLY ^ (c >> 1)) : (c >> 1);
             table[i] = c;

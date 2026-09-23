@@ -1,30 +1,33 @@
 #include "record.h"
+#include  "crc32.h"
 
 #include <chrono>
 
 constexpr uint32_t CRC32_POLY = 0x15a0849e7;
 
-Record::Record(std::string key, std::string value) : 
-    val(value), key(key) {
+Record::Record(std::string k, std::string v) : 
+    val(v), key(k) {
 
     setTimestampNow();
-    setKeySize(sizeof(key));
-    setValueSize(sizeof(value));
-
-    // computeSetCRC16();
-}
-
-void Record::computeSetCRC32(uint64_t polynomial) {
-
+    setKeySize(sizeof(k));
+    setValueSize(sizeof(v));
     
-
-
-    /* We can technically use 33 bits for our polynomial as we know msb is 1. Hence 64-bit argument. */
-    uint32_t poly = polynomial >> 1; // remove last bit, 32 bit 
-
-
-    // this->crc32
+    computeSetCRC32();
 }
+
+void Record::computeSetCRC32() {
+
+    uint32_t crc = 0xFFFFFFFFu;
+
+    crcUpdate(crc, &timestamp, sizeof(timestamp));
+    crcUpdate(crc, &keySize,   sizeof(keySize));
+    crcUpdate(crc, &valSize,   sizeof(valSize));
+    crcUpdate(crc, key.data(), keySize);
+    crcUpdate(crc, val.data(), valSize);
+
+    crc32 = crc ^ 0xFFFFFFFFu;
+}
+
 
 uint32_t Record::getCRC32() {
     return this->crc32;

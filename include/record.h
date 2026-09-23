@@ -18,7 +18,7 @@ class Record {
         Record(std::string key, std::string value);
         ~Record();
         
-        void computeSetCRC32(uint64_t polynomial);
+        void computeSetCRC32();
         uint32_t getCRC32();
 
         void setTimestampNow();
