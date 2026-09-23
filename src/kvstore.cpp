@@ -54,9 +54,8 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
 
     // if file is not full and the active id matches filename.
     
-    // stH.getActiveDatafilePath();
-
-    rec.serialize(getActiveFilestream());
+    if (fs::file_size(getActiveDatafilePath()) < MAX_DATAFILE_BYTES)
+        rec.serialize(activeFilestream);
     
     // ofstream and activefileid.
 

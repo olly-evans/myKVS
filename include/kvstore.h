@@ -6,12 +6,7 @@
 #include "kvstorehandle.h"
 #include "record.h"
 
-// constexpr uint8_t MAX_DATAFILE_BYTES = 4096;
-
-// In other words, the first bit of a binary polynomial representation doesn’t carry any information about the polynomial when we agree on a fixed degree.
-
-// For that reason, the first bit of a binary polynomial representation is always dropped when computing a CRC in software. So the bit size of the resulting binary representation is always n for a polynomial of degree n. Example:
-
+constexpr uint16_t MAX_DATAFILE_BYTES = 65535;
 
 struct StoreFlags {
     bool readWrite = false; // Reading and writing permitted in directory.
@@ -30,16 +25,12 @@ class KVStore {
             Will eventually need to add additional options.           
         */
 
+        /* Main API */
+
         KVStoreHandle open(std::filesystem::path relDataDir, StoreFlags stFlags);
-
-        /* 
-            Open a new or existing datastore for read-only access.
-            The directory and all files in it must be readable by this process.
-        */
-
-        // std::optional<KVStoreHandle> openReadOnlyStore();
-
         void put(const KVStoreHandle& h, const std::string key, const std::string val);
+
+        /* Getters/Setters */
 
         void setDataDir(std::filesystem::path dir, std::string dirName);
         [[nodiscard]] std::filesystem::path getDataDir() const;
