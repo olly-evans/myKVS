@@ -3,19 +3,19 @@
 /* KVStore Methods */
 
 std::filesystem::path KVStore::getDataDir() const {
-    return this->dataDir;
+    return dataDir;
 }
 
 void KVStore::setDataDir(std::filesystem::path root, std::string dirName) {
-    this->dataDir = root.append(dirName);
+    dataDir = root.append(dirName);
 }
 
 void KVStore::setActiveFilestream(std::ofstream stream) {
-    this->activeFilestream = std::move(stream);
+    activeFilestream = std::move(stream);
 }
 
 std::ofstream& KVStore::getActiveFilestream() {
-    return this->activeFilestream;
+    return activeFilestream;
 }
 
 KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const StoreFlags stFlags) {
@@ -28,25 +28,25 @@ KVStoreHandle KVStore::openStore(const std::filesystem::path relDataDir, const S
     // if stFlags.readWrite ... -> find way to allow read and write to dir.
 
     stH.setAbsDirPath();
-    this->setDataDir(stH.getAbsDirPath(), relDataDir);
+    setDataDir(stH.getAbsDirPath(), relDataDir);
 
     // Create dir if needed.
-    if (!filesystem::exists(this->getDataDir()))
-        filesystem::create_directories(this->getDataDir());
+    if (!filesystem::exists(getDataDir()))
+        filesystem::create_directories(getDataDir());
 
     stH.setDatafileExt(stFlags.datafileExtension);
     if (stH.getDatafileExt().empty())
         stH.setDatafileExt(".data");
 
     // Get the active datafiles ID (highest filename) in dataDir.
-    stH.setActiveFileID(this->getDataDir());
+    stH.setActiveFileID(getDataDir());
 
     // createNewDatafile()
     string strActiveFileID = to_string(stH.getActiveFileID());
     string datafileName = strActiveFileID + stFlags.datafileExtension;
 
-    this->activeFilestream.open(
-        this->getDataDir() / datafileName, 
+    activeFilestream.open(
+        getDataDir() / datafileName, 
         ios::binary | ios::app
     );
    
@@ -63,7 +63,7 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
 
     // Do we have a data directory?
     // user must make one if not. return back to main loop perhaps.
-    if (!std::filesystem::exists(this->getDataDir()))
+    if (!std::filesystem::exists(getDataDir()))
         return;
     
 
@@ -71,7 +71,7 @@ void KVStore::put(const KVStoreHandle& stH, const Record& rec) {
     
     // is file too big.
     
-    std::ofstream& out = this->getActiveFilestream();
+    std::ofstream& out = getActiveFilestream();
 
     // // rec.crc = computeCRC32(rec.timeStamp, rec.keySize, rec.valSize, rec.key, rec.val);
 
