@@ -2,10 +2,21 @@
 
 #include <assert.h>
 
-void test_open_store(KVStore& kvs, KVStoreHandle& stH) {
+void test_open() {
     
+    namespace fs = std::filesystem;
+
+    KVStore kvs;
+    StoreFlags flags;
+
+    fs::path path = SOURCE_ROOT;
+    fs::path dataDir = path / "test_kvstore/";
+    fs::create_directories(dataDir);
+    
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+
     /* After openStore() call we should have an existing datastore. */
-    assert(std::filesystem::exists(kvs.getDataDir()));
+    assert(fs::exists(kvs.getDataDir()));
 
     /* Datafile extension cannot be empty. */
     assert(!stH.getDatafileExt().empty());
@@ -18,6 +29,8 @@ void test_open_store(KVStore& kvs, KVStoreHandle& stH) {
 
     /* File should be open. */
     assert(kvs.getActiveFilestream().is_open());
+    
+    fs::remove_all(dataDir);
 
     return;
 }
@@ -44,20 +57,12 @@ void test_close() {
 
 int main() {
 
-    KVStore kvs;
-    
-    StoreFlags flags;
 
-    std::filesystem::path path = SOURCE_ROOT;
-    std::filesystem::path dataDir = path / "test_kvstore/";
-    std::filesystem::create_directories(dataDir);
-    
-    KVStoreHandle stH = kvs.open(dataDir, flags);
+    test_open();
+    // test_create_set_new_datafile();
 
-    test_open_store(kvs, stH);
     // test_put(kvs, stH);
 
-    std::filesystem::remove_all(dataDir);
 
     return 0;
 }
