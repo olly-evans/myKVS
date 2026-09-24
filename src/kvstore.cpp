@@ -39,7 +39,6 @@ void KVStore::put(const KVStoreHandle& stH, const std::string key, const std::st
 
     // lock and mutex is bound to our KVStoreHandle. RAII
 
-    // Do we have a data directory?
     if (!fs::exists(dataDir)) {
         std::cout << "[WARNING] You must open a store before using put." << "\n";
         return;
