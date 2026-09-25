@@ -21,7 +21,7 @@ void test_open_new_store() {
     assert(kvs.getActiveFilestream().good());       /* No error state in stream. */
     assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
-    assert(stH.getActiveFileID() == 0);             /* No puts so id should be zero. */
+    assert(stH.getActiveFileID() == 0);             /* No puts so id should default to zero. */
 
     assert(kvs.getActiveDatafilePath() == 
            dataDir / "0.aol.data");
@@ -87,6 +87,9 @@ void test_put() {
 
     kvs.put(stH, "k2", "v2"); // 24 bytes.
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 46);
+
+    fs::remove_all(kvs.getDataDir());
+
     return;
 }
 
