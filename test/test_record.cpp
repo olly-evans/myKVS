@@ -29,7 +29,7 @@ void test_record_constructor() {
     rec.setCRC32();
     uint32_t second = rec.getCRC32();
 
-    assert(first == second);            /* CRC should be equal for same data. */
+    assert(first == second);            /* CRC should be equal for same data (const timestamp). */
 }
 
 int main() {
