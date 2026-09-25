@@ -21,6 +21,8 @@ class Record {
 
         // static Record deserialize(std::istream& in);
 
+        size_t byteSize();
+
         void setCRC32();
         [[nodiscard]] uint32_t getCRC32();
 

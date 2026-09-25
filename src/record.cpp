@@ -24,8 +24,12 @@ void Record::serialize(std::ostream& out) const {
     out.write(val.data(), val.size());
 }
 
-void Record::setCRC32() {
+size_t Record::byteSize() {
+    return sizeof(crc32) + sizeof(timestamp) + sizeof(keySize) +
+    sizeof (valSize) + keySize + valSize;
+}
 
+void Record::setCRC32() {
     boost::crc_32_type result;
     result.process_bytes(&timestamp, sizeof(timestamp));
     result.process_bytes(&keySize,   sizeof(keySize));

@@ -14,7 +14,7 @@ class KVStoreHandle {
         // ~KVStoreHandle();
 
         [[nodiscard]] uint32_t getActiveFileID() const;
-        void setActiveFileID(std::filesystem::path dataDir);
+        void updateActiveFileID(std::filesystem::path dataDir);
 
         [[nodiscard]] std::filesystem::path getAbsDirPath() const;
         void setAbsDirPath();
