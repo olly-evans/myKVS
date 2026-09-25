@@ -83,7 +83,6 @@ void test_put() {
 
     kvs.put(stH, "k", "v"); // 22 bytes.
     
-    assert(fs::file_size(kvs.getActiveDatafilePath()) > 0);
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 22);
 
     kvs.put(stH, "k2", "v2"); // 24 bytes.
