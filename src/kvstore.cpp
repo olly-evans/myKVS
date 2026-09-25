@@ -29,8 +29,11 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     fs::path appendOnlyDatafileExtension(strID + ".aol" + stH.getDatafileExt());
     activeDatafilePath = dataDir / appendOnlyDatafileExtension;
 
+    stH.setReadWrite(stFlags.readWrite); 
     setActiveDatafile(activeDatafilePath, stFlags.readWrite);
 
+    std::cout << "Store opened successfully." << "\n";
+    std::cout << activeDatafilePath << "\n";
 
     return stH;
 }
@@ -44,27 +47,32 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
     
+    if (!fs::exists(activeDatafilePath) && !fs::is_regular_file(activeDatafilePath)) {
+        std::cout << "[WARNING] No active datafile path. Consider opening a store!" << "\n";
+        return;
+    }
+
     Record rec(key, val);
 
-    // if file is not full and the active id matches filename.
+    if (activeDatafilePath.filename().string() == std::to_string(stH.getActiveFileID())) {
+        std::cout << "[ERROR] Active datafile doesn't match the active ID." << "\n";
+        return;
+    }
 
-    // are we writing to the correct file.
-
-    if (activeDatafilePath.filename().string() == std::to_string(stH.getActiveFileID()))
-        // really bad.
-
+    if (!activeFilestream.is_open())
+        std::cout << "[ERROR] Filestream not open!" << "\n";
+        
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < MAX_DATAFILE_BYTES) {
+        std::cout << "Active datafile found, serializing data." << "\n";
         rec.serialize(activeFilestream);
         return;
     } 
 
     // if its greater, make the new file and write. overlap is stupid and error prone.
 
-    fs::path nextDatafilePath = getNextDatafilePath(stH);
-    rollOverDatafile(); // stream updated here.
+    rollOverDatafile(stH);
 
     stH.updateActiveFileID(dataDir);
-    activeDatafilePath = nextDatafilePath;
 
     rec.serialize(activeFilestream);
         
@@ -92,17 +100,18 @@ void KVStore::setActiveDatafile(fs::path path, bool readWrite) {
     fs::perms readOnlyPerms = fs::perms::owner_read  |  
                               fs::perms::group_read;
 
-    activeFilestream.open(path, std::ios::binary | std::ios::app);
+    // activeFilestream.open(path, std::ios::binary | std::ios::app);
+    activeFilestream.open(path, std::ios::app);
 
     fs::perms fPermissions = readWrite ? readWritePerms : readOnlyPerms;
     fs::permissions(path, fPermissions, fs::perm_options::replace);
+
+    setActiveDatafilePath(path);
 
     return;
 }
 
 void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
-
-    // perhaps tweak old file permissions/extension before we close filestream.
 
     fs::path readOnlyExtension(".rol" + stH.getDatafileExt());
     activeDatafilePath.replace_extension(readOnlyExtension);
@@ -115,12 +124,7 @@ void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
     activeFilestream.close(); // Close old file.
 
     fs::path newDatafilePath = getNextDatafilePath(stH);
-
-    // TODO: store readWrite in stH. will need with every new datafile creation.
-    setActiveDatafile(newDatafilePath, );
-
-    // Replace old datafile extension with .
-    // Make old file read-only.
+    setActiveDatafile(newDatafilePath, stH.getReadWrite());
 
     return;
 }

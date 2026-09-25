@@ -67,19 +67,28 @@ void test_open_existing_store() {
 
 }
 
-void test_put(KVStore& kvs, const KVStoreHandle& stH) {
+/* Perhaps make a test flag where we write in hex to check against. */
 
-    // Record rec = {
-    //     .crc = 0,                  // placeholder — real Bitcask computes this over the rest of the record
-    //     .timeStamp = 1789731459,   // Unix timestamp, e.g. from time(nullptr)
-    //     .keySize = 4,
-    //     .valSize = 7,
-    //     .key = "name",
-    //     .val = "testval",
-    // };
+void test_put() {
 
-    // kvs.put(stH, rec);
+    KVStore kvs;
 
+    fs::path path = SOURCE_ROOT;
+    fs::path dataDir = path / "test_put/";
+    fs::create_directories(dataDir);
+
+    StoreFlags flags;
+
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+
+
+    kvs.put(stH, "k", "v");
+
+    assert(fs::file_size(kvs.getActiveDatafilePath()) == 22);
+
+    kvs.put(stH, "k2", "v2");
+    // assert(fs::file_size(kvs.getActiveDatafilePath()) == 2*recordSize);
+    std::cout << fs::file_size(kvs.getActiveDatafilePath()) << "\n";
     return;
 }
 
@@ -87,6 +96,7 @@ int main() {
 
     test_open_new_store();
     test_open_existing_store();
+    test_put();
 
     return 0;
 }

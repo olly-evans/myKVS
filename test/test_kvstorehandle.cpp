@@ -28,7 +28,7 @@ void test_kvshandle_sets_activefile_id() {
     std::ofstream mockFile2 (dataDir / "5.log");
     mockFile2.close();
 
-    stH.setActiveFileID(dataDir);
+    stH.updateActiveFileID(dataDir);
 
     assert(stH.getActiveFileID() == 5);
 

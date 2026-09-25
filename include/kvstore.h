@@ -5,13 +5,15 @@
 
 #include "kvstorehandle.h"
 #include "record.h"
+
 namespace fs = std::filesystem;
 
 constexpr uint16_t MAX_DATAFILE_BYTES = 65535;
 
 struct StoreFlags {
-    bool readWrite = false; // Reading and writing permitted in directory.
+    bool readWrite = true; // Reading and writing permitted in directory.
     bool syncOnPut = false;
+
     std::string datafileExtension;
 };
 
@@ -36,7 +38,7 @@ class KVStore {
         [[nodiscard]] fs::path getNextDatafilePath(const KVStoreHandle& stH);
 
         void setActiveDatafile(fs::path path, bool readWrite);
-        void rollOverDatafile();
+        void rollOverDatafile(const KVStoreHandle& stH);
 
         /* Getters/Setters */
 

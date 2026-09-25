@@ -37,3 +37,11 @@ std::string KVStoreHandle::getDatafileExt() const {
 void KVStoreHandle::setDatafileExt(std::string fileExtension) {
     datafileExtension = fileExtension;
 }
+
+bool KVStoreHandle::getReadWrite() const {
+    return readWrite;
+}
+
+void KVStoreHandle::setReadWrite(bool rw) {
+    readWrite = rw;
+}

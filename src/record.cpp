@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <boost/crc.hpp>
+#include <iostream>
 
 Record::Record(std::string k, std::string v) : 
     keySize(static_cast<uint32_t>(k.size())),
@@ -26,7 +27,7 @@ void Record::serialize(std::ostream& out) const {
 
 size_t Record::byteSize() {
     return sizeof(crc32) + sizeof(timestamp) + sizeof(keySize) +
-    sizeof (valSize) + keySize + valSize;
+    sizeof(valSize) + keySize + valSize;
 }
 
 void Record::setCRC32() {

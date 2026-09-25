@@ -7,6 +7,7 @@ class KVStoreHandle {
         uint32_t activeFileID;
         std::filesystem::path absDirPath;
         std::string datafileExtension;
+        bool readWrite;
         // hash table pointer.
 
     public:
@@ -21,5 +22,8 @@ class KVStoreHandle {
 
         [[nodiscard]] std::string getDatafileExt() const;
         void setDatafileExt(std::string fileExtension);
+
+        [[nodiscard]] bool getReadWrite() const;
+        void setReadWrite(bool readWrite);
 
 };
