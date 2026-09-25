@@ -23,13 +23,13 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
         stH.setDatafileExt(".data");
 
     // Get the active datafiles ID (highest filename) in dataDir.
-    stH.setActiveFileID(dataDir); // If no datafiles then 0;
+    stH.setActiveFileID(dataDir); 
 
     std::string strID = std::to_string(stH.getActiveFileID());
     fs::path appendOnlyDatafileExtension(strID + ".aol" + stH.getDatafileExt());
     activeDatafilePath = dataDir / appendOnlyDatafileExtension;
 
-    setActiveDatafile(activeDatafilePath);
+    setActiveDatafile(activeDatafilePath, stFlags.readWrite);
 
 
     return stH;
@@ -89,16 +89,21 @@ fs::path KVStore::getNextDatafilePath(const KVStoreHandle& stH) {
     return nextDatafilePath;
 }
 
-void KVStore::setActiveDatafile(fs::path path) {
+void KVStore::setActiveDatafile(fs::path path, bool readWrite) {
 
-    activeFilestream.open(path, 
-                        std::ios::binary | std::ios::app);
+ 
+    fs::perms readWritePerms = fs::perms::owner_write | fs::perms::group_write | 
+                               fs::perms::owner_read  |  fs::perms::group_read | 
+                               fs::perms::others_read;
 
-    fs::permissions(path,
-                fs::perms::owner_write  | fs::perms::group_write | 
-                fs::perms::others_write | fs::perms::owner_read  |  
-                fs::perms::group_read   | fs::perms::others_read, 
-                fs::perm_options::replace);
+    fs::perms readOnlyPerms = fs::perms::owner_read  |  
+                              fs::perms::group_read  | 
+                              fs::perms::others_read;
+
+    activeFilestream.open(path, std::ios::binary | std::ios::app);
+
+    fs::perms permissions = readWrite ? readWritePerms : readOnlyPerms;
+    fs::permissions(path, permissions, fs::perm_options::replace);
 
     return;
 }

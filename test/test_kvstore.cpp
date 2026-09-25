@@ -58,7 +58,8 @@ void test_open_existing_store() {
     assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
     assert(stH.getActiveFileID() == 2);           
-    assert(kvs.getActiveDatafilePath() == dataDir / "2.aol.log");
+    assert(kvs.getActiveDatafilePath() == 
+           dataDir / "2.aol.log");
     
     fs::remove_all(dataDir);
 
