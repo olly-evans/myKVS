@@ -2,15 +2,16 @@
 #include  "crc32.h"
 
 #include <chrono>
+#include <boost/crc.hpp>
 
 Record::Record(std::string k, std::string v) : 
-    key(std::move(k)), val(std::move(v)) {
+    keySize(static_cast<uint32_t>(k.size())),
+    valSize(static_cast<uint32_t>(v.size())),
+    key(std::move(k)),
+    val(std::move(v)) {
 
     setTimestampNow();
-    setKeySize(sizeof(key));
-    setValueSize(sizeof(val));
-    
-    computeSetCRC32();
+    setCRC32();
 }
 
 void Record::serialize(std::ostream& out) const {
@@ -24,22 +25,24 @@ void Record::serialize(std::ostream& out) const {
     out.write(val.data(), val.size());
 }
 
-void Record::computeSetCRC32() {
+void Record::setCRC32() {
 
-    uint32_t crc = 0xFFFFFFFFu;
-
-    crcUpdate(crc, &timestamp, sizeof(timestamp));
-    crcUpdate(crc, &keySize,   sizeof(keySize));
-    crcUpdate(crc, &valSize,   sizeof(valSize));
-    crcUpdate(crc, key.data(), keySize);
-    crcUpdate(crc, val.data(), valSize);
-
-    crc32 = crc ^ 0xFFFFFFFFu;
+    boost::crc_32_type result;
+    result.process_bytes(&timestamp, sizeof(timestamp));
+    result.process_bytes(&keySize,   sizeof(keySize));
+    result.process_bytes(&valSize,   sizeof(valSize));
+    result.process_bytes(key.data(), keySize);
+    result.process_bytes(val.data(), valSize);
+    crc32 = result.checksum();
 }
 
 
 uint32_t Record::getCRC32() {
     return crc32;
+}
+
+void Record::setTimestamp(uint64_t ts) {
+    timestamp = ts;
 }
 
 void Record::setTimestampNow() {

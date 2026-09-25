@@ -21,9 +21,10 @@ class Record {
 
         // static Record deserialize(std::istream& in);
 
-        void computeSetCRC32();
+        void setCRC32();
         [[nodiscard]] uint32_t getCRC32();
 
+        void setTimestamp(uint64_t ts);
         void setTimestampNow();
         [[nodiscard]] uint64_t getTimestamp() const;
 
