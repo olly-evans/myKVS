@@ -93,17 +93,15 @@ void KVStore::setActiveDatafile(fs::path path, bool readWrite) {
 
  
     fs::perms readWritePerms = fs::perms::owner_write | fs::perms::group_write | 
-                               fs::perms::owner_read  |  fs::perms::group_read | 
-                               fs::perms::others_read;
+                               fs::perms::owner_read  |  fs::perms::group_read;
 
     fs::perms readOnlyPerms = fs::perms::owner_read  |  
-                              fs::perms::group_read  | 
-                              fs::perms::others_read;
+                              fs::perms::group_read;
 
     activeFilestream.open(path, std::ios::binary | std::ios::app);
 
-    fs::perms permissions = readWrite ? readWritePerms : readOnlyPerms;
-    fs::permissions(path, permissions, fs::perm_options::replace);
+    fs::perms fPermissions = readWrite ? readWritePerms : readOnlyPerms;
+    fs::permissions(path, fPermissions, fs::perm_options::replace);
 
     return;
 }

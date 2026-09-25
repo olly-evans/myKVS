@@ -1,5 +1,4 @@
 #include "record.h"
-#include  "crc32.h"
 
 #include <chrono>
 #include <boost/crc.hpp>
@@ -57,32 +56,16 @@ uint64_t Record::getTimestamp() const {
     return timestamp;
 }
 
-void Record::setKeySize(uint32_t ks) {
-    keySize = ks;
-}
-
 uint32_t Record::getKeySize() const {
     return keySize;
-}
-
-void Record::setValueSize(uint32_t vs) {
-    valSize = vs;
 }
 
 uint32_t Record::getValueSize() const {
     return valSize;
 }
 
-void Record::setKey(std::string k) {
-    key = k;
-}
-
 std::string Record::getKey() const {
     return key;
-}
-
-void Record::setValue(std::string v) {
-    val = v;
 }
 
 std::string Record::getValue() const {

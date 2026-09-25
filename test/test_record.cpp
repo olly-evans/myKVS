@@ -7,11 +7,12 @@ void test_record_constructor() {
     std::string key = "key";
     std::string val = "val";
 
-    Record rec(key, val); // Constructor sets required fields.
-    assert(rec.getTimestamp()); /* Constructor should set timestamp to time now. */
+    Record rec(key, val);               /* Constructor sets required fields. */
+    assert(rec.getTimestamp());         /* Constructor should set timestamp to time now. */
 
-    /* Timestamp only changing variable, make it constant to check crc consistent for same data. */
-    rec.setTimestamp(1000000); 
+    rec.setTimestamp(1000000);          /* Timestamp only changing variable, make it 
+                                           constant to check crc consistent for same data. 
+                                        */
 
     assert(rec.getTimestamp());
     

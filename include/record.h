@@ -15,7 +15,7 @@ class Record {
 
     public:
         Record(std::string key, std::string value);
-        // ~Record();
+        ~Record() = default;
         
         void serialize(std::ostream& out) const;
 
@@ -26,17 +26,10 @@ class Record {
 
         void setTimestamp(uint64_t ts);
         void setTimestampNow();
+
         [[nodiscard]] uint64_t getTimestamp() const;
-
-        void setKeySize(uint32_t ks);
         [[nodiscard]] uint32_t getKeySize() const;
-
-        void setValueSize(uint32_t vs);
         [[nodiscard]] uint32_t getValueSize() const;
-
-        void setKey(std::string k);
         [[nodiscard]] std::string getKey() const;
-
-        void setValue(std::string v);
         [[nodiscard]] std::string getValue() const;
 };
