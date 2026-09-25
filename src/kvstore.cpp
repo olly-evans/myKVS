@@ -55,32 +55,19 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < MAX_DATAFILE_BYTES) {
         rec.serialize(activeFilestream);
+        return;
     } 
 
     // if its greater, make the new file and write. overlap is stupid and error prone.
 
-    fs::path newDatafilePath = getNextDatafilePath(stH);
-    rollOverDatafile();
+    fs::path nextDatafilePath = getNextDatafilePath(stH);
+    rollOverDatafile(); // stream updated here.
 
     stH.updateActiveFileID(dataDir);
-    activeDatafilePath = newDatafilePath;
+    activeDatafilePath = nextDatafilePath;
+
     rec.serialize(activeFilestream);
-    
-    // don't write.
-
-    // create new file
-
-
-    // setActiveFileID
-    
-
-    // calculate the crc first so we can check how many total bytes to append
-    // total bytes.
-    // and if we need a new datafile.
-
-    // in put(), don't need to roll over in open().
-    // rollOverDatafile(); // calls createDatafile() within.
-
+        
     // append to hashtable.
 }
 
@@ -113,21 +100,27 @@ void KVStore::setActiveDatafile(fs::path path, bool readWrite) {
     return;
 }
 
-void KVStore::rollOverDatafile() {
+void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
 
     // perhaps tweak old file permissions/extension before we close filestream.
+
+    fs::path readOnlyExtension(".rol" + stH.getDatafileExt());
+    activeDatafilePath.replace_extension(readOnlyExtension);
+
+    fs::permissions(activeDatafilePath,
+                    fs::perms::owner_read | fs::perms::group_read, 
+                    fs::perm_options::replace);
 
 
     activeFilestream.close(); // Close old file.
 
-    // fs::path readOnlyExtension(".rol" + stH.getDatafileExt());
-    // currentDatafilePath.replace_extension(readOnlyExtension);
+    fs::path newDatafilePath = getNextDatafilePath(stH);
+
+    // TODO: store readWrite in stH. will need with every new datafile creation.
+    setActiveDatafile(newDatafilePath, );
 
     // Replace old datafile extension with .
     // Make old file read-only.
-    // fs::permissions(currentDatafilePath,
-    //                 fs::perms::owner_read | fs::perms::group_read | 
-    //                 fs::perms::others_read, fs::perm_options::replace);
 
     return;
 }
