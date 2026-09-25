@@ -49,7 +49,7 @@ class KVStore {
         [[nodiscard]] std::ofstream& getActiveFilestream();
 
         void setActiveDatafilePath(fs::path path);
-        [[nodiscard]] fs::path getActiveDatafilePath();
+        [[nodiscard]] fs::path getActiveDatafilePath() const;
 
     private:
         fs::path dataDir;

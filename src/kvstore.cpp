@@ -32,8 +32,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     stH.setReadWrite(stFlags.readWrite); 
     setActiveDatafile(activeDatafilePath, stFlags.readWrite);
 
-    std::cout << "Store opened successfully." << "\n";
-    std::cout << activeDatafilePath << "\n";
+    std::cout << "Store opened successfully in:\n" << dataDir << "\n";
 
     return stH;
 }
@@ -47,21 +46,25 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
     
-    if (!fs::exists(activeDatafilePath) && !fs::is_regular_file(activeDatafilePath)) {
+    if (!(fs::exists(activeDatafilePath) && fs::is_regular_file(activeDatafilePath))) {
         std::cout << "[WARNING] No active datafile path. Consider opening a store!" << "\n";
         return;
     }
 
-    Record rec(key, val);
+    std::string activePathID = activeDatafilePath.stem().stem();
+    std::string activeHandleID = std::to_string(stH.getActiveFileID());
 
-    if (activeDatafilePath.filename().string() == std::to_string(stH.getActiveFileID())) {
+    if (activePathID != activeHandleID) {
         std::cout << "[ERROR] Active datafile doesn't match the active ID." << "\n";
         return;
     }
 
-    if (!activeFilestream.is_open())
-        std::cout << "[ERROR] Filestream not open!" << "\n";
-        
+    if (!activeFilestream.is_open() || activeFilestream.bad())
+        std::cout << "[ERROR] Filestream error!" << "\n";
+    
+
+    Record rec(key, val);
+
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < MAX_DATAFILE_BYTES) {
         std::cout << "Active datafile found, serializing data." << "\n";
         rec.serialize(activeFilestream);
@@ -100,8 +103,7 @@ void KVStore::setActiveDatafile(fs::path path, bool readWrite) {
     fs::perms readOnlyPerms = fs::perms::owner_read  |  
                               fs::perms::group_read;
 
-    // activeFilestream.open(path, std::ios::binary | std::ios::app);
-    activeFilestream.open(path, std::ios::app);
+    activeFilestream.open(path, std::ios::binary | std::ios::app);
 
     fs::perms fPermissions = readWrite ? readWritePerms : readOnlyPerms;
     fs::permissions(path, fPermissions, fs::perm_options::replace);
@@ -149,6 +151,6 @@ void KVStore::setActiveDatafilePath(fs::path path) {
     activeDatafilePath = path;
 }
 
-fs::path KVStore::getActiveDatafilePath() {
+fs::path KVStore::getActiveDatafilePath() const {
     return activeDatafilePath;
 }

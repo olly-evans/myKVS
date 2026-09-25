@@ -23,6 +23,7 @@ void Record::serialize(std::ostream& out) const {
 
     out.write(key.data(), key.size());
     out.write(val.data(), val.size());
+    out.flush();
 }
 
 size_t Record::byteSize() {

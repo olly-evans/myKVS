@@ -77,18 +77,17 @@ void test_put() {
     fs::path dataDir = path / "test_put/";
     fs::create_directories(dataDir);
 
-    StoreFlags flags;
+    StoreFlags flags; // make this a bitmask.
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-
-    kvs.put(stH, "k", "v");
-
+    kvs.put(stH, "k", "v"); // 22 bytes.
+    
+    assert(fs::file_size(kvs.getActiveDatafilePath()) > 0);
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 22);
 
-    kvs.put(stH, "k2", "v2");
-    // assert(fs::file_size(kvs.getActiveDatafilePath()) == 2*recordSize);
-    std::cout << fs::file_size(kvs.getActiveDatafilePath()) << "\n";
+    kvs.put(stH, "k2", "v2"); // 24 bytes.
+    assert(fs::file_size(kvs.getActiveDatafilePath()) == 46);
     return;
 }
 
