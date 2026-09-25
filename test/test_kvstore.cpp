@@ -10,7 +10,7 @@ void test_open_new_store() {
     StoreFlags flags;
 
     fs::path path = SOURCE_ROOT;
-    fs::path dataDir = path / "test_open_initial/";
+    fs::path dataDir = path / "test_open_new/";
     fs::create_directories(dataDir);
 
     flags.datafileExtension = ".data";
@@ -36,7 +36,7 @@ void test_open_existing_store() {
     KVStore kvs;
 
     fs::path path = SOURCE_ROOT;
-    fs::path dataDir = path / "test_open_restore/";
+    fs::path dataDir = path / "test_open_existing/";
     fs::create_directories(dataDir);
     
     std::ofstream mockFile1(dataDir / "0.aol.log");
