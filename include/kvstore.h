@@ -21,7 +21,7 @@ struct StoreFlags {
 struct KeyDirEntry {
     uint32_t fileID;
     uint32_t valSz;
-    uint64_t vOffset;
+    uint64_t offset;
     uint64_t tstamp;
 };
 
@@ -61,5 +61,5 @@ class KVStore {
         fs::path activeDatafilePath;
         std::ofstream activeFilestream;
 
-        std::unordered_map<std::string, Record>& keyDir;
+        std::unordered_map<std::string, KeyDirEntry>& keyDir;
 };

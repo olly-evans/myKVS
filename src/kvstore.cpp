@@ -66,10 +66,17 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     Record rec(key, val);
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < MAX_DATAFILE_BYTES) {
-        std::cout << "Active datafile found, serializing data." << "\n";
-        rec.serialize(activeFilestream);
+        std::cout << "Active datafile found, writing data..." << "\n";
 
-        keyDir[rec.getKey()] = KeyDirEntry{}
+        
+        rec.serialize(activeFilestream);
+        size_t fileSz = fs::file_size(activeDatafilePath);
+
+        // must be done atomically with flush(). both or none succeed.
+        keyDir[rec.getKey()] = KeyDirEntry{stH.getActiveFileID(),
+                                           rec.getValueSize(),
+                                           fileSz - rec.getValueSize(),
+                                           rec.getTimestamp()}; 
         return;
     } 
 
