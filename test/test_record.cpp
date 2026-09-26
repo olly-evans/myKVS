@@ -32,6 +32,8 @@ void test_record_constructor() {
     assert(first == second);            /* CRC should be equal for same data (const timestamp). */
 }
 
+/* test for crc where we put and get and compare crc vals for same data. */
+
 int main() {
 
     test_record_constructor();

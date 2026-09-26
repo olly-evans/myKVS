@@ -68,6 +68,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < MAX_DATAFILE_BYTES) {
         std::cout << "Active datafile found, serializing data." << "\n";
         rec.serialize(activeFilestream);
+
+        keyDir[rec.getKey()] = KeyDirEntry{}
         return;
     } 
 
@@ -80,6 +82,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     rec.serialize(activeFilestream);
         
     // append to hashtable.
+    
 }
 
 /* File */

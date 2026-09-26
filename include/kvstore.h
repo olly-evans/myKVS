@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <unordered_map>
 
 #include "kvstorehandle.h"
 #include "record.h"
@@ -17,20 +18,24 @@ struct StoreFlags {
     std::string datafileExtension;
 };
 
+struct KeyDirEntry {
+    uint32_t fileID;
+    uint32_t valSz;
+    uint64_t vOffset;
+    uint64_t tstamp;
+};
+
 class KVStore {
 
     public:
         // KVStore();
         // ~KVStore();
 
-        /* 
-            Establish a new or existing datastore in CMAKE_SOURCE_DIR 
-            Will eventually need to add additional options.           
-        */
+        
 
         /* Main API */
 
-        KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags);
+        KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& h, const std::string key, const std::string val);
 
         /* File */
@@ -54,6 +59,7 @@ class KVStore {
     private:
         fs::path dataDir;
         fs::path activeDatafilePath;
-
         std::ofstream activeFilestream;
+
+        std::unordered_map<std::string, Record>& keyDir;
 };
