@@ -42,12 +42,12 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     // lock and mutex is bound to our KVStoreHandle. RAII
 
     if (!fs::exists(dataDir)) {
-        std::cout << "[WARNING] You must open a store before using put." << "\n";
+        std::cout << "[WARNING] You must open a store before using put." << std::endl;
         return;
     }
     
     if (!(fs::exists(activeDatafilePath) && fs::is_regular_file(activeDatafilePath))) {
-        std::cout << "[WARNING] No active datafile path. Consider opening a store!" << "\n";
+        std::cout << "[WARNING] No active datafile path. Consider opening a store!" << std::endl;
         return;
     }
 
@@ -55,41 +55,57 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     std::string activeHandleID = std::to_string(stH.getActiveFileID());
 
     if (activePathID != activeHandleID) {
-        std::cout << "[ERROR] Active datafile doesn't match the active ID." << "\n";
+        std::cout << "[ERROR] Active datafile doesn't match the active ID." << std::endl;
         return;
     }
 
     if (!activeFilestream.is_open() || activeFilestream.bad())
-        std::cout << "[ERROR] Filestream error!" << "\n";
+        std::cout << "[ERROR] Filestream error!" << std::endl;
     
 
     Record rec(key, val);
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < MAX_DATAFILE_BYTES) {
-        std::cout << "Active datafile found, writing data..." << "\n";
 
-        
+        // ()
+        // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
         rec.serialize(activeFilestream);
-        size_t fileSz = fs::file_size(activeDatafilePath);
 
-        // must be done atomically with flush(). both or none succeed.
+        size_t fileBytes = fs::file_size(activeDatafilePath);
+        uint64_t byteOffset = fileBytes - rec.getValueSize();
+
         keyDir[rec.getKey()] = KeyDirEntry{stH.getActiveFileID(),
                                            rec.getValueSize(),
-                                           fileSz - rec.getValueSize(),
-                                           rec.getTimestamp()}; 
+                                           byteOffset,
+                                           rec.getTimestamp()};
+        
+        std::cout << "Successfully serialized data to " << 
+                 activeDatafilePath.filename() <<
+                 "\nKeyDir entries is " << 
+                 keyDir.size() <<
+                 std::endl;
         return;
     } 
 
     // if its greater, make the new file and write. overlap is stupid and error prone.
 
-    rollOverDatafile(stH);
+    std::cout << "Datafile full, rolling-over..." << std::endl;
 
+    rollOverDatafile(stH);
     stH.updateActiveFileID(dataDir);
 
+    // same code from above if.
     rec.serialize(activeFilestream);
         
     // append to hashtable.
     
+}
+
+std::string KVStore::get(const KVStoreHandle& stH, std::string key) {
+    KeyDirEntry entry = keyDir.at(key);
+    
+    // file could be aol or rol.
+    // entry.fileID
 }
 
 /* File */

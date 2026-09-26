@@ -81,14 +81,20 @@ void test_put() {
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-    kvs.put(stH, "k", "v"); // 22 bytes.
+    kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
     
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 22);
 
     kvs.put(stH, "k2", "v2"); // 24 bytes.
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 46);
+    
+    std::ifstream readDatafileStream(kvs.getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
-    fs::remove_all(kvs.getDataDir());
+    std::streampos readPos = readDatafileStream.tellg();
+    
+    KeyDirEntry entry = kvs.keyDir.at("k2"); // rightfully private id say.
+
+    // fs::remove_all(kvs.getDataDir());
 
     return;
 }

@@ -37,6 +37,7 @@ class KVStore {
 
         KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& h, const std::string key, const std::string val);
+        std::string KVStore::get(const KVStoreHandle& stH, std::string key);
 
         /* File */
 
@@ -61,5 +62,5 @@ class KVStore {
         fs::path activeDatafilePath;
         std::ofstream activeFilestream;
 
-        std::unordered_map<std::string, KeyDirEntry>& keyDir;
+        std::unordered_map<std::string, KeyDirEntry> keyDir;
 };
