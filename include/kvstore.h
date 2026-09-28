@@ -41,8 +41,6 @@ class KVStore {
 
         [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension);
 
-        [[nodiscard]] fs::path getNextDatafilePath(const KVStoreHandle& stH);
-
         void setActiveDatafile(fs::path path, bool readWrite);
         void rollOverDatafile(const KVStoreHandle& stH);
 

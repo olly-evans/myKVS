@@ -3,11 +3,18 @@
 #include <assert.h>
 namespace fs = std::filesystem;
 
+struct TempDirCleanup {
+    fs::path dir;
+    ~TempDirCleanup() { fs::remove_all(dir); }
+};
+
 void test_open_new_store() {
     
 
     KVStore kvs;
     StoreFlags flags;
+
+    TempDirCleanup tdCleanup{kvs.getDataDir()};
 
     fs::path path = SOURCE_ROOT;
     fs::path dataDir = path / "test_open_new/";
@@ -39,6 +46,8 @@ void test_open_existing_store() {
     fs::path dataDir = path / "test_open_existing/";
     fs::create_directories(dataDir);
     
+    TempDirCleanup tdCleanup{kvs.getDataDir()};
+
     std::ofstream mockFile1(dataDir / "0.aol.log");
     mockFile1.close();
 
@@ -77,12 +86,15 @@ void test_put() {
     fs::path dataDir = path / "test_put/";
     fs::create_directories(dataDir);
 
+    TempDirCleanup tdCleanup{kvs.getDataDir()};
+
     StoreFlags flags; // make this a bitmask.
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
     kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
     
+    // This fails if file already exists and has been written to of course.
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 22);
 
     kvs.put(stH, "k2", "v2"); // 24 bytes.
@@ -94,7 +106,7 @@ void test_put() {
     
     KeyDirEntry entry = kvs.keyDir.at("k2"); // rightfully private id say.
 
-    // fs::remove_all(kvs.getDataDir());
+    fs::remove_all(kvs.getDataDir());
 
     return;
 }

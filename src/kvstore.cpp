@@ -25,6 +25,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     // Get the active datafiles ID (highest filename) in dataDir.
     stH.updateActiveFileID(dataDir); 
 
+
     fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
     
     // std::string strID = std::to_string(stH.getActiveFileID());
@@ -121,15 +122,6 @@ fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension)
     return activeDatafilePath;
 
 }
-fs::path KVStore::getNextDatafilePath(const KVStoreHandle& stH) {
-
-    uint32_t newID = stH.getActiveFileID() + 1;
-    std::string newDatafileID = std::to_string(newID);
-    std::string newDatafileName = newDatafileID + ".aol" + stH.getDatafileExt();
-
-    fs::path nextDatafilePath = dataDir / newDatafileName;
-    return nextDatafilePath;
-}
 
 void KVStore::setActiveDatafile(fs::path path, bool readWrite) {
 
@@ -162,8 +154,8 @@ void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
 
     activeFilestream.close(); // Close old file.
 
-    fs::path newDatafilePath = getNextDatafilePath(stH);
-    setActiveDatafile(newDatafilePath, stH.getReadWrite());
+    fs::path nextDatafilePath = createDatafilePath(stH.getActiveFileID() + 1, stH.getDatafileExt());
+    setActiveDatafile(nextDatafilePath, stH.getReadWrite());
 
     return;
 }
