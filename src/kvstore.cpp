@@ -31,7 +31,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     stH.setReadWrite(stFlags.readWrite); 
     setActiveDatafile(currentDatafilePath, stFlags.readWrite);
 
-    std::cout << "Store opened successfully in:\n" << dataDir << "\n";
+    std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
 
     return stH;
 }
@@ -50,7 +50,6 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
 
-    // function perhaps.
     std::string activePathID = activeDatafilePath.stem().stem();
     std::string activeHandleID = std::to_string(stH.getActiveFileID());
 
@@ -66,10 +65,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     Record rec(key, val);
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < MAX_DATAFILE_BYTES) {
-
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
         putRecord(rec, stH.getActiveFileID());
-
         return;
     } 
 
