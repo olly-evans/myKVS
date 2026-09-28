@@ -88,23 +88,24 @@ std::string KVStore::get(const KVStoreHandle& stH, std::string key) {
     return "foo";
 }
 
-void KVStore::putRecord(const Record rec, uint32_t datafileID) {
+void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
         
     rec.serialize(activeFilestream);
 
-        size_t fileBytes = fs::file_size(activeDatafilePath);
-        uint64_t valueByteOffset = fileBytes - rec.getValueSize();
+    size_t fileBytes = fs::file_size(activeDatafilePath);
+    uint64_t valueByteOffset = fileBytes - rec.getValueSize();
 
-        keyDir[rec.getKey()] = KeyDirEntry{datafileID,
-                                           rec.getValueSize(),
-                                           valueByteOffset,
-                                           rec.getTimestamp()};
-        
-        std::cout << "Successfully serialized data to " << 
-                      activeDatafilePath.filename()     <<
-                      "\nKeyDir entries is: "           << 
-                      keyDir.size()                     <<
-                      std::endl;
+    // This operator behaves funnily but forgot how.
+    keyDir[rec.getKey()] = KeyDirEntry{datafileID,
+                                       rec.getValueSize(),
+                                       valueByteOffset,
+                                       rec.getTimestamp()};
+    
+    std::cout << "Successfully serialized data to " << 
+                    activeDatafilePath.filename()     <<
+                    "\nKeyDir entries is: "           << 
+                    keyDir.size()                     <<
+                    std::endl;
 }
 
 /* File */

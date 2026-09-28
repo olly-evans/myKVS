@@ -2,3 +2,4 @@
 - Why is crc for same data giving different values on repeated execution?
 - setActiveDatafile() needs to take flags for read/write.
 - How to handle collisions in hash table.
+- Create test_data folder once and fs::remove(dataDir) not folder itself in each test.

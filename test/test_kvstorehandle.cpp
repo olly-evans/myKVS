@@ -13,8 +13,6 @@ void test_kvshandle_sets_absolute_directory() {
 
 void test_kvshandle_sets_activefile_id() {
 
-    // create this folder in main for test.cpp and reuse for multiple assertions.
-
     KVStoreHandle stH;
     stH.setDatafileExt(".log");
 

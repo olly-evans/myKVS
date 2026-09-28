@@ -12,19 +12,14 @@ struct TempDirCleanup {
     }
 };
 
-void test_open_new_store() {
+void test_open_new_store(fs::path dir) {
 
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path path = SOURCE_ROOT;
-    fs::path dataDir = path / "test_open_new_store/";
-    fs::create_directories(dataDir);
-    
-    TempDirCleanup cleanup{dataDir};
 
     flags.datafileExtension = ".data";
-    KVStoreHandle stH = kvs.open(dataDir, flags);
+    KVStoreHandle stH = kvs.open(dir, flags);
 
     assert(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
     assert(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
@@ -34,33 +29,27 @@ void test_open_new_store() {
     assert(stH.getActiveFileID() == 0);             /* No puts so id should default to zero. */
 
     assert(kvs.getActiveDatafilePath() == 
-           dataDir / "0.aol.data");
+           dir / "0.aol.data");
 
     return;
 }
 
-void test_open_existing_store() {
+void test_open_existing_store(fs::path dir) {
     
     KVStore kvs;
 
-    fs::path path = SOURCE_ROOT;
-    fs::path dataDir = path / "test_open_existing/";
-    fs::create_directories(dataDir);
-    
-    TempDirCleanup tdCleanup{dataDir};
-
-    std::ofstream mockFile1(dataDir / "0.aol.log");
+    std::ofstream mockFile1(dir / "0.aol.log");
     mockFile1.close();
 
-    std::ofstream mockFile2(dataDir / "1.aol.log");
+    std::ofstream mockFile2(dir / "1.aol.log");
     mockFile2.close();
 
-    std::ofstream mockFile3(dataDir / "2.aol.log");
+    std::ofstream mockFile3(dir / "2.aol.log");
     mockFile3.close();
     
     StoreFlags flags;
     flags.datafileExtension = ".log";
-    KVStoreHandle stH = kvs.open(dataDir, flags);
+    KVStoreHandle stH = kvs.open(dir, flags);
 
     assert(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
     assert(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
@@ -69,7 +58,7 @@ void test_open_existing_store() {
 
     assert(stH.getActiveFileID() == 2);           
     assert(kvs.getActiveDatafilePath() == 
-           dataDir / "2.aol.log");
+           dir / "2.aol.log");
     
     return;
 
@@ -111,11 +100,25 @@ void test_put() {
     return;
 }
 
+void test_put_roll_over_datafile() {
+    return;
+}
+
 int main() {
 
-    test_open_new_store();
-    test_open_existing_store();
+    fs::path path = SOURCE_ROOT;
+    fs::path dataDir = path / "test_open_new_store/";
+    fs::create_directories(dataDir);
+    
+    TempDirCleanup cleanup{dataDir}; // rm all
+
+    test_open_new_store(dataDir);
+    test_open_existing_store(dataDir);
+
+    // Split into two files I think when bothered.
+
     test_put();
+    test_put_roll_over_datafile();
 
     return 0;
 }
