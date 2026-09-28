@@ -31,15 +31,15 @@ class KVStore {
         // KVStore();
         // ~KVStore();
 
-        
-
         /* Main API */
 
         KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& h, const std::string key, const std::string val);
-        std::string KVStore::get(const KVStoreHandle& stH, std::string key);
+        std::string get(const KVStoreHandle& stH, std::string key);
 
         /* File */
+
+        [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension);
 
         [[nodiscard]] fs::path getNextDatafilePath(const KVStoreHandle& stH);
 
@@ -57,10 +57,18 @@ class KVStore {
         void setActiveDatafilePath(fs::path path);
         [[nodiscard]] fs::path getActiveDatafilePath() const;
 
+
     private:
         fs::path dataDir;
         fs::path activeDatafilePath;
         std::ofstream activeFilestream;
 
         std::unordered_map<std::string, KeyDirEntry> keyDir;
+
+    public:
+
+        /* Test */
+        
+        friend void test_put();
+
 };

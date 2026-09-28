@@ -25,12 +25,14 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     // Get the active datafiles ID (highest filename) in dataDir.
     stH.updateActiveFileID(dataDir); 
 
-    std::string strID = std::to_string(stH.getActiveFileID());
-    fs::path appendOnlyDatafileExtension(strID + ".aol" + stH.getDatafileExt());
-    activeDatafilePath = dataDir / appendOnlyDatafileExtension;
+    fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
+    
+    // std::string strID = std::to_string(stH.getActiveFileID());
+    // fs::path appendOnlyDatafileExtension(strID + ".aol" + stH.getDatafileExt());
+    // activeDatafilePath = dataDir / appendOnlyDatafileExtension;
 
     stH.setReadWrite(stFlags.readWrite); 
-    setActiveDatafile(activeDatafilePath, stFlags.readWrite);
+    setActiveDatafile(currentDatafilePath, stFlags.readWrite);
 
     std::cout << "Store opened successfully in:\n" << dataDir << "\n";
 
@@ -102,14 +104,23 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 }
 
 std::string KVStore::get(const KVStoreHandle& stH, std::string key) {
-    KeyDirEntry entry = keyDir.at(key);
+    // KeyDirEntry entry = keyDir.at(key);
     
     // file could be aol or rol.
     // entry.fileID
+    return "foo";
 }
 
 /* File */
 
+fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension) {
+    
+    std::string strID = std::to_string(fileID);
+    fs::path appendOnlyDatafileExtension(strID + ".aol" + fileExtension);
+    activeDatafilePath = dataDir / appendOnlyDatafileExtension;
+    return activeDatafilePath;
+
+}
 fs::path KVStore::getNextDatafilePath(const KVStoreHandle& stH) {
 
     uint32_t newID = stH.getActiveFileID() + 1;
