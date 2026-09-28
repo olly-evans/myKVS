@@ -33,8 +33,6 @@ void test_open_new_store() {
     assert(kvs.getActiveDatafilePath() == 
            dataDir / "0.aol.data");
 
-    fs::remove_all(dataDir);
-
     return;
 }
 
@@ -70,8 +68,6 @@ void test_open_existing_store() {
     assert(kvs.getActiveDatafilePath() == 
            dataDir / "2.aol.log");
     
-    fs::remove_all(dataDir);
-
     return;
 
 }
@@ -105,8 +101,6 @@ void test_put() {
     std::streampos readPos = readDatafileStream.tellg();
     
     KeyDirEntry entry = kvs.keyDir.at("k2"); // rightfully private id say.
-
-    fs::remove_all(kvs.getDataDir());
 
     return;
 }

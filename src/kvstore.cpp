@@ -28,10 +28,6 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
     
-    // std::string strID = std::to_string(stH.getActiveFileID());
-    // fs::path appendOnlyDatafileExtension(strID + ".aol" + stH.getDatafileExt());
-    // activeDatafilePath = dataDir / appendOnlyDatafileExtension;
-
     stH.setReadWrite(stFlags.readWrite); 
     setActiveDatafile(currentDatafilePath, stFlags.readWrite);
 
@@ -123,7 +119,7 @@ fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension)
 
 }
 
-void KVStore::setActiveDatafile(fs::path path, bool readWrite) {
+void KVStore::setActiveDatafile(const fs::path path, const bool readWrite) {
 
  
     fs::perms readWritePerms = fs::perms::owner_write | fs::perms::group_write | 

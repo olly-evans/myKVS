@@ -34,14 +34,14 @@ class KVStore {
         /* Main API */
 
         KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
-        void put(KVStoreHandle& h, const std::string key, const std::string val);
+        void put(KVStoreHandle& stH, const std::string key, const std::string val);
         std::string get(const KVStoreHandle& stH, std::string key);
 
         /* File */
 
         [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension);
 
-        void setActiveDatafile(fs::path path, bool readWrite);
+        void setActiveDatafile(const fs::path path, const bool readWrite);
         void rollOverDatafile(const KVStoreHandle& stH);
 
         /* Getters/Setters */
