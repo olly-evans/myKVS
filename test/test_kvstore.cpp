@@ -1,24 +1,27 @@
 #include "kvstore.h"
 
 #include <assert.h>
+
 namespace fs = std::filesystem;
 
 struct TempDirCleanup {
     fs::path dir;
-    ~TempDirCleanup() { fs::remove_all(dir); }
+    ~TempDirCleanup() { 
+        std::error_code ec;
+        fs::remove_all(dir, ec); 
+    }
 };
 
 void test_open_new_store() {
-    
 
     KVStore kvs;
     StoreFlags flags;
 
-    TempDirCleanup tdCleanup{kvs.getDataDir()};
-
     fs::path path = SOURCE_ROOT;
-    fs::path dataDir = path / "test_open_new/";
+    fs::path dataDir = path / "test_open_new_store/";
     fs::create_directories(dataDir);
+    
+    TempDirCleanup cleanup{dataDir};
 
     flags.datafileExtension = ".data";
     KVStoreHandle stH = kvs.open(dataDir, flags);
@@ -44,7 +47,7 @@ void test_open_existing_store() {
     fs::path dataDir = path / "test_open_existing/";
     fs::create_directories(dataDir);
     
-    TempDirCleanup tdCleanup{kvs.getDataDir()};
+    TempDirCleanup tdCleanup{dataDir};
 
     std::ofstream mockFile1(dataDir / "0.aol.log");
     mockFile1.close();
@@ -82,7 +85,7 @@ void test_put() {
     fs::path dataDir = path / "test_put/";
     fs::create_directories(dataDir);
 
-    TempDirCleanup tdCleanup{kvs.getDataDir()};
+    TempDirCleanup tdCleanup{dataDir};
 
     StoreFlags flags; // make this a bitmask.
 
@@ -96,11 +99,19 @@ void test_put() {
     kvs.put(stH, "k2", "v2"); // 24 bytes.
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 46);
     
+    /* Reading value from offset correctly? */
+
     std::ifstream readDatafileStream(kvs.getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
-    std::streampos readPos = readDatafileStream.tellg();
-    
-    KeyDirEntry entry = kvs.keyDir.at("k2"); // rightfully private id say.
+    KeyDirEntry entry = kvs.keyDir.at("k2"); // test_put() friend method of KVStore
+    readDatafileStream.seekg(entry.offset, std::ios_base::beg);
+
+    std::string rdbuf(entry.valSz, '\0'); // not sure about terminator.
+    readDatafileStream.read(rdbuf.data(), entry.valSz);
+
+    std::cout << rdbuf << "\n";
+    std::cout << entry.valSz << "\n";
+    assert(rdbuf == "v2");
 
     return;
 }
