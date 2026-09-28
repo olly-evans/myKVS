@@ -92,26 +92,21 @@ void test_put() {
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
     kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
-    
-    // This fails if file already exists and has been written to of course.
-    assert(fs::file_size(kvs.getActiveDatafilePath()) == 22);
+    assert(fs::file_size(kvs.getActiveDatafilePath()) == 22); /* Filesize should be 22 bytes after put. */
 
     kvs.put(stH, "k2", "v2"); // 24 bytes.
-    assert(fs::file_size(kvs.getActiveDatafilePath()) == 46);
+    assert(fs::file_size(kvs.getActiveDatafilePath()) == 46); /* Filesize should be 46 bytes after put. */
     
-    /* Reading value from offset correctly? */
 
     std::ifstream readDatafileStream(kvs.getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
-    KeyDirEntry entry = kvs.keyDir.at("k2"); // test_put() friend method of KVStore
+    KeyDirEntry entry = kvs.keyDir.at("k2"); 
     readDatafileStream.seekg(entry.offset, std::ios_base::beg);
 
-    std::string rdbuf(entry.valSz, '\0'); // not sure about terminator.
+    std::string rdbuf(entry.valSz, '\0');
     readDatafileStream.read(rdbuf.data(), entry.valSz);
 
-    std::cout << rdbuf << "\n";
-    std::cout << entry.valSz << "\n";
-    assert(rdbuf == "v2");
+    assert(rdbuf == "v2"); /* Should correctly read the value from the offset in keyDir in df. */
 
     return;
 }
