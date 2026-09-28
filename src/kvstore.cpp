@@ -50,6 +50,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
 
+    // function perhaps.
     std::string activePathID = activeDatafilePath.stem().stem();
     std::string activeHandleID = std::to_string(stH.getActiveFileID());
 
@@ -68,21 +69,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
         // ()
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
-        rec.serialize(activeFilestream);
 
-        size_t fileBytes = fs::file_size(activeDatafilePath);
-        uint64_t byteOffset = fileBytes - rec.getValueSize();
-
-        keyDir[rec.getKey()] = KeyDirEntry{stH.getActiveFileID(),
-                                           rec.getValueSize(),
-                                           byteOffset,
-                                           rec.getTimestamp()};
-        
-        std::cout << "Successfully serialized data to " << 
-                 activeDatafilePath.filename() <<
-                 "\nKeyDir entries is " << 
-                 keyDir.size() <<
-                 std::endl;
         return;
     } 
 
@@ -106,6 +93,25 @@ std::string KVStore::get(const KVStoreHandle& stH, std::string key) {
     // file could be aol or rol.
     // entry.fileID
     return "foo";
+}
+
+void KVStore::putRecord(const Record rec, uint32_t datafileID) {
+        
+    rec.serialize(activeFilestream);
+
+        size_t fileBytes = fs::file_size(activeDatafilePath);
+        uint64_t valueByteOffset = fileBytes - rec.getValueSize();
+
+        keyDir[rec.getKey()] = KeyDirEntry{datafileID,
+                                           rec.getValueSize(),
+                                           valueByteOffset,
+                                           rec.getTimestamp()};
+        
+        std::cout << "Successfully serialized data to " << 
+                      activeDatafilePath.filename()     <<
+                      "\nKeyDir entries is: "           << 
+                      keyDir.size()                     <<
+                      std::endl;
 }
 
 /* File */
@@ -155,6 +161,8 @@ void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
 
     return;
 }
+
+/* Getters and Setters */
 
 fs::path KVStore::getDataDir() const {
     return dataDir;

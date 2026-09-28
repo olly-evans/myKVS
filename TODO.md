@@ -1,3 +1,4 @@
 - If you open an existing store you cannot use a new datafile extension. Or maybe you can...?
 - Why is crc for same data giving different values on repeated execution?
 - setActiveDatafile() needs to take flags for read/write.
+- How to handle collisions in hash table.

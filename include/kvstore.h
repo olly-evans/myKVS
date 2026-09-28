@@ -37,6 +37,8 @@ class KVStore {
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
         std::string get(const KVStoreHandle& stH, std::string key);
 
+        void putRecord(const Record rec, uint32_t datafileID);
+
         /* File */
 
         [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension);
