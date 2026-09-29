@@ -12,15 +12,6 @@ struct TempDirCleanup {
     }
 };
 
-void test_put_before_open() {
-    
-    KVStore kvs;
-    StoreFlags flags;
-
-    // kvs.put(stH, "testkey", "testvalue");
-
-}
-
 void test_open_new_store(fs::path dir) {
 
     KVStore kvs;
@@ -112,6 +103,21 @@ void test_put(fs::path dir) {
     return;
 }
 
+void test_put_before_open() {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    KVStoreHandle stH;
+    kvs.put(stH, "testkey", "testvalue");
+
+    assert(kvs.getActiveDatafilePath().empty());
+    assert(!kvs.getActiveFilestream().is_open());
+    assert(!fs::exists(kvs.getDataDir()));
+
+    return;
+}
+
 void test_put_roll_over_datafile(fs::path dir) {
 
     KVStore kvs;
@@ -133,10 +139,9 @@ void test_put_roll_over_datafile(fs::path dir) {
     assert(kvs.getActiveDatafilePath() == dir / "1.aol.data");
 
     fs::path oldDatafilePath = dir / "0.rol.data";
-    assert(fs::exists(oldDatafilePath));
-    assert(fs::file_size(oldDatafilePath) < stH.getMaxDatafileBytes());
 
-    
+    assert(fs::exists(oldDatafilePath)); /* Old path exists as read-only. */
+    assert(fs::file_size(oldDatafilePath) < stH.getMaxDatafileBytes()); /* Less than max size. */   
 
     fs::remove(dir / "0.rol.data");
     fs::remove(dir / "1.aol.data");
@@ -159,6 +164,7 @@ int main() {
     // Split into two files I think when bothered, perhaps if 3+ tests each.
 
     test_put(testDataDir);
+    test_put_before_open();
     test_put_roll_over_datafile(testDataDir);
 
     return 0;

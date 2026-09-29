@@ -167,6 +167,7 @@ void KVStore::makeDatafileReadOnly(fs::path path) {
 
     return;
 }
+
 /* Getters and Setters */
 
 fs::path KVStore::getDataDir() const {
