@@ -172,11 +172,7 @@ void test_put_roll_over_datafile(fs::path dir) {
     fs::remove(dir / "1.aol.data");
 }
 
-void test_get() {
-    return;
-}
-
-void test_get_crc_check(fs::path dir) {
+void test_get(fs::path dir) {
     
     KVStore kvs;
     StoreFlags flags;
@@ -215,7 +211,7 @@ int main() {
     test_put_roll_over_datafile(testDataDir);
     test_put_threads(testDataDir);
 
-    test_get_crc_check(testDataDir);
+    test_get(testDataDir);
 
 
     return 0;
