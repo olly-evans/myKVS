@@ -29,8 +29,6 @@ void test_open_new_store(fs::path dir) {
 
     assert(kvs.getActiveDatafilePath() == 
            dir / "0.aol.data");
-
-    return;
 }
 
 void test_open_existing_store(fs::path dir) {
@@ -66,9 +64,6 @@ void test_open_existing_store(fs::path dir) {
     fs::remove(mFilePath1);
     fs::remove(mFilePath2);
     fs::remove(mFilePath3);
-
-    return;
-
 }
 
 /* Perhaps make a test flag where we write in hex to check against. */
@@ -99,8 +94,6 @@ void test_put(fs::path dir) {
     assert(rdbuf == "v2"); /* Should correctly read the value from the offset in keyDir in df. */
 
     fs::remove(dir / "0.aol.data");
-
-    return;
 }
 
 void test_put_before_open() {
@@ -114,8 +107,6 @@ void test_put_before_open() {
     assert(kvs.getActiveDatafilePath().empty());
     assert(!kvs.getActiveFilestream().is_open());
     assert(!fs::exists(kvs.getDataDir()));
-
-    return;
 }
 
 void test_put_roll_over_datafile(fs::path dir) {
@@ -145,8 +136,6 @@ void test_put_roll_over_datafile(fs::path dir) {
 
     fs::remove(dir / "0.rol.data");
     fs::remove(dir / "1.aol.data");
-
-    return;
 }
 
 int main() {
