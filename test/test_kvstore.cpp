@@ -127,9 +127,13 @@ void test_put_roll_over_datafile(fs::path dir) {
     
     assert(kvs.getActiveDatafilePath() == dir / "1.aol.data");
 
+    fs::path oldDatafilePath = dir / "0.rol.data";
+    assert(fs::exists(oldDatafilePath));
+    assert(fs::file_size(oldDatafilePath) < stH.getMaxDatafileBytes());
+
     
 
-    fs::remove(dir / "0.aol.data");
+    fs::remove(dir / "0.rol.data");
     fs::remove(dir / "1.aol.data");
 
     return;
