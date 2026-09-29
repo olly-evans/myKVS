@@ -9,12 +9,11 @@
 
 namespace fs = std::filesystem;
 
-constexpr uint16_t MAX_DATAFILE_BYTES = 65535;
-
 struct StoreFlags {
     bool readWrite = true; // Reading and writing permitted in directory.
     bool syncOnPut = false;
 
+    size_t maxDatafileBytes = 65535;
     std::string datafileExtension;
 };
 
@@ -69,6 +68,6 @@ class KVStore {
 
         /* Test */
         
-        friend void test_put();
+        friend void test_put(fs::path dir);
 
 };

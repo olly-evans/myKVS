@@ -5,8 +5,11 @@
 class KVStoreHandle {
     private:
         uint32_t activeFileID;
+        size_t maxDatafileBytes;
+
         std::filesystem::path absDirPath;
         std::string datafileExtension;
+
         bool readWrite;
         // hash table pointer.
 
@@ -16,6 +19,9 @@ class KVStoreHandle {
 
         [[nodiscard]] uint32_t getActiveFileID() const;
         void updateActiveFileID(std::filesystem::path dataDir);
+
+        [[nodiscard]] size_t getMaxDatafileBytes() const;
+        void setMaxDatafileBytes(size_t maxBytes);
 
         [[nodiscard]] std::filesystem::path getAbsDirPath() const;
         void setAbsDirPath();

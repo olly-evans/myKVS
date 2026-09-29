@@ -12,11 +12,14 @@ struct TempDirCleanup {
     }
 };
 
+void test_open_before_put() {
+    return;
+}
+
 void test_open_new_store(fs::path dir) {
 
     KVStore kvs;
     StoreFlags flags;
-
 
     flags.datafileExtension = ".data";
     KVStoreHandle stH = kvs.open(dir, flags);
@@ -38,13 +41,16 @@ void test_open_existing_store(fs::path dir) {
     
     KVStore kvs;
 
-    std::ofstream mockFile1(dir / "0.aol.log");
+    fs::path mFilePath1 = dir / "1.aol.log";
+    std::ofstream mockFile1(mFilePath1);
     mockFile1.close();
 
-    std::ofstream mockFile2(dir / "1.aol.log");
+    fs::path mFilePath2 = dir / "2.aol.log";
+    std::ofstream mockFile2(mFilePath2);
     mockFile2.close();
 
-    std::ofstream mockFile3(dir / "2.aol.log");
+    fs::path mFilePath3 = dir / "3.aol.log";
+    std::ofstream mockFile3(mFilePath3);
     mockFile3.close();
     
     StoreFlags flags;
@@ -56,29 +62,28 @@ void test_open_existing_store(fs::path dir) {
     assert(kvs.getActiveFilestream().good());       /* No error state in stream. */
     assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
-    assert(stH.getActiveFileID() == 2);           
+    assert(stH.getActiveFileID() == 3);           
     assert(kvs.getActiveDatafilePath() == 
-           dir / "2.aol.log");
+           dir / "3.aol.log");
     
+    
+    fs::remove(mFilePath1);
+    fs::remove(mFilePath2);
+    fs::remove(mFilePath3);
+
     return;
 
 }
 
 /* Perhaps make a test flag where we write in hex to check against. */
 
-void test_put() {
+void test_put(fs::path dir) {
 
     KVStore kvs;
 
-    fs::path path = SOURCE_ROOT;
-    fs::path dataDir = path / "test_put/";
-    fs::create_directories(dataDir);
-
-    TempDirCleanup tdCleanup{dataDir};
-
     StoreFlags flags; // make this a bitmask.
 
-    KVStoreHandle stH = kvs.open(dataDir, flags);
+    KVStoreHandle stH = kvs.open(dir, flags);
 
     kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 22); /* Filesize should be 22 bytes after put. */
@@ -97,28 +102,55 @@ void test_put() {
 
     assert(rdbuf == "v2"); /* Should correctly read the value from the offset in keyDir in df. */
 
+    fs::remove(dir / "0.aol.data");
+
     return;
 }
 
-void test_put_roll_over_datafile() {
+void test_put_roll_over_datafile(fs::path dir) {
+
+    KVStore kvs;
+    StoreFlags flags;
+
+    KVStoreHandle stH = kvs.open(dir, flags);
+
+    size_t mockFileSize = 10;
+    stH.setMaxDatafileBytes(mockFileSize);
+
+    uint32_t oldDatafileID = stH.getActiveFileID();
+
+    kvs.put(stH, "foo", "bar");
+
+    uint32_t newDatafileID = stH.getActiveFileID();
+
+    assert(oldDatafileID + 1 == newDatafileID);        /* Should have incremented datafile ID by one. */
+    
+    assert(kvs.getActiveDatafilePath() == dir / "1.aol.data");
+
+    
+
+    fs::remove(dir / "0.aol.data");
+    fs::remove(dir / "1.aol.data");
+
     return;
 }
 
 int main() {
 
     fs::path path = SOURCE_ROOT;
-    fs::path dataDir = path / "test_open_new_store/";
-    fs::create_directories(dataDir);
+    fs::path testDataDir = path / "test/test_kvstore/";
+
+    if (!fs::exists(testDataDir))
+        fs::create_directories(testDataDir);
     
-    TempDirCleanup cleanup{dataDir}; // rm all
 
-    test_open_new_store(dataDir);
-    test_open_existing_store(dataDir);
+    test_open_new_store(testDataDir);
+    test_open_existing_store(testDataDir);
 
-    // Split into two files I think when bothered.
+    // Split into two files I think when bothered, perhaps if 3+ tests each.
 
-    test_put();
-    test_put_roll_over_datafile();
+    test_put(testDataDir);
+    test_put_roll_over_datafile(testDataDir);
 
     return 0;
 }

@@ -2,8 +2,9 @@ build/
 .vscode/
 bin/
 data/
-test_data/
 test_kvstore/
+test_kvstorehandle/
+test_record/
 
 *.out
 *.o
