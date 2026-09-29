@@ -44,6 +44,7 @@ class KVStore {
 
         void setActiveDatafile(const fs::path path, const bool readWrite);
         void rollOverDatafile(const KVStoreHandle& stH);
+        void makeDatafileReadOnly(fs::path path);
 
         /* Getters/Setters */
 

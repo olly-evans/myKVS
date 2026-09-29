@@ -12,8 +12,13 @@ struct TempDirCleanup {
     }
 };
 
-void test_open_before_put() {
-    return;
+void test_put_before_open() {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    // kvs.put(stH, "testkey", "testvalue");
+
 }
 
 void test_open_new_store(fs::path dir) {
