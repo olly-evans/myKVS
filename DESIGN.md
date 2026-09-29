@@ -1,1 +1,2 @@
 - CXX_STANDARD 17 for std::filesystem.
+- Friend methods ins KVStore for testing.

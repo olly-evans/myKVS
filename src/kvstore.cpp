@@ -140,13 +140,14 @@ void KVStore::setActiveDatafile(const fs::path path, const bool readWrite) {
 
 void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
 
-    fs::path roPath = activeDatafilePath;
-    std::string filename = roPath.filename().string();
-    // Replaces "aol" with "rol" directly in the filename string
+    fs::path newPath = activeDatafilePath;
+    std::string filename = newPath.filename().string();
     filename.replace(filename.find("aol"), 3, "rol"); 
-    roPath.replace_filename(filename);
-    
-    fs::permissions(activeDatafilePath,
+    newPath.replace_filename(filename);
+
+    fs::rename(activeDatafilePath, newPath);
+
+    fs::permissions(newPath,
                     fs::perms::owner_read | fs::perms::group_read, 
                     fs::perm_options::replace);
 
