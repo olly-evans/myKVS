@@ -3,3 +3,7 @@
 - setActiveDatafile() needs to take flags for read/write.
 - How to handle collisions in hash table.
 - Do I need an activeFilestream for puts?.
+
+- INPUT AND OUTPUT FILESTREAM, ONE AT A TIME. LOCKED PERHAPS IDK.
+
+- remove testing boilerplate into main, test_kvstore.

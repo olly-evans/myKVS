@@ -20,6 +20,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     stH.setMaxDatafileBytes(stFlags.maxDatafileBytes);
     stH.setDatafileExt(stFlags.datafileExtension);
+
     if (stH.getDatafileExt().empty())
         stH.setDatafileExt(".data");
 
@@ -54,14 +55,13 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     std::string activeHandleID = std::to_string(stH.getActiveFileID());
 
     if (activePathID != activeHandleID) {
-        std::cout << "[ERROR] Active datafile doesn't match the active ID." << std::endl;
+        std::cerr << "[ERROR] Active datafile doesn't match the active ID." << std::endl;
         return;
     }
 
     if (!activeFilestream.is_open() || activeFilestream.bad())
-        std::cout << "[ERROR] Filestream error!" << std::endl;
+        std::cerr << "[ERROR] Filestream error!" << std::endl;
     
-
     Record rec(key, val);
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < stH.getMaxDatafileBytes()) {
@@ -80,8 +80,11 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     putRecord(rec, stH.getActiveFileID());    
 }
 
-std::string KVStore::get(const KVStoreHandle& stH, std::string key) {
+std::string KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
+    // mutex, perhaps just kvstore one used in both get and put.
+
+    // CRC CHECK.
     std::ifstream readDatafileStream(getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
     KeyDirEntry entry = keyDir.at(key); 

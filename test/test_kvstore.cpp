@@ -1,6 +1,7 @@
 #include "kvstore.h"
 
 #include <assert.h>
+#include <thread>
 
 namespace fs = std::filesystem;
 
@@ -96,6 +97,32 @@ void test_put(fs::path dir) {
     fs::remove(dir / "0.aol.data");
 }
 
+void test_put_threads_task(KVStore& kvs, KVStoreHandle& stH, uint64_t startID, uint64_t count) {
+
+    for (uint64_t i = startID; i < startID + count; ++i) {
+        kvs.put(stH, "key" + std::to_string(i), "val" + std::to_string(i));
+    }
+}
+
+void test_put_threads(fs::path dir) {
+
+    KVStore kvs;
+    StoreFlags flags;
+
+    KVStoreHandle stH = kvs.open(dir, flags);
+
+    std::thread t1(test_put_threads_task, std::ref(kvs), std::ref(stH), 0, 100);
+    std::thread t2(test_put_threads_task, std::ref(kvs), std::ref(stH), 100, 100);
+
+    t1.join();
+    t2.join();
+
+    assert(kvs.keyDir.size() == 200);
+
+    // read them back and crc check.
+
+}
+
 void test_put_before_open() {
     
     KVStore kvs;
@@ -138,6 +165,10 @@ void test_put_roll_over_datafile(fs::path dir) {
     fs::remove(dir / "1.aol.data");
 }
 
+// void test_get(fs::path dir) {
+
+// }
+
 int main() {
 
     fs::path path = SOURCE_ROOT;
@@ -145,7 +176,6 @@ int main() {
 
     if (!fs::exists(testDataDir))
         fs::create_directories(testDataDir);
-    
 
     test_open_new_store(testDataDir);
     test_open_existing_store(testDataDir);
@@ -155,6 +185,8 @@ int main() {
     test_put(testDataDir);
     test_put_before_open();
     test_put_roll_over_datafile(testDataDir);
+    test_put_threads(testDataDir);
+
 
     return 0;
 }
