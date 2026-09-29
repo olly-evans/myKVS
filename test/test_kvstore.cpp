@@ -83,11 +83,10 @@ void test_put(fs::path dir) {
     kvs.put(stH, "k2", "v2"); // 24 bytes.
     assert(fs::file_size(kvs.getActiveDatafilePath()) == 46); /* Filesize should be 46 bytes after put. */
     
-
     std::ifstream readDatafileStream(kvs.getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
     KeyDirEntry entry = kvs.keyDir.at("k2"); 
-    readDatafileStream.seekg(entry.offset, std::ios_base::beg);
+    readDatafileStream.seekg(entry.valFileOffset, std::ios_base::beg);
 
     std::string rdbuf(entry.valSz, '\0');
     readDatafileStream.read(rdbuf.data(), entry.valSz);
@@ -124,7 +123,7 @@ void test_put_threads(fs::path dir) {
         std::string key = it->first;
         std::string val = kvs.get(stH, key);
 
-        std::cout << it->first << kvs.get(stH, it->first) << std::endl;
+        // std::cout << it->first << val << std::endl;
         assert(key == val); /* Validate all keys and values are the same as they are for this test. */
     }
 
@@ -173,9 +172,24 @@ void test_put_roll_over_datafile(fs::path dir) {
     fs::remove(dir / "1.aol.data");
 }
 
-// void test_get(fs::path dir) {
+void test_get() {
+    return;
+}
 
-// }
+void test_get_crc_check(fs::path dir) {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    KVStoreHandle stH = kvs.open(dir, flags);
+
+    kvs.put(stH, "key", "val");
+
+    std::string retrievedVal = kvs.get(stH, "key");
+    // assert()
+
+    fs::remove(dir / "0.aol.data");
+}
 
 int main() {
 
@@ -194,6 +208,8 @@ int main() {
     test_put_before_open();
     test_put_roll_over_datafile(testDataDir);
     test_put_threads(testDataDir);
+
+    test_get_crc_check(testDataDir);
 
 
     return 0;

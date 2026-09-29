@@ -21,7 +21,7 @@ struct StoreFlags {
 struct KeyDirEntry {
     uint32_t fileID;
     uint32_t valSz;
-    uint64_t offset;
+    uint64_t valFileOffset;
     uint64_t tstamp;
 };
 

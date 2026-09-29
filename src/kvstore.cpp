@@ -84,23 +84,26 @@ std::string KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
     // mutex, perhaps just kvstore one used in both get and put.
 
-    // read into record and crc check.
-
-    // CRC CHECK.
     std::ifstream readDatafileStream(getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
     KeyDirEntry entry = keyDir.at(key); 
 
-    readDatafileStream.seekg(entry.offset, std::ios_base::beg);
+    readDatafileStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string valbuf(entry.valSz, '\0');
     readDatafileStream.read(valbuf.data(), entry.valSz);
 
     Record rec(key, valbuf);
 
-    readDatafileStream.seekg(entry.offset, std::ios_base::beg);
-    std::string crcbuf(sizeof(rec.getCRC32()), '\0'); // read crc should be the same size.
-    readDatafileStream.read(crcbuf.data(), sizeof(rec.getCRC32()));
+    // rec.getCRCOffset().
+    size_t recBytes = rec.byteSize();
+    uint64_t crcOffset = (entry.valFileOffset + entry.valSz) - recBytes;
 
+    readDatafileStream.seekg(crcOffset, std::ios_base::beg);
+    uint32_t crcFromDisk;
+    readDatafileStream.read(reinterpret_cast<char*>(&crcFromDisk), sizeof(crcFromDisk));
+
+    std::cout << rec.getCRC32() << "\n" << crcFromDisk << "\n";
+    
     // read crc on disk and compare.
     // rec.getCRC() == (uint32_t)crcbuf;
 
@@ -122,7 +125,7 @@ void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
                                        valueByteOffset,
                                        rec.getTimestamp()};
     
-    std::cout << "Successfully serialized data to " << 
+    std::cout << "Successfully serialized data to "   << 
                     activeDatafilePath.filename()     <<
                     "\nKeyDir entries is: "           << 
                     keyDir.size()                     <<
@@ -143,9 +146,9 @@ fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension)
 void KVStore::setActiveDatafile(const fs::path path, const bool readWrite) {
 
     fs::perms rwPerms = fs::perms::owner_write | fs::perms::group_write | 
-                        fs::perms::owner_read  |  fs::perms::group_read;
+                        fs::perms::owner_read  | fs::perms::group_read;
 
-    fs::perms roPerms = fs::perms::owner_read  |  fs::perms::group_read;
+    fs::perms roPerms = fs::perms::owner_read  | fs::perms::group_read;
 
     activeFilestream.open(path, std::ios::binary | std::ios::app);
 
