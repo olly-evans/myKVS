@@ -80,13 +80,18 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     putRecord(rec, stH.getActiveFileID());    
 }
 
-std::string KVStore::get(const KVStoreHandle& stH, const std::string key) {
+std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
     // mutex, perhaps just kvstore one used in both get and put.
 
     std::ifstream readDatafileStream(getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
-    KeyDirEntry entry = keyDir.at(key); 
+    auto it = keyDir.find(key);
+    if (it == keyDir.end()) {
+        return std::nullopt;
+    }
+
+    KeyDirEntry entry = it->second;
 
     readDatafileStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string valbuf(entry.valSz, '\0');
@@ -94,7 +99,7 @@ std::string KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
     Record rec(key, valbuf);
 
-    // rec.getCRCOffset().
+    // rec.getCRCOffset()
     size_t recBytes = rec.byteSize();
     uint64_t crcOffset = (entry.valFileOffset + entry.valSz) - recBytes;
 
@@ -102,10 +107,10 @@ std::string KVStore::get(const KVStoreHandle& stH, const std::string key) {
     uint32_t crcFromDisk;
     readDatafileStream.read(reinterpret_cast<char*>(&crcFromDisk), sizeof(crcFromDisk));
 
-    std::cout << rec.getCRC32() << "\n" << crcFromDisk << "\n";
-    
-    // read crc on disk and compare.
-    // rec.getCRC() == (uint32_t)crcbuf;
+    if (rec.getCRC32() != crcFromDisk) {
+        // Needs handling. Not sure how.
+        return std::nullopt;
+    }    
 
     readDatafileStream.close();
 

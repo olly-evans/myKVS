@@ -121,7 +121,7 @@ void test_put_threads(fs::path dir) {
     // CRC check?
     for (auto it = kvs.keyDir.begin(); it != kvs.keyDir.end(); it++) {
         std::string key = it->first;
-        std::string val = kvs.get(stH, key);
+        std::optional<std::string> val = kvs.get(stH, key);
 
         // std::cout << it->first << val << std::endl;
         assert(key == val); /* Validate all keys and values are the same as they are for this test. */
@@ -185,7 +185,7 @@ void test_get_crc_check(fs::path dir) {
 
     kvs.put(stH, "key", "val");
 
-    std::string retrievedVal = kvs.get(stH, "key");
+    std::optional<std::string> retrievedVal = kvs.get(stH, "key");
     // assert()
 
     fs::remove(dir / "0.aol.data");

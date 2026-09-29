@@ -7,3 +7,5 @@
 - INPUT AND OUTPUT FILESTREAM, ONE AT A TIME. LOCKED PERHAPS IDK.
 
 - remove testing boilerplate into main, test_kvstore.
+
+- what if user opens an existing store but changes the max filesize?
