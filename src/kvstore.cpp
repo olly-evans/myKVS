@@ -39,7 +39,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
 void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string val) {
 
-    // lock and mutex is bound to our KVStoreHandle. RAII
+    std::lock_guard<std::mutex> lock(putMut);
 
     if (!fs::exists(dataDir)) {
         std::cout << "[WARNING] You must open a store before using put." << std::endl;
@@ -84,17 +84,29 @@ std::string KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
     // mutex, perhaps just kvstore one used in both get and put.
 
+    // read into record and crc check.
+
     // CRC CHECK.
     std::ifstream readDatafileStream(getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
     KeyDirEntry entry = keyDir.at(key); 
-    readDatafileStream.seekg(entry.offset, std::ios_base::beg);
 
-    std::string rdbuf(entry.valSz, '\0');
-    readDatafileStream.read(rdbuf.data(), entry.valSz);
+    readDatafileStream.seekg(entry.offset, std::ios_base::beg);
+    std::string valbuf(entry.valSz, '\0');
+    readDatafileStream.read(valbuf.data(), entry.valSz);
+
+    Record rec(key, valbuf);
+
+    readDatafileStream.seekg(entry.offset, std::ios_base::beg);
+    std::string crcbuf(sizeof(rec.getCRC32()), '\0'); // read crc should be the same size.
+    readDatafileStream.read(crcbuf.data(), sizeof(rec.getCRC32()));
+
+    // read crc on disk and compare.
+    // rec.getCRC() == (uint32_t)crcbuf;
+
     readDatafileStream.close();
 
-    return rdbuf;
+    return valbuf;
 }
 
 void KVStore::putRecord(const Record rec, const uint32_t datafileID) {

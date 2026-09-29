@@ -100,7 +100,7 @@ void test_put(fs::path dir) {
 void test_put_threads_task(KVStore& kvs, KVStoreHandle& stH, uint64_t startID, uint64_t count) {
 
     for (uint64_t i = startID; i < startID + count; ++i) {
-        kvs.put(stH, "key" + std::to_string(i), "val" + std::to_string(i));
+        kvs.put(stH, std::to_string(i), std::to_string(i));
     }
 }
 
@@ -119,8 +119,16 @@ void test_put_threads(fs::path dir) {
 
     assert(kvs.keyDir.size() == 200);
 
-    // read them back and crc check.
+    // CRC check?
+    for (auto it = kvs.keyDir.begin(); it != kvs.keyDir.end(); it++) {
+        std::string key = it->first;
+        std::string val = kvs.get(stH, key);
 
+        std::cout << it->first << kvs.get(stH, it->first) << std::endl;
+        assert(key == val); /* Validate all keys and values are the same as they are for this test. */
+    }
+
+    fs::remove(dir / "0.aol.data");
 }
 
 void test_put_before_open() {

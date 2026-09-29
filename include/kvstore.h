@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <mutex>
 
 #include "kvstorehandle.h"
 #include "record.h"
@@ -64,6 +65,8 @@ class KVStore {
         std::ofstream activeFilestream;
 
         std::unordered_map<std::string, KeyDirEntry> keyDir;
+
+        std::mutex putMut;
 
     public:
 
