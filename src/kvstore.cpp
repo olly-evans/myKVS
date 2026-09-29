@@ -80,7 +80,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     putRecord(rec, stH.getActiveFileID());    
 }
 
-std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
+std::optional<std::pair<std::string, uint32_t>> KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
     // mutex, perhaps just kvstore one used in both get and put.
 
@@ -114,7 +114,9 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
 
     readDatafileStream.close();
 
-    return valbuf;
+    std::pair value(valbuf, crcFromDisk);
+
+    return value;
 }
 
 void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
