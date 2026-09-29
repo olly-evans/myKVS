@@ -36,7 +36,7 @@ class KVStore {
 
         KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
-        std::optional<std::pair<std::string, uint32_t>> get(const KVStoreHandle& stH, const std::string key);
+        std::optional<std::string> get(const KVStoreHandle& stH, const std::string key);
 
         void putRecord(const Record rec, const uint32_t datafileID);
 
