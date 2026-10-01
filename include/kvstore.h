@@ -1,6 +1,5 @@
 #pragma once
 
-#include <fstream>
 #include <iostream>
 #include <unordered_map>
 #include <mutex>
@@ -20,8 +19,6 @@ struct StoreFlags {
     size_t maxDatafileBytes = 65535;
     std::string datafileExtension;
 };
-
-struct KVStoreTestAccess;
 
 class KVStore {
 
@@ -46,11 +43,6 @@ class KVStore {
         void rollOverDatafile(const KVStoreHandle& stH);
         void makeDatafileReadOnly(fs::path path);
 
-        /* Reading */
-
-        [[nodiscard]] uint32_t readCRC(KeyDirEntry entry, Record rec, std::string fileExtension) const;
-        [[nodiscard]] std::string readValue(KeyDirEntry entry, std::string fileExtension) const;
-
         /* Getters/Setters */
 
         void setDataDir(fs::path dir, std::string dirName);
@@ -68,13 +60,6 @@ class KVStore {
         fs::path activeDatafilePath;
         std::ofstream activeFilestream;
 
-        // std::unordered_map<std::string, KeyDirEntry> keyDir;
-
         std::shared_mutex writeMutex;
         std::shared_mutex readMutex;
-
-    private:
-
-        /* Testing */
-        // friend struct KVStoreTestAccess;   
 };

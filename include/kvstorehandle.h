@@ -2,6 +2,11 @@
 
 #include <filesystem>
 #include <unordered_map>
+#include <fstream>
+
+#include "record.h"
+
+namespace fs = std::filesystem;
 
 struct KeyDirEntry {
     uint32_t fileID;
@@ -18,7 +23,7 @@ class KVStoreHandle {
         uint32_t activeFileID;
         size_t maxDatafileBytes;
 
-        std::filesystem::path absDirPath;
+        fs::path absDirPath;
         std::string datafileExtension;
 
         bool readWrite;
@@ -29,13 +34,16 @@ class KVStoreHandle {
         // KVStoreHandle(mutex.lock());
         // ~KVStoreHandle();
 
+        [[nodiscard]] uint32_t readCRC(fs::path path, KeyDirEntry entry, Record rec) const;
+        [[nodiscard]] std::string readValue(fs::path path, KeyDirEntry entry) const;
+
         [[nodiscard]] uint32_t getActiveFileID() const;
-        void updateActiveDatafileID(std::filesystem::path dataDir);
+        void updateActiveDatafileID(fs::path dataDir);
 
         [[nodiscard]] size_t getMaxDatafileBytes() const;
         void setMaxDatafileBytes(size_t maxBytes);
 
-        [[nodiscard]] std::filesystem::path getAbsDirPath() const;
+        [[nodiscard]] fs::path getAbsDirPath() const;
         void setAbsDirPath();
 
         [[nodiscard]] std::string getDatafileExt() const;

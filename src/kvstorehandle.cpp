@@ -2,6 +2,34 @@
 
 /* HVStoreHandle Methods */
 
+uint32_t KVStoreHandle::readCRC(fs::path path, KeyDirEntry entry, Record rec) const {
+
+
+    std::ifstream in(path, std::ios::binary | std::ios::in);
+
+    uint64_t crcOffset = (entry.valFileOffset + entry.valSz) - rec.byteSize();
+
+    in.seekg(crcOffset, std::ios_base::beg);
+
+    uint32_t crcFromDisk;
+    in.read(reinterpret_cast<char*>(&crcFromDisk), sizeof(crcFromDisk));
+    in.close();
+
+    return crcFromDisk;
+}
+
+std::string KVStoreHandle::readValue(fs::path path, KeyDirEntry entry) const {
+    
+    std::ifstream in(path, std::ios::binary | std::ios::in);
+
+    in.seekg(entry.valFileOffset, std::ios_base::beg);
+    std::string val(entry.valSz, '\0');
+    in.read(val.data(), entry.valSz);
+    in.close();
+
+    return val;
+}
+
 uint32_t KVStoreHandle::getActiveFileID() const {
     return activeFileID;
 }
