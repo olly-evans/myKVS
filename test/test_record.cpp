@@ -2,8 +2,9 @@
 
 #include <assert.h>
 #include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
-void test_record_constructor() {
+TEST_CASE("Record constructor sets values, equal crc for same data", "Record()") {
 
     std::string key = "key";
     std::string val = "val";
@@ -33,7 +34,7 @@ void test_record_constructor() {
     assert(first == second);            /* CRC should be equal for same data (const timestamp). */
 }
 
-void test_record_crc() {
+TEST_CASE() {
 
     Record a("key", "val");
     Record b("key", "Xal");
@@ -45,13 +46,4 @@ void test_record_crc() {
     b.setCRC32();
 
     assert(a.getCRC32() != b.getCRC32());
-}
-
-/* test for crc where we put and get and compare crc vals for same data. */
-
-int main() {
-
-    test_record_constructor();
-    test_record_crc();
-    return 0;
 }

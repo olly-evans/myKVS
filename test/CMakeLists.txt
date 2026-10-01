@@ -1,13 +1,22 @@
-include(CTest)
+include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG        v3.7.1
+)
+FetchContent_MakeAvailable(Catch2)
 
-add_executable(test_kvstore test_kvstore.cpp)
-target_link_libraries(test_kvstore PRIVATE app_lib)
-add_test(NAME kvstore_test COMMAND test_kvstore)
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
-add_executable(test_kvstorehandle test_kvstorehandle.cpp)
-target_link_libraries(test_kvstorehandle PRIVATE app_lib)
-add_test(NAME kvstorehandle_test COMMAND test_kvstorehandle)
+find_package(Threads REQUIRED)
 
-add_executable(test_record test_record.cpp)
-target_link_libraries(test_record PRIVATE app_lib)
-add_test(NAME record_test COMMAND test_record)
+add_executable(kvstore_tests test_kvstore.cpp)    # your test file(s)
+
+target_link_libraries(kvstore_tests PRIVATE
+    app_lib
+    Catch2::Catch2WithMain
+    Threads::Threads
+)
+
+include(Catch)
+catch_discover_tests(kvstore_tests)
