@@ -43,7 +43,7 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_put_1/");
+    fs::path dataDir = createTempTestDir("test_put_2/");
     TempDirCleanup cleanup(dataDir);
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
@@ -66,7 +66,7 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     }
 }
 
-void test_put_before_open() {
+TEST_CASE("Put before opening a store.", "KVStore::put()") {
     
     KVStore kvs;
     StoreFlags flags;
@@ -79,12 +79,15 @@ void test_put_before_open() {
     REQUIRE(!fs::exists(kvs.getDataDir()));
 }
 
-void test_put_roll_over_datafile(fs::path dir) {
+TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
 
     KVStore kvs;
     StoreFlags flags;
 
-    KVStoreHandle stH = kvs.open(dir, flags);
+    fs::path dataDir = createTempTestDir("test_put_4/");
+    TempDirCleanup cleanup(dataDir);
+
+    KVStoreHandle stH = kvs.open(dataDir, flags);
 
     size_t mockFileSize = 10;
     stH.setMaxDatafileBytes(mockFileSize);
@@ -97,13 +100,13 @@ void test_put_roll_over_datafile(fs::path dir) {
 
     REQUIRE(oldDatafileID + 1 == newDatafileID);        /* Should have incremented datafile ID by one. */
     
-    REQUIRE(kvs.getActiveDatafilePath() == dir / "1.aol.data");
+    REQUIRE(kvs.getActiveDatafilePath() == dataDir / "1.aol.data");
 
-    fs::path oldDatafilePath = dir / "0.rol.data";
+    fs::path oldDatafilePath = dataDir / "0.rol.data";
 
     REQUIRE(fs::exists(oldDatafilePath)); /* Old path exists as read-only. */
     REQUIRE(fs::file_size(oldDatafilePath) < stH.getMaxDatafileBytes()); /* Less than max size. */   
 
-    fs::remove(dir / "0.rol.data");
-    fs::remove(dir / "1.aol.data");
+    fs::remove(dataDir / "0.rol.data");
+    fs::remove(dataDir / "1.aol.data");
 }
