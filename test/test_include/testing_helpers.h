@@ -10,8 +10,7 @@ struct TempDirGuard {
     }
 };
 
-// NAME
-struct KVStoreTestAccess {
+struct HandleTestAccess {
     static auto& keyDir(KVStoreHandle& stH) { return stH.keyDir; }
 };
 

@@ -11,6 +11,7 @@ struct KeyDirEntry {
 };
 
 class KVStoreHandle {
+
     friend class KVStore;
 
     private:
@@ -46,5 +47,5 @@ class KVStoreHandle {
     private:
 
         /* Testing */
-        friend struct KVStoreTestAccess;
+        friend struct HandleTestAccess;
 };

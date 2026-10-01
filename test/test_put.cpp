@@ -21,7 +21,7 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
     
     std::ifstream readDatafileStream(kvs.getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
-    KeyDirEntry entry = KVStoreTestAccess::keyDir(stH).at("k2"); 
+    KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("k2"); 
     readDatafileStream.seekg(entry.valFileOffset, std::ios_base::beg);
 
     std::string rdbuf(entry.valSz, '\0');
@@ -54,11 +54,11 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     t1.join();
     t2.join();
 
-    REQUIRE(KVStoreTestAccess::keyDir(stH).size() == 200);
+    REQUIRE(HandleTestAccess::keyDir(stH).size() == 200);
     
     /* Validate all keys and values are the same as they are for this test. */
     
-    for (auto it = KVStoreTestAccess::keyDir(stH).begin(); it != KVStoreTestAccess::keyDir(stH).end(); it++) {
+    for (auto it = HandleTestAccess::keyDir(stH).begin(); it != HandleTestAccess::keyDir(stH).end(); it++) {
         std::optional<std::string> val = kvs.get(stH, it->first);
 
         // std::cout << it->first << val->first << std::endl;
@@ -126,7 +126,7 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     kvs.put(stH, k, v);
     kvs.put(stH, k, newv);
 
-    KeyDirEntry entry = KVStoreTestAccess::keyDir(stH).at("key");
+    KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("key");
 
     Record rec1(k, v);
     Record rec2(k, newv);
@@ -135,7 +135,7 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     REQUIRE(fs::file_size(kvs.getActiveDatafilePath()) == expectedDatafileSize);
 
     REQUIRE(entry.valSz == 8);
-    REQUIRE(KVStoreTestAccess::keyDir(stH).size() == 1);
+    REQUIRE(HandleTestAccess::keyDir(stH).size() == 1);
 
     REQUIRE(kvs.get(stH, k) == newv);
 }
