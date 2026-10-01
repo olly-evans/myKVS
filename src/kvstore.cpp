@@ -66,7 +66,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < stH.getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
-        stH.writeRecord(activeDatafilePath, activeFilestream, rec);
+        rec.serialize(activeFilestream);
+        stH.updateKeyDir(activeDatafilePath, rec);
         return;
     } 
 
@@ -75,7 +76,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     rollOverDatafile(stH);
     stH.updateActiveDatafileID(dataDir);
     
-    stH.writeRecord(activeDatafilePath, activeFilestream, rec);    
+    rec.serialize(activeFilestream);
+    stH.updateKeyDir(activeDatafilePath, rec);
 }
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
@@ -137,9 +139,19 @@ void KVStore::restore(KVStoreHandle& stH) {
         in.read(reinterpret_cast<char*>(&keySize), sizeof(uint32_t)); // read 4 bytes into buf from keySizeOffset.
         in.read(reinterpret_cast<char*>(&valSize), sizeof(uint32_t)); // read 4 bytes more should be valsize.
 
-        std::string key;
-        std::string val;
+        std::string key(keySize, '\0');
+        std::string val(valSize, '\0');
 
+        in.read(key.data(), keySize);
+        in.read(val.data(), valSize);
+
+        Record rec(key, val);
+
+        // need seperate function for append to keydir.
+        // stH.writeRecord(path)
+
+        // if (numFiles == 0)
+        //     return;
     // }
     
     // for (const auto& df : fs::directory_iterator(dataDir)) {

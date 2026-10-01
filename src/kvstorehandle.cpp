@@ -29,10 +29,8 @@ std::string KVStoreHandle::readValue(fs::path path, KeyDirEntry entry) const {
     return val;
 }
 
-void KVStoreHandle::writeRecord(fs::path path, std::ofstream& out, const Record rec) {
+void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {
         
-    rec.serialize(out);
-
     size_t fileBytes = fs::file_size(path);
     uint64_t valueByteOffset = fileBytes - rec.getValueSize();
 

@@ -37,7 +37,7 @@ class KVStoreHandle {
 
         [[nodiscard]] uint32_t readCRC(fs::path path, KeyDirEntry entry, Record rec) const;
         [[nodiscard]] std::string readValue(fs::path path, KeyDirEntry entry) const;
-        void writeRecord(fs::path path, std::ofstream& out, const Record rec);
+        void updateKeyDir(fs::path path, const Record rec);
 
         [[nodiscard]] uint32_t getActiveFileID() const;
         void updateActiveDatafileID(fs::path dataDir);
