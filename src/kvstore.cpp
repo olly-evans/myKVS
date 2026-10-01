@@ -117,6 +117,39 @@ std::vector<std::string> KVStore::listKeys(const KVStoreHandle& stH) {
     return keys;
 }
 
+void KVStore::restore(KVStoreHandle& stH) {
+
+    stH.updateActiveDatafileID(dataDir);
+    uint32_t numFiles = stH.getActiveFileID();
+
+
+    // while (numFiles > 0) {
+
+        fs::path path = createDatafilePath(numFiles, stH.getDatafileExt());
+        std::ifstream in(path, std::ios::binary | std::ios::in);
+        
+        size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t);
+
+        uint32_t keySize;
+        uint32_t valSize;
+
+        in.seekg(keySizeOffset, std::ios_base::beg);
+        in.read(reinterpret_cast<char*>(&keySize), sizeof(uint32_t)); // read 4 bytes into buf from keySizeOffset.
+        in.read(reinterpret_cast<char*>(&valSize), sizeof(uint32_t)); // read 4 bytes more should be valsize.
+
+        std::string key;
+        std::string val;
+
+    // }
+    
+    // for (const auto& df : fs::directory_iterator(dataDir)) {
+    //     df.is_regular_file();
+    // }
+
+    // 
+    // stH.writeRecord(rec);
+}
+
 /* File */
 
 fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension) const {

@@ -4,7 +4,6 @@
 
 uint32_t KVStoreHandle::readCRC(fs::path path, KeyDirEntry entry, Record rec) const {
 
-
     std::ifstream in(path, std::ios::binary | std::ios::in);
 
     uint64_t crcOffset = (entry.valFileOffset + entry.valSz) - rec.byteSize();
@@ -47,12 +46,12 @@ uint32_t KVStoreHandle::getActiveFileID() const {
     return activeFileID;
 }
 
-void KVStoreHandle::updateActiveDatafileID(std::filesystem::path dataDir) {
+void KVStoreHandle::updateActiveDatafileID(fs::path dataDir) {
 
     uint32_t maxID = 0;
     bool found = false;
 
-    for (const auto& datafile : std::filesystem::directory_iterator(dataDir)) {
+    for (const auto& datafile : fs::directory_iterator(dataDir)) {
         
         if (datafile.path().extension() == datafileExtension) {
             uint32_t currentID = std::stoul(datafile.path().stem().stem().string());
@@ -71,12 +70,12 @@ void KVStoreHandle::setMaxDatafileBytes(size_t maxBytes) {
     maxDatafileBytes = maxBytes;
 }
 
-std::filesystem::path KVStoreHandle::getAbsDirPath() const {
+fs::path KVStoreHandle::getAbsDirPath() const {
     return absDirPath;
 }
 
 void KVStoreHandle::setAbsDirPath() {
-    absDirPath = std::filesystem::path(WORKING_DIRECTORY);
+    absDirPath = fs::path(WORKING_DIRECTORY);
 }
 
 std::string KVStoreHandle::getDatafileExt() const {

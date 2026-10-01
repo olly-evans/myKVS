@@ -31,6 +31,8 @@ class KVStore {
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
         std::optional<std::string> get(const KVStoreHandle& stH, const std::string key);
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
+        void restore(KVStoreHandle& stH);
+
 
         /* File */
 
