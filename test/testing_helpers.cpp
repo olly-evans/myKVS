@@ -2,8 +2,7 @@
 
 fs::path createTempTestDir(std::string dirName) {
     fs::path src = TEST_ROOT;
-    std::string testDir = "test/" + dirName;
-    fs::path path = src / testDir;
+    fs::path path = src / dirName;
     fs::create_directories(path);
     return path;
 }
