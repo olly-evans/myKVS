@@ -10,7 +10,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 find_package(Threads REQUIRED)
 
-file(GLOB_RECURSE TESTS "${CMAKE_SOURCE_DIR}/test/*.cpp")
+file(GLOB_RECURSE TESTS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 add_executable(tests ${TESTS})
 
 target_include_directories(tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_include)
