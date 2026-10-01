@@ -10,8 +10,9 @@ struct TempDirGuard {
     }
 };
 
+// NAME
 struct KVStoreTestAccess {
-    static auto& keyDir(KVStore& kvs) { return kvs.keyDir; }
+    static auto& keyDir(KVStoreHandle& stH) { return stH.keyDir; }
 };
 
 fs::path createTempTestDir(std::string dirName);

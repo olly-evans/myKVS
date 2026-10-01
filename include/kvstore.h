@@ -21,13 +21,6 @@ struct StoreFlags {
     std::string datafileExtension;
 };
 
-struct KeyDirEntry {
-    uint32_t fileID;
-    uint32_t valSz;
-    uint64_t valFileOffset;
-    uint64_t tstamp;
-};
-
 struct KVStoreTestAccess;
 
 class KVStore {
@@ -41,9 +34,9 @@ class KVStore {
         KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
         std::optional<std::string> get(const KVStoreHandle& stH, const std::string key);
-        std::vector<std::string> listKeys();
+        std::vector<std::string> listKeys(const KVStoreHandle& stH);
 
-        void putRecord(const Record rec, const uint32_t datafileID);
+        void putRecord(KVStoreHandle& stH, const Record rec);
 
         /* File */
 
@@ -75,7 +68,7 @@ class KVStore {
         fs::path activeDatafilePath;
         std::ofstream activeFilestream;
 
-        std::unordered_map<std::string, KeyDirEntry> keyDir;
+        // std::unordered_map<std::string, KeyDirEntry> keyDir;
 
         std::shared_mutex writeMutex;
         std::shared_mutex readMutex;
@@ -83,5 +76,5 @@ class KVStore {
     private:
 
         /* Testing */
-        friend struct KVStoreTestAccess;   
+        // friend struct KVStoreTestAccess;   
 };

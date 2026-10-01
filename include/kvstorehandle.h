@@ -1,8 +1,18 @@
 #pragma once
 
 #include <filesystem>
+#include <unordered_map>
+
+struct KeyDirEntry {
+    uint32_t fileID;
+    uint32_t valSz;
+    uint64_t valFileOffset;
+    uint64_t tstamp;
+};
 
 class KVStoreHandle {
+    friend class KVStore;
+
     private:
         uint32_t activeFileID;
         size_t maxDatafileBytes;
@@ -11,7 +21,8 @@ class KVStoreHandle {
         std::string datafileExtension;
 
         bool readWrite;
-        // hash table pointer.
+
+        std::unordered_map<std::string, KeyDirEntry> keyDir;
 
     public:
         // KVStoreHandle(mutex.lock());
@@ -32,4 +43,8 @@ class KVStoreHandle {
         [[nodiscard]] bool getReadWrite() const;
         void setReadWrite(bool readWrite);
 
+    private:
+
+        /* Testing */
+        friend struct KVStoreTestAccess;
 };

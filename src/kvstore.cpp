@@ -66,7 +66,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < stH.getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
-        putRecord(rec, stH.getActiveFileID());
+        putRecord(stH, rec);
         return;
     } 
 
@@ -77,7 +77,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     rollOverDatafile(stH);
     stH.updateActiveDatafileID(dataDir);
     
-    putRecord(rec, stH.getActiveFileID());    
+    putRecord(stH, rec);    
 }
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
@@ -85,8 +85,8 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     /* Seperate filestream in get than put. */
     std::shared_lock<std::shared_mutex> lock(readMutex);
 
-    auto it = keyDir.find(key);
-    if (it == keyDir.end()) {
+    auto it = stH.keyDir.find(key);
+    if (it == stH.keyDir.end()) {
         return std::nullopt;
     }
 
@@ -104,19 +104,19 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     return valbuf;
 }
 
-std::vector<std::string> KVStore::listKeys() {
+std::vector<std::string> KVStore::listKeys(const KVStoreHandle& stH) {
 
     std::vector<std::string> keys;
-    keys.reserve(keyDir.size());
+    keys.reserve(stH.keyDir.size());
 
-    for (const auto& entry : keyDir) {
+    for (const auto& entry : stH.keyDir) {
         keys.push_back(entry.first);
     }
 
     return keys;
 }
 
-void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
+void KVStore::putRecord(KVStoreHandle& stH, const Record rec) {
         
     rec.serialize(activeFilestream);
 
@@ -124,7 +124,7 @@ void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
     uint64_t valueByteOffset = fileBytes - rec.getValueSize();
 
     // This operator behaves funnily but forgot how.
-    keyDir[rec.getKey()] = KeyDirEntry{datafileID,
+    stH.keyDir[rec.getKey()] = KeyDirEntry{stH.getActiveFileID(),
                                        rec.getValueSize(),
                                        valueByteOffset,
                                        rec.getTimestamp()};
@@ -132,7 +132,7 @@ void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
     std::cout << "Successfully serialized data to "   <<
                   activeDatafilePath.filename()       <<
                  "\nKeyDir entries is: "              << 
-                  keyDir.size()                       <<
+                  stH.keyDir.size()                   <<
                   std::endl;
 }
 

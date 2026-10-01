@@ -21,9 +21,9 @@ TEST_CASE("KVStoreHandle sets the max datafile bytes.", "KVStoreHandle::setMaxDa
 
 TEST_CASE("KVStoreHandle sets read/write permissions for the store.", "KVStoreHandle::setReadWrite()") {
     KVStoreHandle stH;
-
     bool readWrite = true;
     stH.setReadWrite(readWrite);
+
     REQUIRE(stH.getReadWrite() == readWrite);
 }
 

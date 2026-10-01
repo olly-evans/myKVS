@@ -38,7 +38,7 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
         kvs.put(stH, std::to_string(i), std::to_string(i));
     }
     
-    REQUIRE(KVStoreTestAccess::keyDir(kvs).size() == numPuts);
+    REQUIRE(KVStoreTestAccess::keyDir(stH).size() == numPuts);
 
     for (uint64_t i = 0; i < numPuts; i++) {
 
@@ -63,7 +63,7 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     KVStoreHandle stH = kvs.open(dataDir, flags);
     kvs.put(stH, "key", "val");
    
-    KeyDirEntry entry = KVStoreTestAccess::keyDir(kvs).at("key");
+    KeyDirEntry entry = KVStoreTestAccess::keyDir(stH).at("key");
 
     std::optional<std::string> noncorruptval = kvs.get(stH, "key");
 
