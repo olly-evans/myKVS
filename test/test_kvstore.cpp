@@ -8,63 +8,6 @@
 
 namespace fs = std::filesystem;
 
-// test_header
-
-
-void test_open_new_store(fs::path dir) {
-
-    KVStore kvs;
-    StoreFlags flags;
-
-    flags.datafileExtension = ".data";
-    KVStoreHandle stH = kvs.open(dir, flags);
-
-    assert(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
-    assert(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
-    assert(kvs.getActiveFilestream().good());       /* No error state in stream. */
-    assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
-
-    assert(stH.getActiveFileID() == 0);             /* No puts so id should default to zero. */
-
-    assert(kvs.getActiveDatafilePath() == 
-           dir / "0.aol.data");
-}
-
-void test_open_existing_store(fs::path dir) {
-    
-    KVStore kvs;
-
-    fs::path mFilePath1 = dir / "1.aol.log";
-    std::ofstream mockFile1(mFilePath1);
-    mockFile1.close();
-
-    fs::path mFilePath2 = dir / "2.aol.log";
-    std::ofstream mockFile2(mFilePath2);
-    mockFile2.close();
-
-    fs::path mFilePath3 = dir / "3.aol.log";
-    std::ofstream mockFile3(mFilePath3);
-    mockFile3.close();
-    
-    StoreFlags flags;
-    flags.datafileExtension = ".log";
-    KVStoreHandle stH = kvs.open(dir, flags);
-
-    assert(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
-    assert(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
-    assert(kvs.getActiveFilestream().good());       /* No error state in stream. */
-    assert(kvs.getActiveFilestream().is_open());    /* File should be open. */
-
-    assert(stH.getActiveFileID() == 3);           
-    assert(kvs.getActiveDatafilePath() == 
-           dir / "3.aol.log");
-    
-    
-    fs::remove(mFilePath1);
-    fs::remove(mFilePath2);
-    fs::remove(mFilePath3);
-}
-
 /* Perhaps make a test flag where we write in hex to check against. */
 
 void test_put(fs::path dir) {

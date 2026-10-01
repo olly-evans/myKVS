@@ -26,7 +26,10 @@ struct KeyDirEntry {
     uint64_t tstamp;
 };
 
+struct KVStoreTestAccess;
+
 class KVStore {
+    friend struct KVStoreTestAccess;
 
     public:
         // KVStore();
@@ -68,14 +71,4 @@ class KVStore {
         std::unordered_map<std::string, KeyDirEntry> keyDir;
 
         std::mutex putMut;
-
-    public:
-
-        /* Testing */
-        
-        friend void test_put(fs::path dir);
-        friend void test_put_threads(fs::path dir);
-        friend void test_get_corrupt_data(fs::path dir);
-
-
 };
