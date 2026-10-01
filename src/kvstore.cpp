@@ -39,7 +39,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
 void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string val) {
 
-    std::lock_guard<std::mutex> lock(putMut);
+    std::lock_guard<std::mutex> lock(stMutex);
 
     if (!fs::exists(dataDir)) {
         std::cout << "[WARNING] You must open a store before using put." << std::endl;
@@ -82,7 +82,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
-    // mutex, perhaps just kvstore one used in both get and put.
+    std::lock_guard<std::mutex> lock(stMutex);
 
     std::ifstream readDatafileStream(getActiveDatafilePath(), std::ios::binary | std::ios::in);
 

@@ -71,10 +71,10 @@ class KVStore {
 
         std::unordered_map<std::string, KeyDirEntry> keyDir;
 
-        std::mutex putMut;
+        std::mutex stMutex;
 
     private:
-        friend struct KVStoreTestAccess;
 
-        
+        /* Testing */
+        friend struct KVStoreTestAccess;   
 };
