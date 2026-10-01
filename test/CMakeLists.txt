@@ -10,7 +10,8 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 find_package(Threads REQUIRED)
 
-add_executable(tests test_open.cpp test_put.cpp test_get.cpp test_kvstorehandle.cpp test_record.cpp testing_helpers.cpp)
+file(GLOB_RECURSE TESTS "${CMAKE_SOURCE_DIR}/test/*.cpp")
+add_executable(tests ${TESTS})
 
 target_link_libraries(tests PRIVATE
     app_lib
