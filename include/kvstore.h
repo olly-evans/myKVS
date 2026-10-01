@@ -75,5 +75,7 @@ class KVStore {
         
         friend void test_put(fs::path dir);
         friend void test_put_threads(fs::path dir);
+        friend void test_get_corrupt_data(fs::path dir);
+
 
 };

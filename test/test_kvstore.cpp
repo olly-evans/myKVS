@@ -185,12 +185,38 @@ void test_get(fs::path dir) {
 
     Record rec("key", "val");
 
-    // assert(rec.getCRC32() == data->second);
-
     assert(val.has_value());
     assert(val.value() == "val");
 
     fs::remove(dir / "0.aol.data");
+}
+
+void test_get_corrupt_data(fs::path dir) {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    KVStoreHandle stH = kvs.open(dir, flags);
+    kvs.put(stH, "key", "val");
+   
+    KeyDirEntry entry = kvs.keyDir.at("key");
+
+
+    // overwritedataonpurpose
+    kvs.getActiveFilestream().seekp(entry.valFileOffset, std::ios_base::beg);
+    char corrupted = 'X';
+    kvs.getActiveFilestream().write(&corrupted, 1);
+    kvs.getActiveFilestream().flush();
+
+    std::optional<std::string> val = kvs.get(stH, "key");
+
+    assert(val == std::nullopt); 
+
+    fs::remove(dir / "0.aol.data");
+}
+
+void test_get_key_collision() {
+    return;
 }
 
 int main() {
@@ -212,7 +238,7 @@ int main() {
     test_put_threads(testDataDir);
 
     test_get(testDataDir);
-
-
+    test_get_corrupt_data(testDataDir);
+    
     return 0;
 }

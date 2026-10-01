@@ -1,6 +1,7 @@
 #include "record.h"
 
 #include <assert.h>
+#include <iostream>
 
 void test_record_constructor() {
 
@@ -22,7 +23,7 @@ void test_record_constructor() {
     assert(!rec.getValue().empty());    /* Constructor should set value. */
     assert(rec.getValueSize());         /* Constructor should set valueSize. */
 
-    // Equal CRC using setCRC32() twice.
+    // Equal CRC using setCRC32() twice on same data.
     rec.setCRC32();
     uint32_t first = rec.getCRC32();
 
@@ -32,10 +33,25 @@ void test_record_constructor() {
     assert(first == second);            /* CRC should be equal for same data (const timestamp). */
 }
 
+void test_record_crc() {
+
+    Record a("key", "val");
+    Record b("key", "Xal");
+
+    a.setTimestamp(100);
+    b.setTimestamp(100);
+
+    a.setCRC32();
+    b.setCRC32();
+
+    assert(a.getCRC32() != b.getCRC32());
+}
+
 /* test for crc where we put and get and compare crc vals for same data. */
 
 int main() {
 
     test_record_constructor();
+    test_record_crc();
     return 0;
 }

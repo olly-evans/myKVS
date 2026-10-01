@@ -2,10 +2,10 @@
 - Why is crc for same data giving different values on repeated execution?
 - setActiveDatafile() needs to take flags for read/write.
 - How to handle collisions in hash table.
-- Do I need an activeFilestream for puts?.
+- Do I need an activeFilestream for puts?
 
 - INPUT AND OUTPUT FILESTREAM, ONE AT A TIME. LOCKED PERHAPS IDK.
 
-- remove testing boilerplate into main, test_kvstore.
+- remove testing boilerplate into main, test_kvstore, think when we open a store we
 
 - what if user opens an existing store but changes the max filesize?
