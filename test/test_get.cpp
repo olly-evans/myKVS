@@ -22,12 +22,42 @@ TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
     REQUIRE(val.value() == "val");
 }
 
-TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
+TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
     
     KVStore kvs;
     StoreFlags flags;
 
     fs::path dataDir = createTempTestDir("test_get_2/");
+    TempDirGuard cleanup{dataDir};
+
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+
+    uint64_t numPuts = 64;
+
+    for (uint64_t i = 0; i < numPuts; i++) {
+        kvs.put(stH, std::to_string(i), std::to_string(i));
+    }
+    
+    REQUIRE(KVStoreTestAccess::keyDir(kvs).size() == numPuts);
+
+    for (uint64_t i = 0; i < numPuts; i++) {
+
+        std::string key = std::to_string(i);
+        std::optional<std::string> val = kvs.get(stH, key);
+        Record rec(key, val.value());
+
+        REQUIRE(val != std::nullopt);
+        REQUIRE(key == val);
+    }
+
+}
+
+TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    fs::path dataDir = createTempTestDir("test_get_3/");
     TempDirGuard cleanup{dataDir};
 
     KVStoreHandle stH = kvs.open(dataDir, flags);

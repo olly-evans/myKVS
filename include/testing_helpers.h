@@ -2,8 +2,6 @@
 
 #include "kvstore.h"
 
-#include <filesystem>
-
 namespace fs = std::filesystem;
 
 struct TempDirGuard {
