@@ -6,7 +6,7 @@ uint32_t KVStoreHandle::getActiveFileID() const {
     return activeFileID;
 }
 
-void KVStoreHandle::updateActiveFileID(std::filesystem::path dataDir) {
+void KVStoreHandle::updateActiveDatafileID(std::filesystem::path dataDir) {
 
     uint32_t maxID = 0;
     bool found = false;

@@ -1,8 +1,6 @@
 #include "kvstorehandle.h"
 #include "testing_helpers.h"
 
-#include <fstream>
-#include <iostream>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("KVStoreHandle sets the absolute directory") {
@@ -10,14 +8,38 @@ TEST_CASE("KVStoreHandle sets the absolute directory") {
     KVStoreHandle stH;
     stH.setAbsDirPath();
 
-    REQUIRE(std::filesystem::exists(stH.getAbsDirPath()));
+    REQUIRE(fs::exists(stH.getAbsDirPath()));
+}
+
+TEST_CASE("KVStoreHandle sets the max datafile bytes.", "KVStoreHandle::setMaxDatafileBytes()") {
+    KVStoreHandle stH;
+
+    size_t bytes = 3;
+    stH.setMaxDatafileBytes(bytes);
+    REQUIRE(stH.getMaxDatafileBytes() == bytes);
+}
+
+TEST_CASE("KVStoreHandle sets read/write permissions for the store.", "KVStoreHandle::setReadWrite()") {
+    KVStoreHandle stH;
+
+    bool readWrite = true;
+    stH.setReadWrite(readWrite);
+    REQUIRE(stH.getReadWrite() == readWrite);
+}
+
+TEST_CASE("KVStoreHandle sets a datafile extension for the store", "setDatafileExt()") {
+    
+    KVStoreHandle stH;
+    stH.setDatafileExt(".data");
+
+    REQUIRE(stH.getDatafileExt() == ".data");
 }
 
 TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActiveFileID()") {
 
     KVStoreHandle stH;
 
-    fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
+    fs::path dataDir = createTempTestDir("test_kvstorehandle_5");
     TempDirGuard cleanup{dataDir};
 
     stH.setDatafileExt(".data"); // Only have default extension if KVStore::open ran.
@@ -27,15 +49,7 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
     std::ofstream mockFile2 (dataDir / "5.aol.data");
     mockFile2.close();
 
-    stH.updateActiveFileID(dataDir);
+    stH.updateActiveDatafileID(dataDir);
 
     REQUIRE(stH.getActiveFileID() == 5);
-}
-
-TEST_CASE("KVStoreHandle sets a datafile extension for the store", "setDatafileExt()") {
-    
-    KVStoreHandle stH;
-    stH.setDatafileExt(".data");
-
-    REQUIRE(stH.getDatafileExt() == ".data");
 }

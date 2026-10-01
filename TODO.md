@@ -9,3 +9,5 @@
 - remove testing boilerplate into main, test_kvstore, think when we open a store we
 
 - what if user opens an existing store but changes the max filesize?
+
+- Make a testing branch.

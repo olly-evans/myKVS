@@ -18,7 +18,7 @@ class KVStoreHandle {
         // ~KVStoreHandle();
 
         [[nodiscard]] uint32_t getActiveFileID() const;
-        void updateActiveFileID(std::filesystem::path dataDir);
+        void updateActiveDatafileID(std::filesystem::path dataDir);
 
         [[nodiscard]] size_t getMaxDatafileBytes() const;
         void setMaxDatafileBytes(size_t maxBytes);

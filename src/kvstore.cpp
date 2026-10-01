@@ -25,7 +25,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
         stH.setDatafileExt(".data");
 
     // Get the active datafiles ID (highest filename) in dataDir.
-    stH.updateActiveFileID(dataDir); 
+    stH.updateActiveDatafileID(dataDir); 
 
     fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
     
@@ -75,7 +75,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     std::cout << "Datafile full, rolling-over..." << std::endl;
 
     rollOverDatafile(stH);
-    stH.updateActiveFileID(dataDir);
+    stH.updateActiveDatafileID(dataDir);
     
     putRecord(rec, stH.getActiveFileID());    
 }
