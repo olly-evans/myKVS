@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <unordered_map>
 #include <mutex>
 #include <shared_mutex>
@@ -32,8 +31,6 @@ class KVStore {
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
         std::optional<std::string> get(const KVStoreHandle& stH, const std::string key);
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
-
-        void putRecord(KVStoreHandle& stH, const Record rec);
 
         /* File */
 

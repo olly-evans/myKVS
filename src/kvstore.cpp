@@ -66,18 +66,16 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < stH.getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
-        putRecord(stH, rec);
+        stH.putRecord(activeDatafilePath, activeFilestream, rec);
         return;
     } 
-
-    // if its greater, make the new file and write. overlap is stupid and error prone.
 
     std::cout << "Datafile full, rolling-over..." << std::endl;
 
     rollOverDatafile(stH);
     stH.updateActiveDatafileID(dataDir);
     
-    putRecord(stH, rec);    
+    stH.putRecord(activeDatafilePath, activeFilestream, rec);    
 }
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
@@ -117,26 +115,6 @@ std::vector<std::string> KVStore::listKeys(const KVStoreHandle& stH) {
     }
 
     return keys;
-}
-
-void KVStore::putRecord(KVStoreHandle& stH, const Record rec) {
-        
-    rec.serialize(activeFilestream);
-
-    size_t fileBytes = fs::file_size(activeDatafilePath);
-    uint64_t valueByteOffset = fileBytes - rec.getValueSize();
-
-    // This operator behaves funnily but forgot how.
-    stH.keyDir[rec.getKey()] = KeyDirEntry{stH.getActiveFileID(),
-                                       rec.getValueSize(),
-                                       valueByteOffset,
-                                       rec.getTimestamp()};
-    
-    std::cout << "Successfully serialized data to "   <<
-                  activeDatafilePath.filename()       <<
-                 "\nKeyDir entries is: "              << 
-                  stH.keyDir.size()                   <<
-                  std::endl;
 }
 
 /* File */

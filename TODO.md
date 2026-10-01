@@ -8,7 +8,7 @@
 
 - remove testing boilerplate into main, test_kvstore, think when we open a store we
 
-- what if user opens an existing store but changes the max filesize?
+- what if user opens an existing store but changes the max filesize? reading from a file isnt always accurate as if a file is too big for the next write we roll-over and write to the next file which means the number of bytes in a full file will rarely be the actual max byte size. Perhaps we store a json or something in our datadir with some metadata, this probably solves multiple problems too.
 
 - Make a testing branch.
 
