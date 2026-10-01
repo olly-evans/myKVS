@@ -86,6 +86,3 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     REQUIRE(noncorruptval == "val");        /* Before corruption read should be original value, "val" */
 }
 
-TEST_CASE("Get responds appropriately to a key collision in the keydir", "KVStore::get()") {
-    return;
-}

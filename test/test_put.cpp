@@ -107,7 +107,35 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
 
     REQUIRE(fs::exists(oldDatafilePath)); /* Old path exists as read-only. */
     REQUIRE(fs::file_size(oldDatafilePath) < stH.getMaxDatafileBytes()); /* Less than max size. */   
+}
 
-    fs::remove(dataDir / "0.rol.data");
-    fs::remove(dataDir / "1.aol.data");
+TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStore::put()") {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    fs::path dataDir = createTempTestDir("test_get_4/");
+    TempDirGuard cleanup(dataDir);
+
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+
+    std::string k = "key";
+    std::string v = "value";
+    std::string newv = "newvalue";
+
+    kvs.put(stH, k, v);
+    kvs.put(stH, k, newv);
+
+    KeyDirEntry entry = KVStoreTestAccess::keyDir(kvs).at("key");
+
+    Record rec1(k, v);
+    Record rec2(k, newv);
+    
+    size_t expectedDatafileSize = rec1.byteSize() + rec2.byteSize();
+    REQUIRE(fs::file_size(kvs.getActiveDatafilePath()) == expectedDatafileSize);
+
+    REQUIRE(entry.valSz == 8);
+    REQUIRE(KVStoreTestAccess::keyDir(kvs).size() == 1);
+
+    REQUIRE(kvs.get(stH, k) == newv);
 }
