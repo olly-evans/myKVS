@@ -39,7 +39,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
 void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string val) {
 
-    std::lock_guard<std::mutex> lock(stMutex);
+    std::unique_lock<std::shared_mutex> lock(writeMutex);
 
     if (!fs::exists(dataDir)) {
         std::cout << "[WARNING] You must open a store before using put." << std::endl;
@@ -82,9 +82,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
-    std::lock_guard<std::mutex> lock(stMutex);
-
-    std::ifstream readDatafileStream(getActiveDatafilePath(), std::ios::binary | std::ios::in);
+    /* Seperate filestream in get than put. */
+    std::shared_lock<std::shared_mutex> lock(readMutex);
 
     auto it = keyDir.find(key);
     if (it == keyDir.end()) {
@@ -93,26 +92,15 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
 
     KeyDirEntry entry = it->second;
 
-    readDatafileStream.seekg(entry.valFileOffset, std::ios_base::beg);
-    std::string valbuf(entry.valSz, '\0');
-    readDatafileStream.read(valbuf.data(), entry.valSz);
+    /* Seperate filestreams opened for readCRC() and readValue(). */
+    std::string valbuf = readValue(entry, stH.getDatafileExt());
 
     Record rec(key, valbuf); 
+    size_t crcDisk = readCRC(entry, rec, stH.getDatafileExt());
 
-    // kvs.readCRC();
-    size_t recBytes = rec.byteSize();
-    uint64_t crcOffset = (entry.valFileOffset + entry.valSz) - recBytes;
-
-    readDatafileStream.seekg(crcOffset, std::ios_base::beg);
-    uint32_t crcFromDisk;
-    readDatafileStream.read(reinterpret_cast<char*>(&crcFromDisk), sizeof(crcFromDisk));
-
-    std::cout << valbuf << "\n";
-    if (rec.getCRC32() != crcFromDisk)
-        return std::nullopt;
+    if (rec.getCRC32() != crcDisk)
+        return std::nullopt; /* Recommend deleting key {key} */
     
-    readDatafileStream.close();
-
     return valbuf;
 }
 
@@ -150,12 +138,11 @@ void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
 
 /* File */
 
-fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension) {
+fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension) const {
     
     std::string strID = std::to_string(fileID);
     fs::path appendOnlyDatafileExtension(strID + ".aol" + fileExtension);
-    activeDatafilePath = dataDir / appendOnlyDatafileExtension;
-    return activeDatafilePath;
+    return dataDir / appendOnlyDatafileExtension;
 }
 
 void KVStore::setActiveDatafile(const fs::path path, const bool readWrite) {
@@ -225,4 +212,34 @@ void KVStore::setActiveDatafilePath(fs::path path) {
 
 fs::path KVStore::getActiveDatafilePath() const {
     return activeDatafilePath;
+}
+
+uint32_t KVStore::readCRC(KeyDirEntry entry, Record rec, std::string fileExtension) const {
+
+    fs::path readPath = createDatafilePath(entry.fileID, fileExtension);
+
+    std::ifstream in(readPath, std::ios::binary | std::ios::in);
+
+    uint64_t crcOffset = (entry.valFileOffset + entry.valSz) - rec.byteSize();
+
+    in.seekg(crcOffset, std::ios_base::beg);
+
+    uint32_t crcFromDisk;
+    in.read(reinterpret_cast<char*>(&crcFromDisk), sizeof(crcFromDisk));
+    in.close();
+
+    return crcFromDisk;
+}
+
+std::string KVStore::readValue(KeyDirEntry entry, std::string fileExtension) const {
+    
+    fs::path readPath = createDatafilePath(entry.fileID, fileExtension);
+    std::ifstream in(readPath, std::ios::binary | std::ios::in);
+
+    in.seekg(entry.valFileOffset, std::ios_base::beg);
+    std::string val(entry.valSz, '\0');
+    in.read(val.data(), entry.valSz);
+    in.close();
+
+    return val;
 }

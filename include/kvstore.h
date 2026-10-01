@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <mutex>
+#include <shared_mutex>
 #include <optional> 
 #include <vector>
 
@@ -46,11 +47,16 @@ class KVStore {
 
         /* File */
 
-        [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension);
+        [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension) const;
 
         void setActiveDatafile(const fs::path path, const bool readWrite);
         void rollOverDatafile(const KVStoreHandle& stH);
         void makeDatafileReadOnly(fs::path path);
+
+        /* Reading */
+
+        [[nodiscard]] uint32_t readCRC(KeyDirEntry entry, Record rec, std::string fileExtension) const;
+        [[nodiscard]] std::string readValue(KeyDirEntry entry, std::string fileExtension) const;
 
         /* Getters/Setters */
 
@@ -71,7 +77,8 @@ class KVStore {
 
         std::unordered_map<std::string, KeyDirEntry> keyDir;
 
-        std::mutex stMutex;
+        std::shared_mutex writeMutex;
+        std::shared_mutex readMutex;
 
     private:
 

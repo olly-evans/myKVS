@@ -11,3 +11,5 @@
 - what if user opens an existing store but changes the max filesize?
 
 - Make a testing branch.
+
+- Make two instances and run on the same directory.
