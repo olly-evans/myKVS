@@ -8,7 +8,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 add_compile_options(-g -O0 -Wall)
-add_compile_definitions(SOURCE_ROOT="${CMAKE_SOURCE_DIR}")
+add_compile_definitions(WORKING_DIRECTORY="${CMAKE_SOURCE_DIR}")
+add_compile_definitions(TEST_ROOT="${CMAKE_SOURCE_DIR}/test/")
+
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 list(REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)

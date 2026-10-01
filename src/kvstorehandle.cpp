@@ -35,7 +35,7 @@ std::filesystem::path KVStoreHandle::getAbsDirPath() const {
 }
 
 void KVStoreHandle::setAbsDirPath() {
-    absDirPath = std::filesystem::path(SOURCE_ROOT);
+    absDirPath = std::filesystem::path(WORKING_DIRECTORY);
 }
 
 std::string KVStoreHandle::getDatafileExt() const {
