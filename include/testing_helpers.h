@@ -11,3 +11,5 @@ struct TempDirCleanup {
         fs::remove_all(dir, ec); 
     }
 };
+
+fs::path createTempTestDir(std::string dirName);

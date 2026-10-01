@@ -8,17 +8,18 @@ uint32_t KVStoreHandle::getActiveFileID() const {
 
 void KVStoreHandle::updateActiveFileID(std::filesystem::path dataDir) {
 
+    std::cout << dataDir << "\n";
     uint32_t maxID = 0;
     bool found = false;
 
     for (const auto& datafile : std::filesystem::directory_iterator(dataDir)) {
+        
         if (datafile.path().extension() == datafileExtension) {
-            uint32_t currentID = std::stoul(datafile.path().stem().string());
+            uint32_t currentID = std::stoul(datafile.path().stem().stem().string());
             maxID = std::max(maxID, currentID);
             found = true;
         }
     }
-
     activeFileID = found ? maxID : 0;
 }
 

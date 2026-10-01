@@ -10,7 +10,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 find_package(Threads REQUIRED)
 
-add_executable(tests test_kvstore.cpp test_kvstorehandle.cpp test_record.cpp)    # your test file(s)
+add_executable(tests test_open.cpp test_kvstorehandle.cpp test_record.cpp testing_helpers.cpp)
 
 target_link_libraries(tests PRIVATE
     app_lib

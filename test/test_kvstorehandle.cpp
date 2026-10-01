@@ -1,7 +1,9 @@
 #include "kvstorehandle.h"
-#include <catch2/catch_test_macros.hpp>
+#include "testing_helpers.h"
 
 #include <fstream>
+#include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("KVStoreHandle sets the absolute directory") {
 
@@ -15,10 +17,10 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
     KVStoreHandle stH;
 
-    std::filesystem::path path = SOURCE_ROOT;
-    std::filesystem::path dataDir = path / "test_data/";
-    std::filesystem::create_directories(dataDir);
+    fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
+    TempDirCleanup cleanup{dataDir};
 
+    stH.setDatafileExt(".data"); // Only have default extension if KVStore::open ran.
     std::ofstream mockFile1 (dataDir / "0.aol.data");
     mockFile1.close();
 
@@ -28,8 +30,6 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
     stH.updateActiveFileID(dataDir);
 
     REQUIRE(stH.getActiveFileID() == 5);
-
-    std::filesystem::remove_all(dataDir);
 }
 
 TEST_CASE("KVStoreHandle sets a datafile extension for the store", "setDatafileExt()") {
