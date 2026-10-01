@@ -97,7 +97,6 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     std::string valbuf(entry.valSz, '\0');
     readDatafileStream.read(valbuf.data(), entry.valSz);
 
-    std::cout << valbuf << "\n";
     Record rec(key, valbuf); 
 
     // kvs.readCRC();
@@ -108,8 +107,7 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     uint32_t crcFromDisk;
     readDatafileStream.read(reinterpret_cast<char*>(&crcFromDisk), sizeof(crcFromDisk));
 
-    std::cout << rec.getCRC32() << "\n" << crcFromDisk << "\n";
-
+    std::cout << valbuf << "\n";
     if (rec.getCRC32() != crcFromDisk)
         return std::nullopt;
     

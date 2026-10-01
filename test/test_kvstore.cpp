@@ -201,16 +201,25 @@ void test_get_corrupt_data(fs::path dir) {
    
     KeyDirEntry entry = kvs.keyDir.at("key");
 
+    std::optional<std::string> noncorruptval = kvs.get(stH, "key");
 
-    // overwritedataonpurpose
-    kvs.getActiveFilestream().seekp(entry.valFileOffset, std::ios_base::beg);
-    char corrupted = 'X';
-    kvs.getActiveFilestream().write(&corrupted, 1);
-    kvs.getActiveFilestream().flush();
+    std::string corrupt = "Xp";
 
-    std::optional<std::string> val = kvs.get(stH, "key");
+    // std::ios::out on its own usually means a new file hence it truncates. Need std::ios::in too.
+    std::ofstream f(kvs.getActiveDatafilePath(), std::ios::in  | 
+                                                 std::ios::out | 
+                                                 std::ios::binary);
 
-    assert(val == std::nullopt); 
+    f.seekp(entry.valFileOffset, std::ios_base::beg);
+    f.write(corrupt.data(), 2);
+    f.close();
+
+    std::optional<std::string> corruptval = kvs.get(stH, "key");
+
+    assert(corruptval == std::nullopt);    /* val being std::nullopt after corruption implies computed and 
+                                              read crc values are different, desired. */
+
+    assert(noncorruptval == "val");        /* Before corruption read should be original value, "val" */
 
     fs::remove(dir / "0.aol.data");
 }
