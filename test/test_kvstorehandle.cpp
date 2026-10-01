@@ -2,49 +2,41 @@
 #include <fstream>
 
 #include "kvstorehandle.h"
+#include <catch2/catch_test_macros.hpp>
 
-void test_kvshandle_sets_absolute_directory() {
+TEST_CASE("KVStoreHandle sets the absolute directory") {
 
     KVStoreHandle stH;
     stH.setAbsDirPath();
 
-    assert(std::filesystem::exists(stH.getAbsDirPath()));
+    REQUIRE(std::filesystem::exists(stH.getAbsDirPath()));
 }
 
-void test_kvshandle_sets_activefile_id() {
+TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActiveFileID()") {
 
     KVStoreHandle stH;
-    stH.setDatafileExt(".log");
 
     std::filesystem::path path = SOURCE_ROOT;
     std::filesystem::path dataDir = path / "test_data/";
     std::filesystem::create_directories(dataDir);
 
-    std::ofstream mockFile1 (dataDir / "0.log");
+    std::ofstream mockFile1 (dataDir / "0.aol.data");
     mockFile1.close();
 
-    std::ofstream mockFile2 (dataDir / "5.log");
+    std::ofstream mockFile2 (dataDir / "5.aol.data");
     mockFile2.close();
 
     stH.updateActiveFileID(dataDir);
 
-    assert(stH.getActiveFileID() == 5);
+    REQUIRE(stH.getActiveFileID() == 5);
 
     std::filesystem::remove_all(dataDir);
 }
 
-void test_kvshandle_set_datafile_ext() {
+TEST_CASE("KVStoreHandle sets a datafile extension for the store", "setDatafileExt()") {
     
     KVStoreHandle stH;
     stH.setDatafileExt(".data");
 
-    assert(stH.getDatafileExt() == ".data");
-}
-int main() {
-
-    test_kvshandle_sets_absolute_directory();
-    test_kvshandle_sets_activefile_id();
-    test_kvshandle_set_datafile_ext();
-    
-    return 0;
+    REQUIRE(stH.getDatafileExt() == ".data");
 }
