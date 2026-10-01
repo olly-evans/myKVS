@@ -141,11 +141,11 @@ void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
                                        valueByteOffset,
                                        rec.getTimestamp()};
     
-    std::cout << "Successfully serialized data to "   << 
-                    activeDatafilePath.filename()     <<
-                    "\nKeyDir entries is: "           << 
-                    keyDir.size()                     <<
-                    std::endl;
+    std::cout << "Successfully serialized data to "   <<
+                  activeDatafilePath.filename()       <<
+                 "\nKeyDir entries is: "              << 
+                  keyDir.size()                       <<
+                  std::endl;
 }
 
 /* File */
@@ -156,7 +156,6 @@ fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension)
     fs::path appendOnlyDatafileExtension(strID + ".aol" + fileExtension);
     activeDatafilePath = dataDir / appendOnlyDatafileExtension;
     return activeDatafilePath;
-
 }
 
 void KVStore::setActiveDatafile(const fs::path path, const bool readWrite) {

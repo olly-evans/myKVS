@@ -139,3 +139,22 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
 
     REQUIRE(kvs.get(stH, k) == newv);
 }
+
+TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    fs::path dataDir = createTempTestDir("test_get_4/");
+    TempDirGuard cleanup(dataDir);
+
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+
+    uint64_t putNum = 32;
+    for (uint64_t i = 0; i < putNum; i++) {
+        kvs.put(stH, std::to_string(i), std::to_string(i));
+    }
+
+    std::vector<std::string> keys = kvs.listKeys();
+    REQUIRE(keys.size() == putNum);
+}
