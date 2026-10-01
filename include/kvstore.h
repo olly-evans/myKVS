@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <mutex>
 #include <optional> 
+#include <vector>
 
 #include "kvstorehandle.h"
 #include "record.h"
@@ -39,6 +40,7 @@ class KVStore {
         KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
         std::optional<std::string> get(const KVStoreHandle& stH, const std::string key);
+        std::vector<std::string> listKeys();
 
         void putRecord(const Record rec, const uint32_t datafileID);
 

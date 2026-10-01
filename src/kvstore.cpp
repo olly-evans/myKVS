@@ -116,6 +116,18 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     return valbuf;
 }
 
+std::vector<std::string> KVStore::listKeys() {
+
+    std::vector<std::string> keys;
+    keys.reserve(keyDir.size());
+
+    for (const auto& entry : keyDir) {
+        keys.push_back(entry.first);
+    }
+
+    return keys;
+}
+
 void KVStore::putRecord(const Record rec, const uint32_t datafileID) {
         
     rec.serialize(activeFilestream);
