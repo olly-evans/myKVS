@@ -9,7 +9,7 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
     StoreFlags flags;
 
     fs::path dataDir = createTempTestDir("test_put_1/");
-    TempDirCleanup cleanup(dataDir);
+    TempDirGuard cleanup(dataDir);
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
@@ -44,7 +44,7 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     StoreFlags flags;
 
     fs::path dataDir = createTempTestDir("test_put_2/");
-    TempDirCleanup cleanup(dataDir);
+    TempDirGuard cleanup(dataDir);
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
@@ -57,6 +57,7 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     REQUIRE(KVStoreTestAccess::keyDir(kvs).size() == 200);
     
     /* Validate all keys and values are the same as they are for this test. */
+    
     for (auto it = KVStoreTestAccess::keyDir(kvs).begin(); it != KVStoreTestAccess::keyDir(kvs).end(); it++) {
         std::optional<std::string> val = kvs.get(stH, it->first);
 
@@ -85,7 +86,7 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
     StoreFlags flags;
 
     fs::path dataDir = createTempTestDir("test_put_4/");
-    TempDirCleanup cleanup(dataDir);
+    TempDirGuard cleanup(dataDir);
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 

@@ -6,9 +6,9 @@
 
 namespace fs = std::filesystem;
 
-struct TempDirCleanup {
+struct TempDirGuard {
     fs::path dir;
-    ~TempDirCleanup() { 
+    ~TempDirGuard() { 
         std::error_code ec;
         fs::remove_all(dir, ec); 
     }

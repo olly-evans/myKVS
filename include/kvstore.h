@@ -29,7 +29,6 @@ struct KeyDirEntry {
 struct KVStoreTestAccess;
 
 class KVStore {
-    friend struct KVStoreTestAccess;
 
     public:
         // KVStore();
@@ -71,4 +70,9 @@ class KVStore {
         std::unordered_map<std::string, KeyDirEntry> keyDir;
 
         std::mutex putMut;
+
+    private:
+        friend struct KVStoreTestAccess;
+
+        
 };

@@ -18,7 +18,7 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
     KVStoreHandle stH;
 
     fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
-    TempDirCleanup cleanup{dataDir};
+    TempDirGuard cleanup{dataDir};
 
     stH.setDatafileExt(".data"); // Only have default extension if KVStore::open ran.
     std::ofstream mockFile1 (dataDir / "0.aol.data");
