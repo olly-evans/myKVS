@@ -1,8 +1,7 @@
-#include <assert.h>
-#include <fstream>
-
 #include "kvstorehandle.h"
 #include <catch2/catch_test_macros.hpp>
+
+#include <fstream>
 
 TEST_CASE("KVStoreHandle sets the absolute directory") {
 

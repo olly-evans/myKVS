@@ -8,13 +8,8 @@
 
 namespace fs = std::filesystem;
 
-struct TempDirCleanup {
-    fs::path dir;
-    ~TempDirCleanup() { 
-        std::error_code ec;
-        fs::remove_all(dir, ec); 
-    }
-};
+// test_header
+
 
 void test_open_new_store(fs::path dir) {
 
