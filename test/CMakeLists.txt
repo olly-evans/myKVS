@@ -13,6 +13,8 @@ find_package(Threads REQUIRED)
 file(GLOB_RECURSE TESTS "${CMAKE_SOURCE_DIR}/test/*.cpp")
 add_executable(tests ${TESTS})
 
+target_include_directories(tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_include)
+
 target_link_libraries(tests PRIVATE
     app_lib
     Catch2::Catch2WithMain
