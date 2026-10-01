@@ -30,24 +30,17 @@ std::string KVStoreHandle::readValue(fs::path path, KeyDirEntry entry) const {
     return val;
 }
 
-void KVStoreHandle::putRecord(fs::path path, std::ofstream& out, const Record rec) {
+void KVStoreHandle::writeRecord(fs::path path, std::ofstream& out, const Record rec) {
         
     rec.serialize(out);
 
     size_t fileBytes = fs::file_size(path);
     uint64_t valueByteOffset = fileBytes - rec.getValueSize();
 
-    // This operator behaves funnily but forgot how.
     keyDir[rec.getKey()] = KeyDirEntry{getActiveFileID(),
                                        rec.getValueSize(),
                                        valueByteOffset,
                                        rec.getTimestamp()};
-    
-    std::cout << "Successfully serialized data to "   <<
-                  path.filename()       <<
-                 "\nKeyDir entries is: "              << 
-                  keyDir.size()                   <<
-                  std::endl;
 }
 
 uint32_t KVStoreHandle::getActiveFileID() const {

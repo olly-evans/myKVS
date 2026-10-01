@@ -66,7 +66,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     if (fs::file_size(activeDatafilePath) + rec.byteSize() < stH.getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
-        stH.putRecord(activeDatafilePath, activeFilestream, rec);
+        stH.writeRecord(activeDatafilePath, activeFilestream, rec);
         return;
     } 
 
@@ -75,7 +75,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     rollOverDatafile(stH);
     stH.updateActiveDatafileID(dataDir);
     
-    stH.putRecord(activeDatafilePath, activeFilestream, rec);    
+    stH.writeRecord(activeDatafilePath, activeFilestream, rec);    
 }
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
