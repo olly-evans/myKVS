@@ -11,7 +11,6 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
     fs::path dataDir = createTempTestDir("test_open_1/");
     TempDirGuard cleanup{dataDir};
 
-    flags.datafileExtension = ".data";
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
     REQUIRE(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
@@ -32,20 +31,20 @@ TEST_CASE("Mock existing store gets the correct active file id", "KVStore::") {
     fs::path dataDir = createTempTestDir("test_open_2");
     TempDirGuard cleanup(dataDir);
 
-    fs::path mFilePath1 = dataDir / "1.aol.log";
+    fs::path mFilePath1 = dataDir / "1.aol.data";
     std::ofstream mockFile1(mFilePath1);
     mockFile1.close();
 
-    fs::path mFilePath2 = dataDir / "2.aol.log";
+    fs::path mFilePath2 = dataDir / "2.aol.data";
     std::ofstream mockFile2(mFilePath2);
     mockFile2.close();
 
-    fs::path mFilePath3 = dataDir / "3.aol.log";
+    fs::path mFilePath3 = dataDir / "3.aol.data";
     std::ofstream mockFile3(mFilePath3);
     mockFile3.close();
     
     StoreFlags flags;
-    flags.datafileExtension = ".log";
+
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
     REQUIRE(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
@@ -55,5 +54,5 @@ TEST_CASE("Mock existing store gets the correct active file id", "KVStore::") {
 
     REQUIRE(stH.getActiveFileID() == 3);           
     REQUIRE(kvs.getActiveDatafilePath() == 
-           dataDir / "3.aol.log");
+           dataDir / "3.aol.data");
 }

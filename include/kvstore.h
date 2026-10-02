@@ -16,7 +16,6 @@ struct StoreFlags {
     bool syncOnPut = false;
 
     size_t maxDatafileBytes = 65535;
-    std::string datafileExtension;
 };
 
 class KVStore {
