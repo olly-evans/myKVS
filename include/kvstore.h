@@ -32,7 +32,6 @@ class KVStore {
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
         void restore(KVStoreHandle& stH);
 
-
         /* File */
 
         [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension) const;
@@ -41,10 +40,12 @@ class KVStore {
         void rollOverDatafile(const KVStoreHandle& stH);
         void makeDatafileReadOnly(fs::path path);
 
+        bool isDataDir(KVStoreHandle& stH, fs::path dir);
+
         /* Getters/Setters */
 
         void setDataDir(fs::path dir, std::string dirName);
-        [[nodiscard]] fs::path getDataDir() const;
+        [[nodiscard]] fs::path getDataDir() const;        
 
         void setActiveFilestream(std::ofstream stream);
         [[nodiscard]] std::ofstream& getActiveFilestream();

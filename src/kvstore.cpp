@@ -1,5 +1,7 @@
 #include "kvstore.h"
 
+#include <algorithm>
+
 namespace fs = std::filesystem;
 
 /* KVStore Methods */
@@ -22,16 +24,22 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     stH.setReadWrite(stFlags.readWrite); 
 
-    bool isExistingDataDir = isDataDir();
-    if (fs::exists(dataDir)) {
+    /* isDataDir doing too much. */
+    if (fs::exists(dataDir) && isDataDir(stH, dataDir)) {
+        restore(stH);
+
+        stH.updateActiveDatafileID(dataDir);
+        fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
         
-        
-        
+        setActiveDatafile(currentDatafilePath, stFlags.readWrite);
+
+        std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
+        return stH;
     }
 
     fs::create_directories(dataDir);
 
-    // Get the active datafiles ID (highest filename) in dataDir.
+    // we can make a setter for this for this case.
     stH.updateActiveDatafileID(dataDir);
     fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
     
@@ -212,6 +220,24 @@ void KVStore::makeDatafileReadOnly(fs::path path) {
                     fs::perm_options::replace);
 
     return;
+}
+
+bool KVStore::isDataDir(KVStoreHandle& stH, fs::path dir) {
+    std::string detectedExtension;
+
+    for (const auto& entry : fs::directory_iterator(dir)) {
+        if (!entry.is_regular_file()) continue;
+
+        std::string stem = entry.path().stem().string();
+        // skip stem() twice if you have double extensions like .aol.data
+        if (stem.empty() || !std::all_of(stem.begin(), stem.end(), ::isdigit)) continue;
+
+        detectedExtension = entry.path().extension().string(); // or however you derive it
+        stH.setDatafileExt(detectedExtension);
+        return true;
+    }
+
+    return false;
 }
 
 /* Getters and Setters */
