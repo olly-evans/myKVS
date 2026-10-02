@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "kvstorehandle.h"
-#include "record.h"
 
 namespace fs = std::filesystem;
 

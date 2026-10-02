@@ -14,22 +14,27 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     stH.setAbsDirPath();
     setDataDir(stH.getAbsDirPath(), relDataDir);
 
-    // Create dir if needed.
-    if (!fs::exists(dataDir)) 
-        fs::create_directories(dataDir);
-
     stH.setMaxDatafileBytes(stFlags.maxDatafileBytes);
     stH.setDatafileExt(stFlags.datafileExtension);
 
     if (stH.getDatafileExt().empty())
         stH.setDatafileExt(".data");
 
-    // Get the active datafiles ID (highest filename) in dataDir.
-    stH.updateActiveDatafileID(dataDir); 
+    stH.setReadWrite(stFlags.readWrite); 
 
+    bool isExistingDataDir = isDataDir();
+    if (fs::exists(dataDir)) {
+        
+        
+        
+    }
+
+    fs::create_directories(dataDir);
+
+    // Get the active datafiles ID (highest filename) in dataDir.
+    stH.updateActiveDatafileID(dataDir);
     fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
     
-    stH.setReadWrite(stFlags.readWrite); 
     setActiveDatafile(currentDatafilePath, stFlags.readWrite);
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
@@ -121,45 +126,40 @@ std::vector<std::string> KVStore::listKeys(const KVStoreHandle& stH) {
 
 void KVStore::restore(KVStoreHandle& stH) {
 
-    stH.updateActiveDatafileID(dataDir);
-    uint32_t numFiles = stH.getActiveFileID();
-
-
-    // while (numFiles > 0) {
-
-        fs::path path = createDatafilePath(numFiles, stH.getDatafileExt());
-        std::ifstream in(path, std::ios::binary | std::ios::in);
         
-        size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t);
+    for (const auto& df : fs::directory_iterator(dataDir)) {
 
-        uint32_t keySize;
-        uint32_t valSize;
+        // restoreRecord()
+        uintmax_t bytesRead = 0;
+        uintmax_t fileSize = df.file_size();
 
-        in.seekg(keySizeOffset, std::ios_base::beg);
-        in.read(reinterpret_cast<char*>(&keySize), sizeof(uint32_t)); // read 4 bytes into buf from keySizeOffset.
-        in.read(reinterpret_cast<char*>(&valSize), sizeof(uint32_t)); // read 4 bytes more should be valsize.
+        std::ifstream in(df.path(), std::ios::binary | std::ios::in);
 
-        std::string key(keySize, '\0');
-        std::string val(valSize, '\0');
+        while(bytesRead < fileSize) {
 
-        in.read(key.data(), keySize);
-        in.read(val.data(), valSize);
+            size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t);
 
-        Record rec(key, val);
+            uint32_t keySize;
+            uint32_t valSize;
 
-        // need seperate function for append to keydir.
-        // stH.writeRecord(path)
+            in.seekg(keySizeOffset, std::ios_base::beg);
+            in.read(reinterpret_cast<char*>(&keySize), sizeof(uint32_t)); // read 4 bytes into buf from keySizeOffset.
+            in.read(reinterpret_cast<char*>(&valSize), sizeof(uint32_t)); // read 4 bytes more should be valsize.
+            
+            bytesRead += keySizeOffset + sizeof(uint32_t) + sizeof(uint32_t) + keySize + valSize;
 
-        // if (numFiles == 0)
-        //     return;
-    // }
-    
-    // for (const auto& df : fs::directory_iterator(dataDir)) {
-    //     df.is_regular_file();
-    // }
+            std::string key(keySize, '\0');
+            std::string val(valSize, '\0');
 
-    // 
-    // stH.writeRecord(rec);
+
+            in.read(key.data(), keySize);
+            in.read(val.data(), valSize);
+
+            Record rec(key, val);
+
+            stH.updateKeyDir(df.path(), rec);
+        }
+    }
 }
 
 /* File */
