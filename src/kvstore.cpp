@@ -23,7 +23,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     stH.setReadWrite(stFlags.readWrite); 
 
     /* isDataDir doing too much. */
-    if (fs::exists(dataDir) && isDataDir(stH, dataDir)) {
+    if (fs::exists(dataDir) && DetectStore::isStore(stH, dataDir)) {
         restore(stH);
 
         stH.updateActiveDatafileID(dataDir);
@@ -225,18 +225,6 @@ void KVStore::makeDatafileReadOnly(fs::path path) {
                     fs::perm_options::replace);
 
     return;
-}
-
-bool KVStore::isDataDir(KVStoreHandle& stH, const fs::path& dir) {
-
-    std::vector<fs::path> candidates = DetectStore::listCandidateDatafiles(dir);
-
-    if (candidates.empty()) {
-        return false;
-    }
-
-    stH.setDatafileExt(DetectStore::extractExtension(candidates.front()));
-    return true;
 }
 
 /* Getters and Setters */

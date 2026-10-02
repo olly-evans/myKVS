@@ -26,7 +26,18 @@ namespace DetectStore {
     }
 
     std::string extractExtension(const fs::path& datafilePath) {
-        return datafilePath.extension().string();
+        return datafilePath.extension().extension().string();
     }
 
+    bool isStore(KVStoreHandle& stH, const fs::path& dir) {
+
+        std::vector<fs::path> candidates = DetectStore::listCandidateDatafiles(dir);
+
+        if (candidates.empty())
+            return false;
+        
+
+        stH.setDatafileExt(DetectStore::extractExtension(candidates.front()));
+        return true;
+    }
 } // DetectStore namespace

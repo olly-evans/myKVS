@@ -40,8 +40,6 @@ class KVStore {
         void rollOverDatafile(const KVStoreHandle& stH);
         void makeDatafileReadOnly(fs::path path);
 
-        bool isDataDir(KVStoreHandle& stH, const fs::path& dir);
-
         /* Getters/Setters */
 
         void setDataDir(fs::path dir, std::string dirName);

@@ -1,9 +1,10 @@
 #pragma once
 
+#include "kvstorehandle.h"
+
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -12,4 +13,5 @@ namespace DetectStore {
     bool isCandidateDatafile(const fs::directory_entry& entry);
     std::vector<fs::path> listCandidateDatafiles(const fs::path& dir);
     std::string extractExtension(const fs::path& datafilePath);
+    bool isStore(KVStoreHandle& stH, const fs::path& dir);
 }
