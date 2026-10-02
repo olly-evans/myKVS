@@ -13,3 +13,11 @@
 - Make a testing branch.
 
 - Make two instances and run on the same directory.
+
+- FINISH TEST FOR RESTORE()
+
+- Functions.
+- SetTimestamp()
+- Only .lock, .hint and .dfext
+
+- kvstore_api.cpp, kvstore_files.cpp... I think almost all getters/setters in kvstore can be put into Handle.

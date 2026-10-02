@@ -1,6 +1,6 @@
-#include "kvstore.h"
 
-#include <algorithm>
+#include "detect_store.h"
+#include "kvstore.h"
 
 namespace fs = std::filesystem;
 
@@ -14,7 +14,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     KVStoreHandle stH;
 
     stH.setAbsDirPath();
-    setDataDir(stH.getAbsDirPath(), relDataDir);
+    setDataDir(stH.getAbsDirPath(), relDataDir);    
 
     stH.setMaxDatafileBytes(stFlags.maxDatafileBytes);
     stH.setDatafileExt(stFlags.datafileExtension);
@@ -144,8 +144,11 @@ void KVStore::restore(KVStoreHandle& stH) {
         std::ifstream in(df.path(), std::ios::binary | std::ios::in);
 
         while(bytesRead < fileSize) {
+            
+            // Record rec();
+            // rec.deserialize(), deserializes and constructs record for us.
 
-            size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t);
+            size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t) + bytesRead;
 
             uint32_t keySize;
             uint32_t valSize;
@@ -164,6 +167,10 @@ void KVStore::restore(KVStoreHandle& stH) {
             in.read(val.data(), valSize);
 
             Record rec(key, val);
+            // rec.setTimestamp();
+            
+            if (rec.byteSize() != bytesRead)
+                return;
 
             stH.updateKeyDir(df.path(), rec);
         }
@@ -222,22 +229,16 @@ void KVStore::makeDatafileReadOnly(fs::path path) {
     return;
 }
 
-bool KVStore::isDataDir(KVStoreHandle& stH, fs::path dir) {
-    std::string detectedExtension;
+bool KVStore::isDataDir(KVStoreHandle& stH, const fs::path& dir) {
 
-    for (const auto& entry : fs::directory_iterator(dir)) {
-        if (!entry.is_regular_file()) continue;
+    std::vector<fs::path> candidates = DetectStore::listCandidateDatafiles(dir);
 
-        std::string stem = entry.path().stem().string();
-        // skip stem() twice if you have double extensions like .aol.data
-        if (stem.empty() || !std::all_of(stem.begin(), stem.end(), ::isdigit)) continue;
-
-        detectedExtension = entry.path().extension().string(); // or however you derive it
-        stH.setDatafileExt(detectedExtension);
-        return true;
+    if (candidates.empty()) {
+        return false;
     }
 
-    return false;
+    stH.setDatafileExt(DetectStore::extractExtension(candidates.front()));
+    return true;
 }
 
 /* Getters and Setters */

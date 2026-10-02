@@ -8,6 +8,7 @@
 
 #include "kvstorehandle.h"
 
+
 namespace fs = std::filesystem;
 
 struct StoreFlags {
@@ -40,7 +41,7 @@ class KVStore {
         void rollOverDatafile(const KVStoreHandle& stH);
         void makeDatafileReadOnly(fs::path path);
 
-        bool isDataDir(KVStoreHandle& stH, fs::path dir);
+        bool isDataDir(KVStoreHandle& stH, const fs::path& dir);
 
         /* Getters/Setters */
 
