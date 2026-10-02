@@ -23,7 +23,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     stH.setReadWrite(stFlags.readWrite); 
 
     /* isDataDir doing too much. */
-    if (fs::exists(dataDir) && DetectStore::isStore(stH, dataDir)) {
+    if (fs::exists(dataDir) && DetectStore::isStore(dataDir)) {
         restore(stH);
 
         stH.updateActiveDatafileID(dataDir);

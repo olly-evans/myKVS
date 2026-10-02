@@ -29,7 +29,7 @@ namespace DetectStore {
         return datafilePath.extension().extension().string();
     }
 
-    bool isStore(KVStoreHandle& stH, const fs::path& dir) {
+    bool isStore(const fs::path& dir) {
 
         std::vector<fs::path> candidates = DetectStore::listCandidateDatafiles(dir);
 
@@ -37,7 +37,8 @@ namespace DetectStore {
             return false;
         
 
-        stH.setDatafileExt(DetectStore::extractExtension(candidates.front()));
+        // stH.setDatafileExt(DetectStore::extractExtension(candidates.front()));
         return true;
     }
+
 } // DetectStore namespace
