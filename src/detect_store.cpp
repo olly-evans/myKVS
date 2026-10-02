@@ -7,34 +7,35 @@ namespace DetectStore {
         return !stem.empty() && std::all_of(stem.begin(), stem.end(), ::isdigit);
     }
 
-    bool isCandidateDatafile(const fs::directory_entry& entry) {
-        if (!entry.is_regular_file()) {
-            return false;
-        }
-        std::string stem = entry.path().stem().string();
-        return isNumericStem(stem);
+    bool isValidStoreFile(const fs::directory_entry& entry) {
+
+        // all storefiles must contain two periods.
+
+
+        // either .lock .hint or .data ext.
+
+        // can be more specific with .lock or .hint later when we use them.
+
+        // .data must have numeric stem.
+
+        return true;
     }
 
-    std::vector<fs::path> listCandidateDatafiles(const fs::path& dir) {
-        std::vector<fs::path> candidates;
-        for (const auto& entry : fs::directory_iterator(dir)) {
-            if (isCandidateDatafile(entry)) {
-                candidates.push_back(entry.path());
-            }
-        }
-        return candidates;
-    }
+    bool allValidStoreFiles(const fs::path& dir) {
 
-    std::string extractExtension(const fs::path& datafilePath) {
-        return datafilePath.extension().extension().string();
+        for (const auto& candidateFile : fs::directory_iterator(dir)) {
+            if (!isValidStoreFile(candidateFile))
+                return false;
+        }
+        return true;
     }
 
     bool isStore(const fs::path& dir) {
 
-        std::vector<fs::path> candidates = DetectStore::listCandidateDatafiles(dir);
+        // std::vector<fs::path> candidates = DetectStore::listCandidateDatafiles(dir);
 
-        if (candidates.empty())
-            return false;
+        // if (candidates.empty())
+        //     return false;
         
 
         // stH.setDatafileExt(DetectStore::extractExtension(candidates.front()));

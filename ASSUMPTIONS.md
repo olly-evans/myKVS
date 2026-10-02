@@ -1,1 +1,2 @@
 - Datafiles have a .data extension.
+- A Storefile (.hint, .lock, .data) filename must contain two periods.

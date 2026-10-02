@@ -12,9 +12,11 @@ namespace DetectStore {
     bool isNumericStem(const std::string& stem);
 
     bool isCandidateDatafile(const fs::directory_entry& entry);
-    std::vector<fs::path> listCandidateDatafiles(const fs::path& dir);
+    bool allValidStoreFiles(const fs::path& dir);
 
-    std::string extractExtension(const fs::path& datafilePath);
-    
     bool isStore(const fs::path& dir);
+
+    // run is candidatedatafile on all files in dir, if stem of .data is numeric
+    // if .lock or .hint also true.
+    // anything else and disqualified for now.
 }
