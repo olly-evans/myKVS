@@ -7,21 +7,21 @@ namespace DetectStore {
         return !stem.empty() && std::all_of(stem.begin(), stem.end(), ::isdigit);
     }
 
-    bool isValidStoreFile(const fs::directory_entry& entry) {
+    bool isValidStoreFile(const fs::path& filepath) {
 
         std::array<std::string, 3> validExtensions = {".data", ".hint", ".lock"};
 
-        if (!entry.is_regular_file())
+        if (filepath.empty())
             return false;
 
-        std::string filename = entry.path().filename().string(); // "0.aol.data i.e"
-        std::string stem = entry.path().stem().stem().string();
+        std::string filename = filepath.filename().string(); // "0.aol.data i.e"
+        std::string stem = filepath.filename().stem().stem();
 
         if (!isNumericStem(stem))
             return false;
 
-        bool noStemRemaining = stem.empty();
-        if (noStemRemaining)
+        // If using stem() twice returns as using it once too then only one period in filename and invalid file.
+        if (stem == filepath.filename().stem())
             return false;
 
         // either .lock .hint or .data ext.
@@ -33,7 +33,7 @@ namespace DetectStore {
         return true;
     }
 
-    bool allValidStoreFiles(const fs::path& dir) {
+    bool hasOnlyValidStoreFiles(const fs::path& dir) {
 
         for (const auto& candidateFile : fs::directory_iterator(dir)) {
             if (!isValidStoreFile(candidateFile))

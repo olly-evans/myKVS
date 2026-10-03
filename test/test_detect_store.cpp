@@ -59,10 +59,10 @@ TEST_CASE("isValidStoreFile() stripping filename correctly", "DetectStore::isVal
     std::ofstream mockFile1(mFilePath1);
     mockFile1.close();
 
-    for (const auto& entry : fs::directory_iterator(dataDir)) {
-        std::cout << entry.path().filename() << "\n";
-        std::cout << entry.path().stem().stem().string() << "\n";
-        
-        REQUIRE(DetectStore::isValidStoreFile(entry));
-    }
+    fs::path mFilePath2 = dataDir / "0.data";
+    std::ofstream mockFile2(mFilePath2);
+    mockFile2.close();
+
+    REQUIRE(DetectStore::isValidStoreFile(mFilePath1));
+    REQUIRE(!DetectStore::isValidStoreFile(mFilePath2));
 }
