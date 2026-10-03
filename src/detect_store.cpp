@@ -7,24 +7,36 @@ namespace DetectStore {
         return !stem.empty() && std::all_of(stem.begin(), stem.end(), ::isdigit);
     }
 
+    bool isValidStoreExtension(const std::string& fExt) {
+        
+        std::array<std::string, 3> validExtensions = {".data", ".hint", ".lock"};
+
+        for (const auto& vExt : validExtensions) {
+            if ((fExt == vExt))
+                return true;
+        }
+        return false;
+    }
+
     bool isValidStoreFile(const fs::path& filepath) {
 
-        std::array<std::string, 3> validExtensions = {".data", ".hint", ".lock"};
 
         if (filepath.empty())
             return false;
 
-        std::string filename = filepath.filename().string(); // "0.aol.data i.e"
-        std::string stem = filepath.filename().stem().stem();
+        std::string stem = filepath.filename().stem().stem(); // "0.aol.data" -> "0", "0.data" -> 0
 
         if (!isNumericStem(stem))
             return false;
 
-        // If using stem() twice returns as using it once too then only one period in filename and invalid file.
+        // "0.aol.data" -> "0" also "0.data" -> 0
         if (stem == filepath.filename().stem())
             return false;
 
         // either .lock .hint or .data ext.
+
+        if (!isValidStoreExtension(filepath))
+            return false;
 
         // can be more specific with .lock or .hint later when we use them.
 
