@@ -9,8 +9,20 @@ namespace DetectStore {
 
     bool isValidStoreFile(const fs::directory_entry& entry) {
 
-        // all storefiles must contain two periods.
+        std::array<std::string, 3> validExtensions = {".data", ".hint", ".lock"};
 
+        if (!entry.is_regular_file())
+            return false;
+
+        std::string filename = entry.path().filename().string(); // "0.aol.data i.e"
+        std::string stem = entry.path().stem().stem().string();
+
+        if (!isNumericStem(stem))
+            return false;
+
+        bool noStemRemaining = stem.empty();
+        if (noStemRemaining)
+            return false;
 
         // either .lock .hint or .data ext.
 
