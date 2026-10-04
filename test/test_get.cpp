@@ -52,12 +52,55 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
 
 }
 
-TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
+TEST_CASE("Does get change input stream correctly. Opened store and put. Opened store again and read.", "KVStore::get()") {
     
     KVStore kvs;
     StoreFlags flags;
 
     fs::path dataDir = createTempTestDir("test_get_3/");
+    TempDirGuard cleanup{dataDir};
+
+    fs::path mFilePath1 = dataDir / "1.aol.data";
+    std::ofstream mockFile1(mFilePath1);
+    mockFile1.close();
+
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+    kvs.put(stH, "key", "val"); /* Put to mockFile1 */
+
+    REQUIRE(kvs.getActiveInputStream().is_open());
+    REQUIRE(kvs.getActiveInputStream().good());
+
+    fs::path mFilePath2 = dataDir / "2.aol.data";
+    std::ofstream mockFile2(mFilePath2);
+    mockFile2.close();
+
+    KVStore kvs2;
+    stH = kvs2.open(dataDir, flags); /* activeInputStream with mf2. */
+
+    REQUIRE(kvs2.getActiveInputStream().is_open());
+    REQUIRE(kvs2.getActiveInputStream().good());
+
+    fs::path readPathBeforeGet = kvs2.getActiveInputStreamPath(); /* mf2 */
+
+    std::optional<std::string> val = kvs2.get(stH, "key");
+
+    REQUIRE(val == "val");
+    
+    fs::path readPathAfterGet = kvs2.getActiveInputStreamPath(); /* get is in mf1 */
+
+    REQUIRE(kvs2.getActiveInputStream().is_open());
+    REQUIRE(kvs2.getActiveInputStream().good());
+
+    REQUIRE(readPathBeforeGet != readPathAfterGet); /* Should be different as defaults to mf2, 
+                                                       then puts to mf1, reads from it. */
+}
+
+TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
+    
+    KVStore kvs;
+    StoreFlags flags;
+
+    fs::path dataDir = createTempTestDir("test_get_4/");
     TempDirGuard cleanup{dataDir};
 
     KVStoreHandle stH = kvs.open(dataDir, flags);

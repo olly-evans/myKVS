@@ -25,8 +25,9 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     /* isDataDir doing too much. */
     if (fs::exists(dataDir) && DetectStore::isStore(dataDir)) {
 
-        restore(stH);
+        // restore(stH);
 
+        // FUNCTION
         stH.updateActiveDatafileID(dataDir);
         fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
                                                               stH.getActiveDatafileID(), 
@@ -53,7 +54,6 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
                                                           stH.getDatafileExt()); 
     
     stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
-
     /* Set to active datafile by default. */
 
     std::ifstream in(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
@@ -74,7 +74,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
     
-    fs::path df = stH.getActiveDatafilePath();
+    const fs::path df = stH.getActiveDatafilePath();
 
     if (!(fs::exists(df) && fs::is_regular_file(df))) {
         std::cout << "[WARNING] No active datafile path. Consider opening a store!" << std::endl;
@@ -112,7 +112,6 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
 
-    /* Seperate filestream in get than put. */
     std::shared_lock<std::shared_mutex> lock(readMutex);
 
     auto it = stH.keyDir.find(key);
@@ -130,6 +129,8 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     
 
     // pass in stream perhaps, dont know if ill keep these.
+
+    /* OFC NOT WORKING IN TEST_GET, DOESNT USE OUR FILESTREAM. */
     std::string valbuf = stH.readDiskValue(readPath, entry);
 
     Record rec(key, valbuf); 
