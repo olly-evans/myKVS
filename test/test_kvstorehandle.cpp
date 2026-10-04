@@ -5,6 +5,7 @@
 
 
 TEST_CASE("KVStoreHandle sets read/write permissions for the store.", "KVStoreHandle::setReadWrite()") {
+    
     KVStoreHandle stH;
     bool readWrite = true;
     stH.setReadWrite(readWrite);
