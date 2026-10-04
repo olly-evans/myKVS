@@ -70,7 +70,7 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     std::string corrupt = "Xp";
 
     // std::ios::out on its own usually means a new file hence it truncates. Need std::ios::in too.
-    std::ofstream f(kvs.getActiveDatafilePath(), std::ios::in  | 
+    std::ofstream f(stH.getActiveDatafilePath(), std::ios::in  | 
                                                  std::ios::out | 
                                                  std::ios::binary);
 

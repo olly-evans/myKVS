@@ -14,12 +14,12 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
     kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
-    REQUIRE(fs::file_size(kvs.getActiveDatafilePath()) == 22); /* Filesize should be 22 bytes after put. */
+    REQUIRE(fs::file_size(stH.getActiveDatafilePath()) == 22); /* Filesize should be 22 bytes after put. */
 
     kvs.put(stH, "k2", "v2"); // 24 bytes.
-    REQUIRE(fs::file_size(kvs.getActiveDatafilePath()) == 46); /* Filesize should be 46 bytes after put. */
+    REQUIRE(fs::file_size(stH.getActiveDatafilePath()) == 46); /* Filesize should be 46 bytes after put. */
     
-    std::ifstream readDatafileStream(kvs.getActiveDatafilePath(), std::ios::binary | std::ios::in);
+    std::ifstream readDatafileStream(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
     KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("k2"); 
     readDatafileStream.seekg(entry.valFileOffset, std::ios_base::beg);
@@ -75,7 +75,7 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
     KVStoreHandle stH;
     kvs.put(stH, "testkey", "testvalue");
 
-    REQUIRE(kvs.getActiveDatafilePath().empty());
+    REQUIRE(stH.getActiveDatafilePath().empty());
     REQUIRE(!kvs.getActiveFilestream().is_open());
     REQUIRE(!fs::exists(kvs.getDataDir()));
 }
@@ -101,7 +101,7 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
 
     REQUIRE(oldDatafileID + 1 == newDatafileID);        /* Should have incremented datafile ID by one. */
     
-    REQUIRE(kvs.getActiveDatafilePath() == dataDir / "1.aol.data");
+    REQUIRE(stH.getActiveDatafilePath() == dataDir / "1.aol.data");
 
     fs::path oldDatafilePath = dataDir / "0.rol.data";
 
@@ -132,7 +132,7 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     Record rec2(k, newv);
     
     size_t expectedDatafileSize = rec1.byteSize() + rec2.byteSize();
-    REQUIRE(fs::file_size(kvs.getActiveDatafilePath()) == expectedDatafileSize);
+    REQUIRE(fs::file_size(stH.getActiveDatafilePath()) == expectedDatafileSize);
 
     REQUIRE(entry.valSz == 8);
     REQUIRE(HandleTestAccess::keyDir(stH).size() == 1);

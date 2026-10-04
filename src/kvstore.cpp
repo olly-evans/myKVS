@@ -24,12 +24,15 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     /* isDataDir doing too much. */
     if (fs::exists(dataDir) && DetectStore::isStore(dataDir)) {
+
         restore(stH);
 
         stH.updateActiveDatafileID(dataDir);
-        fs::path currentDatafilePath = createDatafilePath(stH.getActiveDatafileID(), stH.getDatafileExt()); 
+        fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
+                                                              stH.getActiveDatafileID(), 
+                                                              stH.getDatafileExt()); 
         
-        setActiveDatafile(currentDatafilePath, stFlags.readWrite);
+        stH.setActiveDatafile(currentDatafilePath, activeFilestream);
 
         std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
         return stH;
@@ -39,9 +42,11 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     // we can make a setter for this for this case.
     stH.updateActiveDatafileID(dataDir);
-    fs::path currentDatafilePath = createDatafilePath(stH.getActiveDatafileID(), stH.getDatafileExt()); 
+    fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
+                                                          stH.getActiveDatafileID(), 
+                                                          stH.getDatafileExt()); 
     
-    setActiveDatafile(currentDatafilePath, stFlags.readWrite);
+    stH.setActiveDatafile(currentDatafilePath, activeFilestream);
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
 
@@ -86,7 +91,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     std::cout << "Datafile full, rolling-over..." << std::endl;
 
-    rollOverDatafile(stH);
+    stH.rollOverDatafile(dataDir, activeFilestream);
     stH.updateActiveDatafileID(dataDir);
     
     rec.serialize(activeFilestream);
@@ -107,7 +112,7 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
 
     /* Seperate filestreams opened for readCRC() and readValue(). */
 
-    fs::path datafile = createDatafilePath(entry.fileID, stH.getDatafileExt());
+    fs::path datafile = stH.createDatafilePath(dataDir, entry.fileID, stH.getDatafileExt());
 
     std::string valbuf = stH.readDiskValue(datafile, entry);
 

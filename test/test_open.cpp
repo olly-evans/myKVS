@@ -36,7 +36,7 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
     REQUIRE(stH.getActiveDatafileID() == 0);             /* No puts so id should default to zero. */
 
-    REQUIRE(kvs.getActiveDatafilePath() == 
+    REQUIRE(stH.getActiveDatafilePath() == 
            dataDir / "0.aol.data");
 }
 
@@ -69,6 +69,6 @@ TEST_CASE("Mock existing store gets the correct active file id", "KVStore::") {
     REQUIRE(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
     REQUIRE(stH.getActiveDatafileID() == 3);           
-    REQUIRE(kvs.getActiveDatafilePath() == 
+    REQUIRE(stH.getActiveDatafilePath() == 
            dataDir / "3.aol.data");
 }
