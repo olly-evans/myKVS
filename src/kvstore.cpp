@@ -188,6 +188,14 @@ void KVStore::restore(KVStoreHandle& stH) {
 
 /* Getters and Setters */
 
+fs::path KVStore::getAbsDirPath() const {
+    return absDirPath;
+}
+
+void KVStore::updateAbsDirPath() {
+    absDirPath = fs::path(WORKING_DIRECTORY);
+}
+
 fs::path KVStore::getDataDir() const {
     return dataDir;
 }
@@ -204,7 +212,13 @@ std::ofstream& KVStore::getActiveOutputStream() {
     return activeOutputStream;
 }
 
+std::ifstream& KVStore::getActiveInputStream() {
+    return activeInputStream;
+}
 
+void KVStore::setActiveInputStream(std::ifstream stream) {
+    activeInputStream = std::move(stream);
+}
 
 size_t KVStore::getMaxDatafileBytes() const {
     return maxDatafileBytes;
@@ -212,12 +226,4 @@ size_t KVStore::getMaxDatafileBytes() const {
 
 void KVStore::setMaxDatafileBytes(size_t maxBytes) {
     maxDatafileBytes = maxBytes;
-}
-
-fs::path KVStore::getAbsDirPath() const {
-    return absDirPath;
-}
-
-void KVStore::updateAbsDirPath() {
-    absDirPath = fs::path(WORKING_DIRECTORY);
 }

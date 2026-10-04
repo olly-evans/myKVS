@@ -32,31 +32,32 @@ class KVStore {
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
         void restore(KVStoreHandle& stH);
 
-        /* File */
-
-
         /* Getters/Setters */
-
-        void setDataDir(fs::path dir, std::string dirName);
-        [[nodiscard]] fs::path getDataDir() const;        
-
-        void setActiveOutputStream(std::ofstream stream);
-        [[nodiscard]] std::ofstream& getActiveOutputStream();
-
-        [[nodiscard]] size_t getMaxDatafileBytes() const;
-        void setMaxDatafileBytes(size_t maxBytes);
 
         [[nodiscard]] fs::path getAbsDirPath() const;
         void updateAbsDirPath();
 
+        [[nodiscard]] fs::path getDataDir() const;        
+        void setDataDir(fs::path dir, std::string dirName);
+
+        [[nodiscard]] std::ofstream& getActiveOutputStream();
+        void setActiveOutputStream(std::ofstream stream);
+
+        [[nodiscard]] std::ifstream& getActiveInputStream();
+        void setActiveInputStream(std::ifstream stream);
+
+        [[nodiscard]] size_t getMaxDatafileBytes() const;
+        void setMaxDatafileBytes(size_t maxBytes);
+
     private:
+        std::shared_mutex writeMutex;
+        std::shared_mutex readMutex;
+
         fs::path absDirPath;
         fs::path dataDir;
 
-        size_t maxDatafileBytes;
-
         std::ofstream activeOutputStream;
+        std::ifstream activeInputStream;
 
-        std::shared_mutex writeMutex;
-        std::shared_mutex readMutex;
+        size_t maxDatafileBytes;
 };

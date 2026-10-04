@@ -29,12 +29,12 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-    REQUIRE(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
-    REQUIRE(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
+    REQUIRE(fs::exists(kvs.getDataDir()));             /* Should have existing data directory. */
+    REQUIRE(!stH.getDatafileExt().empty());            /* Datafile extension cannot be empty. */
     REQUIRE(kvs.getActiveOutputStream().good());       /* No error state in stream. */
     REQUIRE(kvs.getActiveOutputStream().is_open());    /* File should be open. */
 
-    REQUIRE(stH.getActiveDatafileID() == 0);             /* No puts so id should default to zero. */
+    REQUIRE(stH.getActiveDatafileID() == 0);           /* No puts so id should default to zero. */
 
     REQUIRE(stH.getActiveDatafilePath() == 
            dataDir / "0.aol.data");
