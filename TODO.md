@@ -22,3 +22,5 @@
 
 - File stuff in datafile Object or namespace, if it goes in object it'll need more stuff w
 - kvstore_api.cpp, kvstore_files.cpp... I think almost all getters/setters in kvstore can be put into Handle.
+
+- ReadKeySize... etc.. down the restored record then read record in loop.
