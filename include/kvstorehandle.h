@@ -22,9 +22,9 @@ class KVStoreHandle {
 
     private:
 
+        fs::path activeDatafilePath;
         std::string datafileExtension;
         uint32_t activeDatafileID;
-
 
         bool readWrite;
 
@@ -34,11 +34,21 @@ class KVStoreHandle {
         // KVStoreHandle(mutex.lock());
         // ~KVStoreHandle();
 
+        /* Datafile */
+        [[nodiscard]] fs::path createDatafilePath(const fs::path& dataDir, uint32_t fID, std::string fExt) const;
+        void setActiveDatafile(const fs::path& path, std::ofstream& out);
+        void makeDatafileReadOnly(const fs::path& path, std::ofstream& out);
+        void rollOverDatafile(const fs::path& dataDir, std::ofstream& out);
+
+
         [[nodiscard]] uint32_t readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const;
         [[nodiscard]] std::string readDiskValue(fs::path path, KeyDirEntry entry) const;
 
         void updateKeyDir(fs::path path, const Record rec);
 
+        [[nodiscard]] fs::path getActiveDatafilePath() const;
+        void setActiveDatafilePath(fs::path path);
+        
         [[nodiscard]] uint32_t getActiveDatafileID() const;
         void updateActiveDatafileID(fs::path dataDir);
 

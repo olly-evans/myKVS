@@ -2,6 +2,56 @@
 
 /* HVStoreHandle Methods */
 
+fs::path KVStoreHandle::createDatafilePath(const fs::path& dataDir, uint32_t fID, std::string fExt) const {
+    
+    std::string strID = std::to_string(fID);
+    fs::path appendOnlyName(strID + ".aol" + fExt);
+    return dataDir / appendOnlyName;
+}
+
+void KVStoreHandle::setActiveDatafile(const fs::path& path, std::ofstream& out) {
+
+    fs::perms rwPerms = fs::perms::owner_write | fs::perms::group_write | 
+                        fs::perms::owner_read  | fs::perms::group_read;
+
+    fs::perms roPerms = fs::perms::owner_read  | fs::perms::group_read;
+
+    out.open(path, std::ios::binary | std::ios::app);
+
+    fs::perms fPermissions = getReadWrite() ? rwPerms : roPerms;
+    fs::permissions(path, fPermissions, fs::perm_options::replace);
+
+    setActiveDatafilePath(path);
+
+    return;
+}
+
+void KVStoreHandle::makeDatafileReadOnly(const fs::path& path, std::ofstream& out) {
+
+    out.close();
+
+    fs::path newPath = path;
+    std::string filename = newPath.filename().string();
+    filename.replace(filename.find("aol"), 3, "rol"); 
+    newPath.replace_filename(filename);
+
+    fs::rename(path, newPath);
+
+    fs::permissions(newPath,
+                    fs::perms::owner_read | fs::perms::group_read, 
+                    fs::perm_options::replace);
+
+    return;
+}
+
+void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out) {
+
+    makeDatafileReadOnly(activeDatafilePath, out);
+    fs::path nextDatafilePath = createDatafilePath(dataDir, getActiveDatafileID() + 1, getDatafileExt());
+    setActiveDatafile(nextDatafilePath, out);
+
+}
+
 uint32_t KVStoreHandle::readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const {
 
     std::ifstream in(path, std::ios::binary | std::ios::in);
@@ -38,6 +88,14 @@ void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {
                                        rec.getValueSize(),
                                        valueByteOffset,
                                        rec.getTimestamp()};
+}
+
+void KVStoreHandle::setActiveDatafilePath(fs::path path) {
+    activeDatafilePath = path;
+}
+
+fs::path KVStoreHandle::getActiveDatafilePath() const {
+    return activeDatafilePath;
 }
 
 uint32_t KVStoreHandle::getActiveDatafileID() const {

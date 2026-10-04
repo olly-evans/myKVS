@@ -34,11 +34,6 @@ class KVStore {
 
         /* File */
 
-        [[nodiscard]] fs::path createDatafilePath(uint32_t fileID, std::string fileExtension) const;
-
-        void setActiveDatafile(const fs::path path, const bool readWrite);
-        void rollOverDatafile(const KVStoreHandle& stH);
-        void makeDatafileReadOnly(fs::path path);
 
         /* Getters/Setters */
 
@@ -47,9 +42,6 @@ class KVStore {
 
         void setActiveFilestream(std::ofstream stream);
         [[nodiscard]] std::ofstream& getActiveFilestream();
-
-        void setActiveDatafilePath(fs::path path);
-        [[nodiscard]] fs::path getActiveDatafilePath() const;
 
         [[nodiscard]] size_t getMaxDatafileBytes() const;
         void setMaxDatafileBytes(size_t maxBytes);
@@ -63,9 +55,7 @@ class KVStore {
 
         size_t maxDatafileBytes;
 
-        fs::path activeDatafilePath;
         std::ofstream activeFilestream;
-
 
         std::shared_mutex writeMutex;
         std::shared_mutex readMutex;

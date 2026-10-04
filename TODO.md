@@ -24,3 +24,5 @@
 - ReadKeySize... etc.. down the restored record then read record in loop.
 
 - test for replacing key. should just update it to new value.
+
+- make an input stream for kvstore.

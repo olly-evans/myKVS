@@ -57,12 +57,14 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
     
-    if (!(fs::exists(activeDatafilePath) && fs::is_regular_file(activeDatafilePath))) {
+    fs::path df = stH.getActiveDatafilePath();
+
+    if (!(fs::exists(df) && fs::is_regular_file(df))) {
         std::cout << "[WARNING] No active datafile path. Consider opening a store!" << std::endl;
         return;
     }
 
-    std::string activePathID = activeDatafilePath.stem().stem();
+    std::string activePathID = df.stem().stem();
     std::string activeHandleID = std::to_string(stH.getActiveDatafileID());
 
     if (activePathID != activeHandleID) {
@@ -75,10 +77,10 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     
     Record rec(key, val);
 
-    if (fs::file_size(activeDatafilePath) + rec.byteSize() < getMaxDatafileBytes()) {
+    if (fs::file_size(df) + rec.byteSize() < getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
         rec.serialize(activeFilestream);
-        stH.updateKeyDir(activeDatafilePath, rec);
+        stH.updateKeyDir(df, rec);
         return;
     } 
 
@@ -88,7 +90,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     stH.updateActiveDatafileID(dataDir);
     
     rec.serialize(activeFilestream);
-    stH.updateKeyDir(activeDatafilePath, rec);
+    stH.updateKeyDir(df, rec);
 }
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
@@ -177,56 +179,6 @@ void KVStore::restore(KVStoreHandle& stH) {
 
 /* File */
 
-fs::path KVStore::createDatafilePath(uint32_t fileID, std::string fileExtension) const {
-    
-    std::string strID = std::to_string(fileID);
-    fs::path appendOnlyDatafileExtension(strID + ".aol" + fileExtension);
-    return dataDir / appendOnlyDatafileExtension;
-}
-
-void KVStore::setActiveDatafile(const fs::path path, const bool readWrite) {
-
-    fs::perms rwPerms = fs::perms::owner_write | fs::perms::group_write | 
-                        fs::perms::owner_read  | fs::perms::group_read;
-
-    fs::perms roPerms = fs::perms::owner_read  | fs::perms::group_read;
-
-    activeFilestream.open(path, std::ios::binary | std::ios::app);
-
-    fs::perms fPermissions = readWrite ? rwPerms : roPerms;
-    fs::permissions(path, fPermissions, fs::perm_options::replace);
-
-    setActiveDatafilePath(path);
-
-    return;
-}
-
-void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
-
-    makeDatafileReadOnly(activeDatafilePath);
-    fs::path nextDatafilePath = createDatafilePath(stH.getActiveDatafileID() + 1, stH.getDatafileExt());
-    setActiveDatafile(nextDatafilePath, stH.getReadWrite());
-
-}
-
-void KVStore::makeDatafileReadOnly(fs::path path) {
-
-    activeFilestream.close();
-
-    fs::path newPath = path;
-    std::string filename = newPath.filename().string();
-    filename.replace(filename.find("aol"), 3, "rol"); 
-    newPath.replace_filename(filename);
-
-    fs::rename(path, newPath);
-
-    fs::permissions(newPath,
-                    fs::perms::owner_read | fs::perms::group_read, 
-                    fs::perm_options::replace);
-
-    return;
-}
-
 /* Getters and Setters */
 
 fs::path KVStore::getDataDir() const {
@@ -245,13 +197,7 @@ std::ofstream& KVStore::getActiveFilestream() {
     return activeFilestream;
 }
 
-void KVStore::setActiveDatafilePath(fs::path path) {
-    activeDatafilePath = path;
-}
 
-fs::path KVStore::getActiveDatafilePath() const {
-    return activeDatafilePath;
-}
 
 size_t KVStore::getMaxDatafileBytes() const {
     return maxDatafileBytes;
