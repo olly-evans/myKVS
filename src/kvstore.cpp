@@ -22,10 +22,9 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     stH.setReadWrite(stFlags.readWrite); 
 
-    /* isDataDir doing too much. */
-    if (fs::exists(dataDir) && DetectStore::isStore(dataDir)) {
+    if (DetectStore::isStore(dataDir)) {
 
-        // restore(stH);
+        restore(stH);
 
         // FUNCTION
         stH.updateActiveDatafileID(dataDir);
@@ -170,6 +169,8 @@ void KVStore::restore(KVStoreHandle& stH) {
             // Record rec();
             // rec.deserialize(), deserializes and constructs record for us.
             
+            stH.readCRC(bytesRead);
+
             // readDiskCRC(std::ifstream& in, &bytesRead) <- incremented in readDiskCRC.
 
             size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t) + bytesRead;

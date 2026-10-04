@@ -20,7 +20,6 @@ namespace DetectStore {
 
     bool isValidStoreFile(const fs::path& filepath) {
 
-
         if (filepath.empty())
             return false;
 
@@ -38,10 +37,6 @@ namespace DetectStore {
         if (!isValidStoreExtension(filepath.extension()))
             return false;
 
-        // can be more specific with .lock or .hint later when we use them.
-
-        // .data must have numeric stem.
-
         return true;
     }
 
@@ -55,15 +50,13 @@ namespace DetectStore {
     }
 
     bool isStore(const fs::path& dir) {
-
-        // std::vector<fs::path> candidates = DetectStore::listCandidateDatafiles(dir);
-
-        // if (candidates.empty())
-        //     return false;
         
+        bool dirExists = fs::exists(dir);
+        bool allValidStoreFiles = hasOnlyValidStoreFiles(dir);
 
-        // stH.setDatafileExt(DetectStore::extractExtension(candidates.front()));
-        return true;
+        // More criteria if required.
+
+        return allValidStoreFiles && dirExists;
     }
 
 } // DetectStore namespace

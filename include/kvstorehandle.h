@@ -40,6 +40,8 @@ class KVStoreHandle {
         void makeDatafileReadOnly(const fs::path& path, std::ofstream& out);
         void rollOverDatafile(const fs::path& dataDir, std::ofstream& out);
 
+        uint32_t readCRC(std::ifstream& in, size_t &crcOffset);
+
         [[nodiscard]] uint32_t readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const;
         [[nodiscard]] std::string readDiskValue(fs::path path, KeyDirEntry entry) const;
 

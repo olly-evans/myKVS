@@ -52,9 +52,16 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
 
 }
 
-// uint32_t KVStoreHandle::readCRC(size_t crcOffset) {
+uint32_t KVStoreHandle::readCRC(std::ifstream& in, size_t &crcOffset) {
 
-// }
+    // file?
+
+    // streampos?
+    
+    in.seekg(crcOffset, std::ios_base::beg);
+    in.read(reinterpret_cast<char*>(&crcOffset), sizeof(crcOffset));
+
+}
 
 uint32_t KVStoreHandle::readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const {
 
