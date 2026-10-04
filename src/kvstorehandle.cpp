@@ -2,7 +2,7 @@
 
 /* HVStoreHandle Methods */
 
-uint32_t KVStoreHandle::readCRC(fs::path path, KeyDirEntry entry, Record rec) const {
+uint32_t KVStoreHandle::readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const {
 
     std::ifstream in(path, std::ios::binary | std::ios::in);
 
@@ -17,7 +17,7 @@ uint32_t KVStoreHandle::readCRC(fs::path path, KeyDirEntry entry, Record rec) co
     return crcFromDisk;
 }
 
-std::string KVStoreHandle::readValue(fs::path path, KeyDirEntry entry) const {
+std::string KVStoreHandle::readDiskValue(fs::path path, KeyDirEntry entry) const {
     
     std::ifstream in(path, std::ios::binary | std::ios::in);
 

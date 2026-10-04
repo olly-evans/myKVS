@@ -107,10 +107,10 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
 
     fs::path datafile = createDatafilePath(entry.fileID, stH.getDatafileExt());
 
-    std::string valbuf = stH.readValue(datafile, entry);
+    std::string valbuf = stH.readDiskValue(datafile, entry);
 
     Record rec(key, valbuf); 
-    size_t crcDisk = stH.readCRC(datafile, entry, rec);
+    size_t crcDisk = stH.readDiskCRC(datafile, entry, rec);
 
     if (rec.getCRC32() != crcDisk)
         return std::nullopt; /* Recommend deleting key {key} */
