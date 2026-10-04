@@ -60,16 +60,6 @@ void KVStoreHandle::updateActiveDatafileID(fs::path dataDir) {
     activeDatafileID = found ? maxID : 0;
 }
 
-
-
-fs::path KVStoreHandle::getAbsDirPath() const {
-    return absDirPath;
-}
-
-void KVStoreHandle::setAbsDirPath() {
-    absDirPath = fs::path(WORKING_DIRECTORY);
-}
-
 std::string KVStoreHandle::getDatafileExt() const {
     return datafileExtension;
 }

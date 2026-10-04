@@ -13,8 +13,8 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     KVStoreHandle stH;
 
-    stH.setAbsDirPath();
-    setDataDir(stH.getAbsDirPath(), relDataDir);    
+    setAbsDirPath();
+    setDataDir(getAbsDirPath(), relDataDir);    
 
     setMaxDatafileBytes(stFlags.maxDatafileBytes);
 
@@ -259,4 +259,12 @@ size_t KVStore::getMaxDatafileBytes() const {
 
 void KVStore::setMaxDatafileBytes(size_t maxBytes) {
     maxDatafileBytes = maxBytes;
+}
+
+fs::path KVStore::getAbsDirPath() const {
+    return absDirPath;
+}
+
+void KVStore::setAbsDirPath() {
+    absDirPath = fs::path(WORKING_DIRECTORY);
 }

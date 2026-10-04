@@ -11,6 +11,14 @@ TEST_CASE("KVStore sets the max datafile bytes.", "KVStoreHandle::setMaxDatafile
     REQUIRE(kvs.getMaxDatafileBytes() == bytes);
 }
 
+TEST_CASE("KVStore sets the absolute directory") {
+
+    KVStore kvs;
+    kvs.setAbsDirPath();
+
+    REQUIRE(fs::exists(kvs.getAbsDirPath()));
+}
+
 TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
     KVStore kvs;

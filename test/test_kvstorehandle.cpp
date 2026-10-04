@@ -3,12 +3,12 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("KVStoreHandle sets the absolute directory") {
+TEST_CASE("KVStore sets the absolute directory") {
 
-    KVStoreHandle stH;
-    stH.setAbsDirPath();
+    KVStore kvs;
+    kvs.setAbsDirPath();
 
-    REQUIRE(fs::exists(stH.getAbsDirPath()));
+    REQUIRE(fs::exists(kvs.getAbsDirPath()));
 }
 
 TEST_CASE("KVStoreHandle sets read/write permissions for the store.", "KVStoreHandle::setReadWrite()") {
