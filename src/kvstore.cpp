@@ -36,8 +36,9 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
         
         /* Set to active datafile by default. */
 
-        std::ifstream activeInputStream(currentDatafilePath, std::ios::binary | std::ios::in);
-        setActiveInputStreamPath(currentDatafilePath);
+        std::ifstream in(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
+        setActiveInputStream(in);
+        setActiveInputStreamPath(stH.getActiveDatafilePath());
 
         std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
         return stH;
@@ -52,11 +53,12 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
                                                           stH.getDatafileExt()); 
     
     stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
-    
+
     /* Set to active datafile by default. */
 
-    std::ifstream activeInputStream(currentDatafilePath, std::ios::binary | std::ios::in);
-    setActiveInputStreamPath(currentDatafilePath);
+    std::ifstream in(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
+    setActiveInputStream(in);
+    setActiveInputStreamPath(stH.getActiveDatafilePath());
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
 
@@ -228,6 +230,10 @@ void KVStore::setActiveOutputStream(std::ofstream stream) {
 
 std::ifstream& KVStore::getActiveInputStream() {
     return activeInputStream;
+}
+
+void KVStore::setActiveInputStream(std::ifstream& in) {
+    activeInputStream = std::move(in);
 }
 
 void KVStore::updateActiveInputStream(fs::path path) {

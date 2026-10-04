@@ -34,6 +34,9 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
     REQUIRE(kvs.getActiveOutputStream().good());       /* No error state in stream. */
     REQUIRE(kvs.getActiveOutputStream().is_open());    /* File should be open. */
 
+    REQUIRE(kvs.getActiveInputStream().good());       /* No error state in input stream. */
+    REQUIRE(kvs.getActiveInputStream().is_open());    /* Default datafile should be open to read. */
+
     REQUIRE(stH.getActiveDatafileID() == 0);           /* No puts so id should default to zero. */
 
     REQUIRE(stH.getActiveDatafilePath() == 
@@ -63,10 +66,13 @@ TEST_CASE("Mock existing store gets the correct active file id", "KVStore::") {
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-    REQUIRE(fs::exists(kvs.getDataDir()));           /* Should have existing data directory. */
-    REQUIRE(!stH.getDatafileExt().empty());          /* Datafile extension cannot be empty. */
-    REQUIRE(kvs.getActiveOutputStream().good());       /* No error state in stream. */
-    REQUIRE(kvs.getActiveOutputStream().is_open());    /* File should be open. */
+    REQUIRE(fs::exists(kvs.getDataDir()));            /* Should have existing data directory. */
+    REQUIRE(!stH.getDatafileExt().empty());           /* Datafile extension cannot be empty. */
+    REQUIRE(kvs.getActiveOutputStream().good());      /* No error state in stream. */
+    REQUIRE(kvs.getActiveOutputStream().is_open());   /* File should be open. */
+
+    REQUIRE(kvs.getActiveInputStream().good());       /* No error state in input stream. */
+    REQUIRE(kvs.getActiveInputStream().is_open());    /* Default datafile should be set to read. */
 
     REQUIRE(stH.getActiveDatafileID() == 3);           
     REQUIRE(stH.getActiveDatafilePath() == 
