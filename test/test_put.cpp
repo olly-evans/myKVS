@@ -93,11 +93,11 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
     size_t mockFileSize = 10;
     kvs.setMaxDatafileBytes(mockFileSize);
 
-    uint32_t oldDatafileID = stH.getActiveFileID();
+    uint32_t oldDatafileID = stH.getActiveDatafileID();
 
     kvs.put(stH, "foo", "bar");
 
-    uint32_t newDatafileID = stH.getActiveFileID();
+    uint32_t newDatafileID = stH.getActiveDatafileID();
 
     REQUIRE(oldDatafileID + 1 == newDatafileID);        /* Should have incremented datafile ID by one. */
     

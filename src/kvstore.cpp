@@ -27,7 +27,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
         restore(stH);
 
         stH.updateActiveDatafileID(dataDir);
-        fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
+        fs::path currentDatafilePath = createDatafilePath(stH.getActiveDatafileID(), stH.getDatafileExt()); 
         
         setActiveDatafile(currentDatafilePath, stFlags.readWrite);
 
@@ -39,7 +39,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     // we can make a setter for this for this case.
     stH.updateActiveDatafileID(dataDir);
-    fs::path currentDatafilePath = createDatafilePath(stH.getActiveFileID(), stH.getDatafileExt()); 
+    fs::path currentDatafilePath = createDatafilePath(stH.getActiveDatafileID(), stH.getDatafileExt()); 
     
     setActiveDatafile(currentDatafilePath, stFlags.readWrite);
 
@@ -63,7 +63,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     }
 
     std::string activePathID = activeDatafilePath.stem().stem();
-    std::string activeHandleID = std::to_string(stH.getActiveFileID());
+    std::string activeHandleID = std::to_string(stH.getActiveDatafileID());
 
     if (activePathID != activeHandleID) {
         std::cerr << "[ERROR] Active datafile doesn't match the active ID." << std::endl;
@@ -204,7 +204,7 @@ void KVStore::setActiveDatafile(const fs::path path, const bool readWrite) {
 void KVStore::rollOverDatafile(const KVStoreHandle& stH) {
 
     makeDatafileReadOnly(activeDatafilePath);
-    fs::path nextDatafilePath = createDatafilePath(stH.getActiveFileID() + 1, stH.getDatafileExt());
+    fs::path nextDatafilePath = createDatafilePath(stH.getActiveDatafileID() + 1, stH.getDatafileExt());
     setActiveDatafile(nextDatafilePath, stH.getReadWrite());
 
 }

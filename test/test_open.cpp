@@ -26,7 +26,7 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
     REQUIRE(kvs.getActiveFilestream().good());       /* No error state in stream. */
     REQUIRE(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
-    REQUIRE(stH.getActiveFileID() == 0);             /* No puts so id should default to zero. */
+    REQUIRE(stH.getActiveDatafileID() == 0);             /* No puts so id should default to zero. */
 
     REQUIRE(kvs.getActiveDatafilePath() == 
            dataDir / "0.aol.data");
@@ -60,7 +60,7 @@ TEST_CASE("Mock existing store gets the correct active file id", "KVStore::") {
     REQUIRE(kvs.getActiveFilestream().good());       /* No error state in stream. */
     REQUIRE(kvs.getActiveFilestream().is_open());    /* File should be open. */
 
-    REQUIRE(stH.getActiveFileID() == 3);           
+    REQUIRE(stH.getActiveDatafileID() == 3);           
     REQUIRE(kvs.getActiveDatafilePath() == 
            dataDir / "3.aol.data");
 }

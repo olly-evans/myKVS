@@ -21,7 +21,7 @@ class KVStoreHandle {
     friend class KVStore;
 
     private:
-        uint32_t activeFileID;
+        uint32_t activeDatafileID;
 
         fs::path absDirPath;
         std::string datafileExtension;
@@ -36,9 +36,10 @@ class KVStoreHandle {
 
         [[nodiscard]] uint32_t readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const;
         [[nodiscard]] std::string readDiskValue(fs::path path, KeyDirEntry entry) const;
+        
         void updateKeyDir(fs::path path, const Record rec);
 
-        [[nodiscard]] uint32_t getActiveFileID() const;
+        [[nodiscard]] uint32_t getActiveDatafileID() const;
         void updateActiveDatafileID(fs::path dataDir);
 
         [[nodiscard]] fs::path getAbsDirPath() const;

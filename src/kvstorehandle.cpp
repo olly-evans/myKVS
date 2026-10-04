@@ -34,14 +34,14 @@ void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {
     size_t fileBytes = fs::file_size(path);
     uint64_t valueByteOffset = fileBytes - rec.getValueSize();
 
-    keyDir[rec.getKey()] = KeyDirEntry{getActiveFileID(),
+    keyDir[rec.getKey()] = KeyDirEntry{getActiveDatafileID(),
                                        rec.getValueSize(),
                                        valueByteOffset,
                                        rec.getTimestamp()};
 }
 
-uint32_t KVStoreHandle::getActiveFileID() const {
-    return activeFileID;
+uint32_t KVStoreHandle::getActiveDatafileID() const {
+    return activeDatafileID;
 }
 
 void KVStoreHandle::updateActiveDatafileID(fs::path dataDir) {
@@ -57,7 +57,7 @@ void KVStoreHandle::updateActiveDatafileID(fs::path dataDir) {
             found = true;
         }
     }
-    activeFileID = found ? maxID : 0;
+    activeDatafileID = found ? maxID : 0;
 }
 
 

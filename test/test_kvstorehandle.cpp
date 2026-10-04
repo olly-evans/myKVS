@@ -43,5 +43,5 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
     stH.updateActiveDatafileID(dataDir);
 
-    REQUIRE(stH.getActiveFileID() == 5);
+    REQUIRE(stH.getActiveDatafileID() == 5);
 }
