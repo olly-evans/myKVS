@@ -26,7 +26,7 @@ class KVStore {
 
         /* Main API */
 
-        KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
+        [[nodiscard]] KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
         std::optional<std::string> get(const KVStoreHandle& stH, const std::string key);
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
@@ -44,7 +44,10 @@ class KVStore {
         void setActiveOutputStream(std::ofstream stream);
 
         [[nodiscard]] std::ifstream& getActiveInputStream();
-        void setActiveInputStream(std::ifstream stream);
+        void updateActiveInputStream(fs::path path);
+
+        [[nodiscard]] fs::path getActiveInputStreamPath();
+        void setActiveInputStreamPath(fs::path path);
 
         [[nodiscard]] size_t getMaxDatafileBytes() const;
         void setMaxDatafileBytes(size_t maxBytes);
@@ -57,7 +60,9 @@ class KVStore {
         fs::path dataDir;
 
         std::ofstream activeOutputStream;
+
         std::ifstream activeInputStream;
+        fs::path activeInputStreamPath;
 
         size_t maxDatafileBytes;
 };

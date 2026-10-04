@@ -33,6 +33,11 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
                                                               stH.getDatafileExt()); 
         
         stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
+        
+        /* Set to active datafile by default. */
+
+        std::ifstream activeInputStream(currentDatafilePath, std::ios::binary | std::ios::in);
+        setActiveInputStreamPath(currentDatafilePath);
 
         std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
         return stH;
@@ -47,6 +52,11 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
                                                           stH.getDatafileExt()); 
     
     stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
+    
+    /* Set to active datafile by default. */
+
+    std::ifstream activeInputStream(currentDatafilePath, std::ios::binary | std::ios::in);
+    setActiveInputStreamPath(currentDatafilePath);
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
 
@@ -110,14 +120,18 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
 
     KeyDirEntry entry = it->second;
 
-    /* Seperate filestreams opened for readCRC() and readValue(). */
+    fs::path readPath = stH.createDatafilePath(dataDir, entry.fileID, stH.getDatafileExt());
 
-    fs::path datafile = stH.createDatafilePath(dataDir, entry.fileID, stH.getDatafileExt());
+    /* if input stream already reading from stH.getActiveDatafilePath(), no set */
+    if (getActiveInputStreamPath() != readPath)
+        updateActiveInputStream(readPath);
+    
 
-    std::string valbuf = stH.readDiskValue(datafile, entry);
+    // pass in stream perhaps, dont know if ill keep these.
+    std::string valbuf = stH.readDiskValue(readPath, entry);
 
     Record rec(key, valbuf); 
-    size_t crcDisk = stH.readDiskCRC(datafile, entry, rec);
+    size_t crcDisk = stH.readDiskCRC(readPath, entry, rec);
 
     if (rec.getCRC32() != crcDisk)
         return std::nullopt; /* Recommend deleting key {key} */
@@ -204,20 +218,29 @@ void KVStore::setDataDir(fs::path root, std::string dirName) {
     dataDir = root.append(dirName);
 }
 
-void KVStore::setActiveOutputStream(std::ofstream stream) {
-    activeOutputStream = std::move(stream);
-}
-
 std::ofstream& KVStore::getActiveOutputStream() {
     return activeOutputStream;
+}
+
+void KVStore::setActiveOutputStream(std::ofstream stream) {
+    activeOutputStream = std::move(stream);
 }
 
 std::ifstream& KVStore::getActiveInputStream() {
     return activeInputStream;
 }
 
-void KVStore::setActiveInputStream(std::ifstream stream) {
-    activeInputStream = std::move(stream);
+void KVStore::updateActiveInputStream(fs::path path) {
+    activeInputStream.open(path, std::ios::binary | std::ios::in);
+    setActiveInputStreamPath(path);
+}
+
+fs::path KVStore::getActiveInputStreamPath() {
+    return activeInputStreamPath;
+}
+
+void KVStore::setActiveInputStreamPath(fs::path path) {
+    activeInputStreamPath = path;
 }
 
 size_t KVStore::getMaxDatafileBytes() const {
