@@ -76,7 +76,7 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
     kvs.put(stH, "testkey", "testvalue");
 
     REQUIRE(stH.getActiveDatafilePath().empty());
-    REQUIRE(!kvs.getActiveFilestream().is_open());
+    REQUIRE(!kvs.getActiveOutputStream().is_open());
     REQUIRE(!fs::exists(kvs.getDataDir()));
 }
 

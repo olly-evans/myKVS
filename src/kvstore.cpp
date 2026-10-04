@@ -32,7 +32,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
                                                               stH.getActiveDatafileID(), 
                                                               stH.getDatafileExt()); 
         
-        stH.setActiveDatafile(currentDatafilePath, activeFilestream);
+        stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
 
         std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
         return stH;
@@ -46,7 +46,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
                                                           stH.getActiveDatafileID(), 
                                                           stH.getDatafileExt()); 
     
-    stH.setActiveDatafile(currentDatafilePath, activeFilestream);
+    stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
 
@@ -77,24 +77,24 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
 
-    if (!activeFilestream.is_open() || activeFilestream.bad())
+    if (!activeOutputStream.is_open() || activeOutputStream.bad())
         std::cerr << "[ERROR] Filestream error!" << std::endl;
     
     Record rec(key, val);
 
     if (fs::file_size(df) + rec.byteSize() < getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
-        rec.serialize(activeFilestream);
+        rec.serialize(activeOutputStream);
         stH.updateKeyDir(df, rec);
         return;
     } 
 
     std::cout << "Datafile full, rolling-over..." << std::endl;
 
-    stH.rollOverDatafile(dataDir, activeFilestream);
+    stH.rollOverDatafile(dataDir, activeOutputStream);
     stH.updateActiveDatafileID(dataDir);
     
-    rec.serialize(activeFilestream);
+    rec.serialize(activeOutputStream);
     stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
 }
 
@@ -196,12 +196,12 @@ void KVStore::setDataDir(fs::path root, std::string dirName) {
     dataDir = root.append(dirName);
 }
 
-void KVStore::setActiveFilestream(std::ofstream stream) {
-    activeFilestream = std::move(stream);
+void KVStore::setActiveOutputStream(std::ofstream stream) {
+    activeOutputStream = std::move(stream);
 }
 
-std::ofstream& KVStore::getActiveFilestream() {
-    return activeFilestream;
+std::ofstream& KVStore::getActiveOutputStream() {
+    return activeOutputStream;
 }
 
 

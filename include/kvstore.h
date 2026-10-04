@@ -40,8 +40,8 @@ class KVStore {
         void setDataDir(fs::path dir, std::string dirName);
         [[nodiscard]] fs::path getDataDir() const;        
 
-        void setActiveFilestream(std::ofstream stream);
-        [[nodiscard]] std::ofstream& getActiveFilestream();
+        void setActiveOutputStream(std::ofstream stream);
+        [[nodiscard]] std::ofstream& getActiveOutputStream();
 
         [[nodiscard]] size_t getMaxDatafileBytes() const;
         void setMaxDatafileBytes(size_t maxBytes);
@@ -55,7 +55,7 @@ class KVStore {
 
         size_t maxDatafileBytes;
 
-        std::ofstream activeFilestream;
+        std::ofstream activeOutputStream;
 
         std::shared_mutex writeMutex;
         std::shared_mutex readMutex;

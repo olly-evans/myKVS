@@ -15,8 +15,8 @@ TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
 
     Record rec("key", "val");
 
-    kvs.setActiveFilestream(std::move(mockFile1));
-    rec.serialize(kvs.getActiveFilestream());
+    kvs.setActiveOutputStream(std::move(mockFile1));
+    rec.serialize(kvs.getActiveOutputStream());
 
     mockFile1.close();
 
