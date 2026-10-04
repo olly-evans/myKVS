@@ -12,7 +12,7 @@ namespace DetectStore {
         std::array<std::string, 3> validExtensions = {".data", ".hint", ".lock"};
 
         for (const auto& validExt : validExtensions) {
-            if ((fileExt == validExt))
+            if ((validExt == fileExt))
                 return true;
         }
         return false;
@@ -35,7 +35,7 @@ namespace DetectStore {
 
         // either .lock .hint or .data ext.
 
-        if (!isValidStoreExtension(filepath))
+        if (!isValidStoreExtension(filepath.extension()))
             return false;
 
         // can be more specific with .lock or .hint later when we use them.

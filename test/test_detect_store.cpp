@@ -33,8 +33,6 @@ TEST_CASE("Detecting mock store correctly", "KVStore::isStore()") {
     fs::path dataDir = createTempTestDir("test_detect_store_1");
     TempDirGuard cleanup{dataDir};
 
-    KVStore kvs;
-
     fs::path mFilePath1 = dataDir / "1.aol.hint";
     std::ofstream mockFile1(mFilePath1);
     mockFile1.close();
@@ -53,15 +51,8 @@ TEST_CASE("isValidStoreFile() stripping filename correctly", "DetectStore::isVal
     fs::path dataDir = createTempTestDir("test_detect_store_2");
     TempDirGuard cleanup{dataDir};
 
-    KVStore kvs;
-
     fs::path mFilePath1 = dataDir / "0.aol.data";
-    std::ofstream mockFile1(mFilePath1);
-    mockFile1.close();
-
     fs::path mFilePath2 = dataDir / "0.data";
-    std::ofstream mockFile2(mFilePath2);
-    mockFile2.close();
 
     REQUIRE(DetectStore::isValidStoreFile(mFilePath1));
     REQUIRE(!DetectStore::isValidStoreFile(mFilePath2));
