@@ -16,7 +16,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
     stH.setAbsDirPath();
     setDataDir(stH.getAbsDirPath(), relDataDir);    
 
-    stH.setMaxDatafileBytes(stFlags.maxDatafileBytes);
+    setMaxDatafileBytes(stFlags.maxDatafileBytes);
 
     stH.setDatafileExt(".data");
 
@@ -75,7 +75,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     
     Record rec(key, val);
 
-    if (fs::file_size(activeDatafilePath) + rec.byteSize() < stH.getMaxDatafileBytes()) {
+    if (fs::file_size(activeDatafilePath) + rec.byteSize() < getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
         rec.serialize(activeFilestream);
         stH.updateKeyDir(activeDatafilePath, rec);
@@ -251,4 +251,12 @@ void KVStore::setActiveDatafilePath(fs::path path) {
 
 fs::path KVStore::getActiveDatafilePath() const {
     return activeDatafilePath;
+}
+
+size_t KVStore::getMaxDatafileBytes() const {
+    return maxDatafileBytes;
+}
+
+void KVStore::setMaxDatafileBytes(size_t maxBytes) {
+    maxDatafileBytes = maxBytes;
 }

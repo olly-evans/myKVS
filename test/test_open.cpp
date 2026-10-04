@@ -3,6 +3,14 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+TEST_CASE("KVStore sets the max datafile bytes.", "KVStoreHandle::setMaxDatafileBytes()") {
+    KVStore kvs;
+
+    size_t bytes = 3;
+    kvs.setMaxDatafileBytes(bytes);
+    REQUIRE(kvs.getMaxDatafileBytes() == bytes);
+}
+
 TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
     KVStore kvs;
@@ -28,7 +36,7 @@ TEST_CASE("Mock existing store gets the correct active file id", "KVStore::") {
     
     KVStore kvs;
 
-    fs::path dataDir = createTempTestDir("test_open_2");
+    fs::path dataDir = createTempTestDir("test_open_1");
     TempDirGuard cleanup(dataDir);
 
     fs::path mFilePath1 = dataDir / "1.aol.data";

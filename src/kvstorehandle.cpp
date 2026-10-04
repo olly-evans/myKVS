@@ -60,13 +60,7 @@ void KVStoreHandle::updateActiveDatafileID(fs::path dataDir) {
     activeFileID = found ? maxID : 0;
 }
 
-size_t KVStoreHandle::getMaxDatafileBytes() const {
-    return maxDatafileBytes;
-}
 
-void KVStoreHandle::setMaxDatafileBytes(size_t maxBytes) {
-    maxDatafileBytes = maxBytes;
-}
 
 fs::path KVStoreHandle::getAbsDirPath() const {
     return absDirPath;

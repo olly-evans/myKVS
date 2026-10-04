@@ -11,14 +11,6 @@ TEST_CASE("KVStoreHandle sets the absolute directory") {
     REQUIRE(fs::exists(stH.getAbsDirPath()));
 }
 
-TEST_CASE("KVStoreHandle sets the max datafile bytes.", "KVStoreHandle::setMaxDatafileBytes()") {
-    KVStoreHandle stH;
-
-    size_t bytes = 3;
-    stH.setMaxDatafileBytes(bytes);
-    REQUIRE(stH.getMaxDatafileBytes() == bytes);
-}
-
 TEST_CASE("KVStoreHandle sets read/write permissions for the store.", "KVStoreHandle::setReadWrite()") {
     KVStoreHandle stH;
     bool readWrite = true;

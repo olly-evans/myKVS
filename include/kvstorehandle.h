@@ -22,7 +22,6 @@ class KVStoreHandle {
 
     private:
         uint32_t activeFileID;
-        size_t maxDatafileBytes;
 
         fs::path absDirPath;
         std::string datafileExtension;
@@ -41,9 +40,6 @@ class KVStoreHandle {
 
         [[nodiscard]] uint32_t getActiveFileID() const;
         void updateActiveDatafileID(fs::path dataDir);
-
-        [[nodiscard]] size_t getMaxDatafileBytes() const;
-        void setMaxDatafileBytes(size_t maxBytes);
 
         [[nodiscard]] fs::path getAbsDirPath() const;
         void setAbsDirPath();

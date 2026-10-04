@@ -91,7 +91,7 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
     size_t mockFileSize = 10;
-    stH.setMaxDatafileBytes(mockFileSize);
+    kvs.setMaxDatafileBytes(mockFileSize);
 
     uint32_t oldDatafileID = stH.getActiveFileID();
 
@@ -106,7 +106,7 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
     fs::path oldDatafilePath = dataDir / "0.rol.data";
 
     REQUIRE(fs::exists(oldDatafilePath)); /* Old path exists as read-only. */
-    REQUIRE(fs::file_size(oldDatafilePath) < stH.getMaxDatafileBytes()); /* Less than max size. */   
+    REQUIRE(fs::file_size(oldDatafilePath) < kvs.getMaxDatafileBytes()); /* Less than max size. */   
 }
 
 TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStore::put()") {

@@ -30,7 +30,7 @@ TEST_CASE("Does isNumericStem() detect a non-numeric stem", "DetectStore::isNume
 
 TEST_CASE("Detecting mock store correctly", "KVStore::isStore()") {
 
-    fs::path dataDir = createTempTestDir("test_detect_store_3");
+    fs::path dataDir = createTempTestDir("test_detect_store_1");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;
@@ -50,7 +50,7 @@ TEST_CASE("Detecting mock store correctly", "KVStore::isStore()") {
 
 TEST_CASE("isValidStoreFile() stripping filename correctly", "DetectStore::isValidStoreFile()") {
     
-    fs::path dataDir = createTempTestDir("test_detect_store_4");
+    fs::path dataDir = createTempTestDir("test_detect_store_2");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;
