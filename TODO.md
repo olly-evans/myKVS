@@ -24,3 +24,5 @@
 - kvstore_api.cpp, kvstore_files.cpp... I think almost all getters/setters in kvstore can be put into Handle.
 
 - ReadKeySize... etc.. down the restored record then read record in loop.
+
+- test for replacing key. should just update it to new value.
