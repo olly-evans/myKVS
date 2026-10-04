@@ -46,6 +46,9 @@ namespace DetectStore {
             return false;
 
         for (const auto& candidateFile : fs::directory_iterator(dir)) {
+
+            if (!candidateFile.is_regular_file())
+                return false;
             if (!isValidStoreFile(candidateFile))
                 return false;
         }
@@ -55,12 +58,17 @@ namespace DetectStore {
 
     bool isStore(const fs::path& dir) {
         
-        bool dirExists = fs::exists(dir);
+        std::error_code ec;
+
+        bool pathIsDir = fs::is_directory(dir, ec);
+        bool dirExists = fs::exists(dir, ec);
         bool allValidStoreFiles = hasOnlyValidStoreFiles(dir);
 
         // More criteria if required.
 
-        return allValidStoreFiles && dirExists;
+        bool isStore = pathIsDir && dirExists && allValidStoreFiles;
+
+        return isStore;
     }
 
 } // DetectStore namespace
