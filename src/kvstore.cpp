@@ -95,7 +95,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     stH.updateActiveDatafileID(dataDir);
     
     rec.serialize(activeFilestream);
-    stH.updateKeyDir(df, rec);
+    stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
 }
 
 std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
@@ -152,6 +152,8 @@ void KVStore::restore(KVStoreHandle& stH) {
             
             // Record rec();
             // rec.deserialize(), deserializes and constructs record for us.
+            
+            // readDiskCRC(std::ifstream& in, &bytesRead) <- incremented in readDiskCRC.
 
             size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t) + bytesRead;
 

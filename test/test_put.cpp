@@ -80,12 +80,12 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
     REQUIRE(!fs::exists(kvs.getDataDir()));
 }
 
-TEST_CASE("Rolling over a datafile in put", "KVStore::rollOverDatafile()") {
+TEST_CASE("Rolling over a datafile in put", "KVStoreHandle::rollOverDatafile()") {
 
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_put_4/");
+    fs::path dataDir = createTempTestDir("test_put_3/");
     TempDirGuard cleanup(dataDir);
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
@@ -145,7 +145,7 @@ TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") 
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_get_4/");
+    fs::path dataDir = createTempTestDir("test_get_5/");
     TempDirGuard cleanup(dataDir);
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
