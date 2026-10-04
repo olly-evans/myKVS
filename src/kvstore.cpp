@@ -169,7 +169,7 @@ void KVStore::restore(KVStoreHandle& stH) {
             // Record rec();
             // rec.deserialize(), deserializes and constructs record for us.
             
-            stH.readCRC(bytesRead);
+            // stH.readCRC(bytesRead);
 
             // readDiskCRC(std::ifstream& in, &bytesRead) <- incremented in readDiskCRC.
 

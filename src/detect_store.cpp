@@ -42,10 +42,14 @@ namespace DetectStore {
 
     bool hasOnlyValidStoreFiles(const fs::path& dir) {
 
+        if (fs::is_empty(dir))
+            return false;
+
         for (const auto& candidateFile : fs::directory_iterator(dir)) {
             if (!isValidStoreFile(candidateFile))
                 return false;
         }
+
         return true;
     }
 
