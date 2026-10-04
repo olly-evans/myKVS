@@ -55,7 +55,7 @@ class KVStore {
         void setMaxDatafileBytes(size_t maxBytes);
 
         [[nodiscard]] fs::path getAbsDirPath() const;
-        void setAbsDirPath();
+        void updateAbsDirPath();
 
     private:
         fs::path absDirPath;

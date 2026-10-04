@@ -3,7 +3,6 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-
 TEST_CASE("KVStoreHandle sets read/write permissions for the store.", "KVStoreHandle::setReadWrite()") {
     
     KVStoreHandle stH;
@@ -12,6 +11,7 @@ TEST_CASE("KVStoreHandle sets read/write permissions for the store.", "KVStoreHa
 
     REQUIRE(stH.getReadWrite() == readWrite);
 }
+
 
 TEST_CASE("KVStoreHandle sets a datafile extension for the store", "setDatafileExt()") {
     
