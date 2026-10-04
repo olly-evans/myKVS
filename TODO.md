@@ -18,8 +18,6 @@
 
 - activeDatafilePath and getters/setters to kvstorehandle.
 
-- Only .lock, .hint and .data file extensions in isValidDatafileExtension <- perhaps in file object/ns.
-
 - File stuff in datafile Object or namespace, if it goes in object it'll need more stuff w
 - kvstore_api.cpp, kvstore_files.cpp... I think almost all getters/setters in kvstore can be put into Handle.
 
