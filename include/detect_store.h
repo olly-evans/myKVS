@@ -12,7 +12,7 @@ namespace DetectStore {
 
     bool isNumericStem(const std::string& stem);
 
-    bool isValidStoreExtension(const std::string& fExtension);
+    bool isValidStoreExtension(const std::string& fileExt);
     bool isValidStoreFile(const fs::path& filepath);
     bool hasOnlyValidStoreFiles(const fs::path& dir);
 

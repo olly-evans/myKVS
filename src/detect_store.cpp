@@ -7,12 +7,12 @@ namespace DetectStore {
         return !stem.empty() && std::all_of(stem.begin(), stem.end(), ::isdigit);
     }
 
-    bool isValidStoreExtension(const std::string& fExt) {
+    bool isValidStoreExtension(const std::string& fileExt) {
         
         std::array<std::string, 3> validExtensions = {".data", ".hint", ".lock"};
 
-        for (const auto& vExt : validExtensions) {
-            if ((fExt == vExt))
+        for (const auto& validExt : validExtensions) {
+            if ((fileExt == validExt))
                 return true;
         }
         return false;

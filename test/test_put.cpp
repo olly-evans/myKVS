@@ -31,7 +31,7 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
 
 }
 
-void test_put_threads_task(KVStore& kvs, KVStoreHandle& stH, uint64_t startID, uint64_t count) {
+void simulate_puts_in_range(KVStore& kvs, KVStoreHandle& stH, uint64_t startID, uint64_t count) {
 
     for (uint64_t i = startID; i < startID + count; ++i) {
         kvs.put(stH, std::to_string(i), std::to_string(i));
@@ -48,8 +48,8 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-    std::thread t1(test_put_threads_task, std::ref(kvs), std::ref(stH), 0, 100);
-    std::thread t2(test_put_threads_task, std::ref(kvs), std::ref(stH), 100, 100);
+    std::thread t1(simulate_puts_in_range, std::ref(kvs), std::ref(stH), 0, 100);
+    std::thread t2(simulate_puts_in_range, std::ref(kvs), std::ref(stH), 100, 100);
 
     t1.join();
     t2.join();
