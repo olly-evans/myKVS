@@ -126,7 +126,7 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     kvs.put(stH, k, v);
     kvs.put(stH, k, newv);
 
-    KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("key");
+    KeyDirEntry entry = HandleTestAccess::keyDir(stH).at(k);
 
     Record rec1(k, v);
     Record rec2(k, newv);

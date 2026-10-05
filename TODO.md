@@ -11,18 +11,7 @@
 
 - Make two instances and run on the same directory.
 
-- FINISH TEST FOR RESTORE()
 
-- Functions for restoreRecord() in restore()
-- SetTimestamp() in restore().
-
-- activeDatafilePath and getters/setters to kvstorehandle.
-
-- File stuff in datafile Object or namespace, if it goes in object it'll need more stuff w
-- kvstore_api.cpp, kvstore_files.cpp... I think almost all getters/setters in kvstore can be put into Handle.
-
-- ReadKeySize... etc.. down the restored record then read record in loop.
-
-- test for replacing key. should just update it to new value.
+# 3 store a counter for temporary directores in a test_.cpp and construct the path somewhere.
 
 # 4 Migrate get() to use std::expected perhaps with an error struct.

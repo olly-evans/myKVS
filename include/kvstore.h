@@ -55,9 +55,8 @@ class KVStore {
         void setMaxDatafileBytes(size_t maxBytes);
 
     private:
-        std::shared_mutex writeMutex;
-        std::shared_mutex readMutex;
-
+        std::shared_mutex rwMutex;
+        
         fs::path absDirPath;
         fs::path dataDir;
 
