@@ -22,7 +22,7 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
     std::ifstream readDatafileStream(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
 
     KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("k2"); 
-    readDatafileStream.seekg(entry.valFileOffset, std::ios_base::beg);
+    readDatafileStream.seekg(static_cast<std::streamoff>(entry.valFileOffset), std::ios_base::beg);
 
     std::string rdbuf(entry.valSz, '\0');
     readDatafileStream.read(rdbuf.data(), entry.valSz);

@@ -106,7 +106,9 @@ TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::re
     kvs.put(stH, "key", "value");
 
     kvs.updateActiveInputStream(stH.getActiveDatafilePath());
-    kvs.getActiveInputStream().seekg(sizeof(uint32_t) + sizeof(uint64_t), std::ios_base::beg);
+
+    uint64_t off = sizeof(uint32_t) + sizeof(uint64_t);
+    kvs.getActiveInputStream().seekg(static_cast<std::streamoff>(off), std::ios_base::beg);
 
     uint32_t keySize = stH.readField<uint32_t>(kvs.getActiveInputStream());
     REQUIRE(keySize == 3); 

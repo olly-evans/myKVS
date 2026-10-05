@@ -59,15 +59,16 @@ std::string KVStoreHandle::readString(std::ifstream& in, size_t n) {
     return s;
 }
 
-Record KVStoreHandle::readRecord(std::ifstream& in, const size_t recFileOffset) {
+Record KVStoreHandle::readRecord(std::ifstream& in, const std::streamoff recFileOffset) {
 
     /* 
         Can take a path and in.open(), we will be using this for restore. 
         Only one run at init. 
     */
 
+    /* size_t sometimes used as offset, hence cast. */
     if (recFileOffset > 0)
-        in.seekg(recFileOffset, std::ios_base::beg);
+        in.seekg(static_cast<std::streamoff>(recFileOffset), std::ios_base::beg);
 
     uint32_t crc       = readField<uint32_t>(in);
     uint64_t timestamp = readField<uint64_t>(in);
