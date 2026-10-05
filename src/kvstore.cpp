@@ -215,7 +215,7 @@ void KVStore::updateActiveInputStream(fs::path path) {
     setActiveInputStreamPath(path);
 }
 
-fs::path KVStore::getActiveInputStreamPath() {
+fs::path KVStore::getActiveInputStreamPath() const {
     return activeInputStreamPath;
 }
 

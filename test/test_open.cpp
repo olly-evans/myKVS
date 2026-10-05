@@ -3,7 +3,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("KVStore sets the max datafile bytes.", "KVStoreHandle::setMaxDatafileBytes()") {
+TEST_CASE("KVStore sets the max datafile bytes.", "KVStore::setMaxDatafileBytes()") {
     KVStore kvs;
 
     size_t bytes = 3;
@@ -43,7 +43,7 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
            dataDir / "0.aol.data");
 }
 
-TEST_CASE("Mock existing store gets the correct active file id", "KVStore::") {
+TEST_CASE("Open gets the correct active id for a mock existing store", "KVStore::open()") {
     
     KVStore kvs;
 

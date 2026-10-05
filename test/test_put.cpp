@@ -80,7 +80,7 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
     REQUIRE(!fs::exists(kvs.getDataDir()));
 }
 
-TEST_CASE("Rolling over a datafile in put", "KVStoreHandle::rollOverDatafile()") {
+TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
 
     KVStore kvs;
     StoreFlags flags;

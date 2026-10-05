@@ -21,10 +21,10 @@ class Record {
 
         // static Record deserialize(std::istream& in);
 
-        size_t byteSize();
+        size_t byteSize() const;
 
         void setCRC32();
-        [[nodiscard]] uint32_t getCRC32();
+        [[nodiscard]] uint32_t getCRC32() const;
 
         void setTimestamp(uint64_t ts);
         void setTimestampNow();

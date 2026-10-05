@@ -43,7 +43,7 @@ class KVStore {
         /* List all the keys in the keyDir */
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
 
-        /* Restore the keyDir from an existing store. */
+        /* Restore the keyDir from an existing store. Brute-force for now, no hint files. */
         void restore(KVStoreHandle& stH);
 
         /* Getters/Setters */
@@ -62,7 +62,7 @@ class KVStore {
         void setActiveInputStream(std::ifstream& in);
         void updateActiveInputStream(fs::path path);
 
-        [[nodiscard]] fs::path getActiveInputStreamPath();
+        [[nodiscard]] fs::path getActiveInputStreamPath() const;
         void setActiveInputStreamPath(fs::path path);
 
         [[nodiscard]] size_t getMaxDatafileBytes() const;

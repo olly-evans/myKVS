@@ -37,10 +37,12 @@ class KVStoreHandle {
         /* Datafile */
 
         void openActiveDatafile(fs::path dataDir, std::ofstream& out);
+        
         [[nodiscard]] fs::path createDatafilePath(const fs::path& dataDir, uint32_t fID, std::string fExt) const;
         void setActiveDatafile(const fs::path& path, std::ofstream& out);
         void makeDatafileReadOnly(const fs::path& path, std::ofstream& out);
         void rollOverDatafile(const fs::path& dataDir, std::ofstream& out);
+
         uint32_t validDatafileToID(fs::path path);
 
         template <typename T>
