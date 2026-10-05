@@ -130,24 +130,22 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
     if (getActiveInputStreamPath().empty() || (getActiveInputStreamPath() != readPath))
         updateActiveInputStream(readPath);
 
-    
-    uintmax_t fileSize = fs::file_size(readPath); // 26
-        // 23                   // 3
+    uintmax_t fileSize = fs::file_size(readPath);
     if ((entry.valFileOffset + entry.valSz) > fileSize)
-        return std::nullopt; // Reading past the file size.
+        return std::nullopt; // Woud read past the file size.
 
     activeInputStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string val = stH.readString(activeInputStream, entry.valSz);
-    std::cout << val << "\n";
 
-    // CRC Check.
     Record rec(key, val);
-    rec.setTimestamp(entry.tstamp);
 
+    // Read CRC.
     std::streampos crcOff = activeInputStream.tellg() - static_cast<std::streampos>(rec.byteSize());
     activeInputStream.seekg(crcOff, std::ios_base::beg);
     uint32_t crc = stH.readField<uint32_t>(activeInputStream);
     
+    // Calculate expected CRC. rec.getExpectedCRC();
+    rec.setTimestamp(entry.tstamp);
     rec.setCRC32();
 
     if (rec.getCRC32() != crc)
