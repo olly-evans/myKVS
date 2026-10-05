@@ -113,7 +113,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
 }
 
-std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::string key) {
+std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string key) {
 
     std::shared_lock<std::shared_mutex> lock(readMutex);
 
@@ -127,22 +127,33 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     fs::path readPath = stH.createDatafilePath(dataDir, entry.fileID, stH.getDatafileExt());
 
     /* if input stream already reading from stH.getActiveDatafilePath(), no set */
-    if (getActiveInputStreamPath() != readPath)
+    if (getActiveInputStreamPath().empty() || (getActiveInputStreamPath() != readPath))
         updateActiveInputStream(readPath);
+
     
+    uintmax_t fileSize = fs::file_size(readPath); // 26
+        // 23                   // 3
+    if ((entry.valFileOffset + entry.valSz) > fileSize)
+        return std::nullopt; // Reading past the file size.
 
-    // pass in stream perhaps, dont know if ill keep these.
+    activeInputStream.seekg(entry.valFileOffset, std::ios_base::beg);
+    std::string val = stH.readString(activeInputStream, entry.valSz);
+    std::cout << val << "\n";
 
-    /* OFC NOT WORKING IN TEST_GET, DOESNT USE OUR FILESTREAM. */
-    // std::string valbuf = stH.readDiskValue(readPath, entry);
+    // CRC Check.
+    Record rec(key, val);
+    rec.setTimestamp(entry.tstamp);
 
-    // Record rec(key, valbuf); 
-    // size_t crcDisk = stH.readDiskCRC(readPath, entry, rec);
-
-    // if (rec.getCRC32() != crcDisk)
-    //     return std::nullopt; /* Recommend deleting key {key} */
+    std::streampos crcOff = activeInputStream.tellg() - static_cast<std::streampos>(rec.byteSize());
+    activeInputStream.seekg(crcOff, std::ios_base::beg);
+    uint32_t crc = stH.readField<uint32_t>(activeInputStream);
     
-    return "asdf";
+    rec.setCRC32();
+
+    if (rec.getCRC32() != crc)
+        return std::nullopt; // CRC mismatch from disk and expected.
+    
+    return val;
 }
 
 std::vector<std::string> KVStore::listKeys(const KVStoreHandle& stH) {

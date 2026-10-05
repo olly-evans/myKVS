@@ -28,7 +28,7 @@ class KVStore {
 
         [[nodiscard]] KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
-        std::optional<std::string> get(const KVStoreHandle& stH, const std::string key);
+        std::optional<std::string> get(KVStoreHandle& stH, const std::string key);
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
         void restore(KVStoreHandle& stH);
 

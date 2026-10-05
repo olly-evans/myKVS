@@ -9,7 +9,7 @@ Record::Record(std::string k, std::string v) :
     valSize(static_cast<uint32_t>(v.size())),
     key(std::move(k)),
     val(std::move(v)) {
-
+    
     setTimestampNow();
     setCRC32();
 }
