@@ -89,7 +89,7 @@ TEST_CASE("Does get change input stream correctly. Opened store and put. Opened 
     fs::path readPathAfterGet = kvs2.getActiveInputStreamPath(); /* get is in mf1 */
 
     REQUIRE(kvs2.getActiveInputStream().is_open());
-    REQUIRE(kvs2.getActiveInputStream().good());
+    REQUIRE(kvs2.getActiveInputStream().good()); /* perhaps need a .clear(), this is a new stream now remember, new object.*/
 
     REQUIRE(readPathBeforeGet != readPathAfterGet); /* Should be different as defaults to mf2, 
                                                        then puts to mf1, reads from it. */

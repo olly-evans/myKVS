@@ -52,42 +52,11 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
 
 }
 
-uint32_t KVStoreHandle::readCRC(std::ifstream& in, size_t &crcOffset) {
-
-    // file?
-
-    // streampos?
-    
-    in.seekg(crcOffset, std::ios_base::beg);
-    in.read(reinterpret_cast<char*>(&crcOffset), sizeof(crcOffset));
-
-}
-
-uint32_t KVStoreHandle::readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const {
-
-    std::ifstream in(path, std::ios::binary | std::ios::in);
-
-    uint64_t crcOffset = (entry.valFileOffset + entry.valSz) - rec.byteSize();
-
-    in.seekg(crcOffset, std::ios_base::beg);
-
-    uint32_t crcFromDisk;
-    in.read(reinterpret_cast<char*>(&crcFromDisk), sizeof(crcFromDisk));
-    in.close();
-
-    return crcFromDisk;
-}
-
-std::string KVStoreHandle::readDiskValue(fs::path path, KeyDirEntry entry) const {
-    
-    std::ifstream in(path, std::ios::binary | std::ios::in);
-
-    in.seekg(entry.valFileOffset, std::ios_base::beg);
-    std::string val(entry.valSz, '\0');
-    in.read(val.data(), entry.valSz);
-    in.close();
-
-    return val;
+std::string KVStoreHandle::readString(std::istream& in, size_t n) {
+    std::string s(n, '\0');
+    if (!in.read(s.data(), static_cast<std::streamsize>(n)))
+        throw std::runtime_error("short read");
+    return s;
 }
 
 void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {

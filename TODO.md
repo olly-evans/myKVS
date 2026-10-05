@@ -27,7 +27,7 @@
 
 - make an input stream for kvstore.
 
-# 1 finish testing isStore() that has to work for restore()
-# 2 finish read functions one by one in restore().
+# 1 test readfield and readstring seperately.
+# 2 create a restoreRecord() function.
 # 3 Test restore.
 # 4 Test inputstream for existing open after a put to previous open.

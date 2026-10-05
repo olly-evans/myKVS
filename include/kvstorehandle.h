@@ -40,10 +40,9 @@ class KVStoreHandle {
         void makeDatafileReadOnly(const fs::path& path, std::ofstream& out);
         void rollOverDatafile(const fs::path& dataDir, std::ofstream& out);
 
-        uint32_t readCRC(std::ifstream& in, size_t &crcOffset);
-
-        [[nodiscard]] uint32_t readDiskCRC(fs::path path, KeyDirEntry entry, Record rec) const;
-        [[nodiscard]] std::string readDiskValue(fs::path path, KeyDirEntry entry) const;
+        template <typename T>
+        T readField(std::istream& in);
+        static std::string readString(std::istream& in, size_t n);
 
         void updateKeyDir(fs::path path, const Record rec);
 
@@ -64,3 +63,12 @@ class KVStoreHandle {
         /* Testing */
         friend struct HandleTestAccess;
 };
+
+template <typename T>
+T KVStoreHandle::readField(std::istream& in) {
+    static_assert(std::is_trivially_copyable_v<T>);
+    T v{};
+    if (!in.read(reinterpret_cast<char*>(&v), sizeof(T)))
+        throw std::runtime_error("Mismatching read sizes.");
+    return v;
+}

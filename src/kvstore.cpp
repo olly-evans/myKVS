@@ -130,15 +130,15 @@ std::optional<std::string> KVStore::get(const KVStoreHandle& stH, const std::str
     // pass in stream perhaps, dont know if ill keep these.
 
     /* OFC NOT WORKING IN TEST_GET, DOESNT USE OUR FILESTREAM. */
-    std::string valbuf = stH.readDiskValue(readPath, entry);
+    // std::string valbuf = stH.readDiskValue(readPath, entry);
 
-    Record rec(key, valbuf); 
-    size_t crcDisk = stH.readDiskCRC(readPath, entry, rec);
+    // Record rec(key, valbuf); 
+    // size_t crcDisk = stH.readDiskCRC(readPath, entry, rec);
 
-    if (rec.getCRC32() != crcDisk)
-        return std::nullopt; /* Recommend deleting key {key} */
+    // if (rec.getCRC32() != crcDisk)
+    //     return std::nullopt; /* Recommend deleting key {key} */
     
-    return valbuf;
+    return "asdf";
 }
 
 std::vector<std::string> KVStore::listKeys(const KVStoreHandle& stH) {
@@ -158,46 +158,28 @@ void KVStore::restore(KVStoreHandle& stH) {
         
     for (const auto& df : fs::directory_iterator(dataDir)) {
 
-        // restoreRecord()
-        uintmax_t bytesRead = 0;
-        uintmax_t fileSize = df.file_size();
+        // readRecord()
 
-        std::ifstream in(df.path(), std::ios::binary | std::ios::in);
+        updateActiveInputStream(df);
+        // reading through whole file, so no seek required.
 
-        while(bytesRead < fileSize) {
+        while(activeInputStream.peek() != std::char_traits<char>::eof()) {
+                        
+            uint32_t crc = stH.readField<uint32_t>(activeInputStream);
+            uint64_t timestamp = stH.readField<uint64_t>(activeInputStream);
+            uint32_t keySize = stH.readField<uint32_t>(activeInputStream);
+            uint32_t valSize = stH.readField<uint32_t>(activeInputStream);
+            std::string key = stH.readString(activeInputStream, keySize);
+            std::string val = stH.readString(activeInputStream, valSize);
+
+            // Record rec(key, val);
+            // // rec.setTimestamp();
             
-            // Record rec();
-            // rec.deserialize(), deserializes and constructs record for us.
-            
-            // stH.readCRC(bytesRead);
+            // // if (rec.byteSize() != bytesRead)
+            // //     return;
 
-            // readDiskCRC(std::ifstream& in, &bytesRead) <- incremented in readDiskCRC.
-
-            size_t keySizeOffset = sizeof(uint32_t) + sizeof(uint64_t) + bytesRead;
-
-            uint32_t keySize;
-            uint32_t valSize;
-
-            in.seekg(keySizeOffset, std::ios_base::beg);
-            in.read(reinterpret_cast<char*>(&keySize), sizeof(uint32_t)); // read 4 bytes into buf from keySizeOffset.
-            in.read(reinterpret_cast<char*>(&valSize), sizeof(uint32_t)); // read 4 bytes more should be valsize.
-            
-            bytesRead += keySizeOffset + sizeof(uint32_t) + sizeof(uint32_t) + keySize + valSize;
-
-            std::string key(keySize, '\0');
-            std::string val(valSize, '\0');
-
-
-            in.read(key.data(), keySize);
-            in.read(val.data(), valSize);
-
-            Record rec(key, val);
-            // rec.setTimestamp();
-            
-            if (rec.byteSize() != bytesRead)
-                return;
-
-            stH.updateKeyDir(df.path(), rec);
+            // stH.updateKeyDir(df.path(), rec);
+            return;
         }
     }
 }
