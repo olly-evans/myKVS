@@ -26,16 +26,30 @@ class KVStore {
 
         /* Main API */
 
-        [[nodiscard]] KVStoreHandle open(fs::path relDataDir, StoreFlags stFlags); /* Open new or existing store in relDataDir. */
+        /* 
+            Opens a new or existing store. relDataDir is a path relative to the project
+            root (e.g. "data") — open() resolves it against the root and creates the
+            directory if it doesn't already exist. 
+        */
+
+        [[nodiscard]] KVStoreHandle open(fs::path pathDirRelativeToRoot, StoreFlags stFlags); 
+
+        /* Put a key/value pair to an existing data store. */
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
+
+        /* Retrieve data from an existing data store using a key */
         std::optional<std::string> get(KVStoreHandle& stH, const std::string key);
+
+        /* List all the keys in the keyDir */
         std::vector<std::string> listKeys(const KVStoreHandle& stH);
+
+        /* Restore the keyDir from an existing store. */
         void restore(KVStoreHandle& stH);
 
         /* Getters/Setters */
 
-        [[nodiscard]] fs::path getAbsDirPath() const;
-        void updateAbsDirPath();
+        [[nodiscard]] fs::path getRootDirPath() const;
+        void updateRootDirPath();
 
         [[nodiscard]] fs::path getDataDir() const;        
         void setDataDir(fs::path dir, std::string dirName);
@@ -56,7 +70,7 @@ class KVStore {
 
     private:
         std::shared_mutex rwMutex;
-        
+
         fs::path absDirPath;
         fs::path dataDir;
 

@@ -12,6 +12,6 @@
 - Make two instances and run on the same directory.
 
 
-# 3 store a counter for temporary directores in a test_.cpp and construct the path somewhere.
-
-# 4 Migrate get() to use std::expected perhaps with an error struct.
+# 1 Test restore() with a more complex series of puts, and perhaps a rollOver too.
+# 2 store a counter for temporary directores in a test_.cpp and construct the path somewhere.
+# 3 Migrate get() to use std::expected perhaps with an error struct.

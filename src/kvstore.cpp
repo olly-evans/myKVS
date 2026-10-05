@@ -6,15 +6,16 @@ namespace fs = std::filesystem;
 
 /* KVStore Methods */
 
-KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags) {
+KVStoreHandle KVStore::open(const fs::path pathDirRelativeToRoot, const StoreFlags stFlags) {
 
     // if stFlags.syncOnPut ... -> mutex in put function???
-    // if stFlags.readWrite ... -> find way to allow read and write to dir.
+    // if stFlags.readWrite ... -> not fully fleshed out and tested
+    // dataFileExt not changed right now. Just default to .data and this is a valid store file.
 
     KVStoreHandle stH;
 
-    updateAbsDirPath();
-    setDataDir(getAbsDirPath(), relDataDir);    
+    updateRootDirPath();
+    setDataDir(getRootDirPath(), pathDirRelativeToRoot);    
     setMaxDatafileBytes(stFlags.maxDatafileBytes);
     stH.setDatafileExt(".data");
     stH.setReadWrite(stFlags.readWrite); 
@@ -159,15 +160,13 @@ void KVStore::restore(KVStoreHandle& stH) {
     }
 }
 
-/* File */
-
 /* Getters and Setters */
 
-fs::path KVStore::getAbsDirPath() const {
+fs::path KVStore::getRootDirPath() const {
     return absDirPath;
 }
 
-void KVStore::updateAbsDirPath() {
+void KVStore::updateRootDirPath() {
     absDirPath = fs::path(WORKING_DIRECTORY);
 }
 
