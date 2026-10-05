@@ -24,7 +24,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     if (DetectStore::isStore(dataDir)) {
 
-        // stH.updateActiveDatafile(dataDir, activeOutputStream);
+        // stH.openActiveDatafile(dataDir, activeOutputStream);
         stH.updateActiveDatafileID(dataDir);
         fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
                                                               stH.getActiveDatafileID(), 
@@ -34,8 +34,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
         restore(stH);
 
-        /* Set to active datafile by default. */
-
+        /* Set to active datafile to read by default. */
         updateActiveInputStream(stH.getActiveDatafilePath());
 
         std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
@@ -76,10 +75,9 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         return;
     }
 
-    std::string activePathID = df.stem().stem();
-    std::string activeHandleID = std::to_string(stH.getActiveDatafileID());
+    uint32_t activePathID = stH.validDatafileToID(df);
 
-    if (activePathID != activeHandleID) {
+    if (activePathID != stH.getActiveDatafileID()) {
         std::cerr << "[ERROR] Active datafile doesn't match the active ID." << std::endl;
         return;
     }
