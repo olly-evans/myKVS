@@ -25,6 +25,7 @@
 
 - test for replacing key. should just update it to new value.
 
-# 1 use readfield and readstring in get and get the tests to pass.
+# 1 pass test for get.
 # 2 Test restore.
 # 3 Test inputstream for existing open after a put to previous open.
+# 4 Migrate get() to use std::expected, error struct type.

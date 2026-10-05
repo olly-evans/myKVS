@@ -232,7 +232,7 @@ void KVStore::updateActiveInputStream(fs::path path) {
     if (activeInputStream.is_open()) 
         activeInputStream.close();
 
-    activeInputStream.clear();                         // close() doesn't always reset state pre-C++11
+    activeInputStream.clear();
 
     activeInputStream.open(path, std::ios::binary | std::ios::in);
     setActiveInputStreamPath(path);

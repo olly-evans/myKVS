@@ -1,4 +1,6 @@
-- CXX_STANDARD 17 for std::filesystem.
+- CXX_STANDARD 23 for std::expected.
+
 - Friend struct in KVStore for testing.
 - Used Catch2 testing macros as assert calls std::abort and doesnt call destructors for cleaning up in tests.
 - Writing to disk and inserting to keyDir cannot be truly atomic but we can create a safety net by flushing to disk first and then if a termination occurs we can restore the keyDir from disk on reboot etc..
+- stream.close() doesn't always reset state pre-C++11
