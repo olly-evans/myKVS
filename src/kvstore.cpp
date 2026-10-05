@@ -15,11 +15,8 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     updateAbsDirPath();
     setDataDir(getAbsDirPath(), relDataDir);    
-
     setMaxDatafileBytes(stFlags.maxDatafileBytes);
-
     stH.setDatafileExt(".data");
-
     stH.setReadWrite(stFlags.readWrite); 
 
     if (DetectStore::isStore(dataDir)) {
