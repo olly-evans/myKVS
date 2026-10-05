@@ -2,6 +2,16 @@
 
 /* HVStoreHandle Methods */
 
+void KVStoreHandle::openActiveDatafile(fs::path dataDir, std::ofstream& out) {
+
+    updateActiveDatafileID(dataDir);
+    fs::path currentDatafilePath = createDatafilePath(dataDir, 
+                                                      getActiveDatafileID(), 
+                                                      getDatafileExt()); 
+        
+    setActiveDatafile(currentDatafilePath, out);
+
+}
 fs::path KVStoreHandle::createDatafilePath(const fs::path& dataDir, uint32_t fID, std::string fExt) const {
     
     std::string strID = std::to_string(fID);

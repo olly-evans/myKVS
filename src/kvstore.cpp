@@ -24,38 +24,24 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     if (DetectStore::isStore(dataDir)) {
 
-        // stH.openActiveDatafile(dataDir, activeOutputStream);
-        stH.updateActiveDatafileID(dataDir);
-        fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
-                                                              stH.getActiveDatafileID(), 
-                                                              stH.getDatafileExt()); 
-        
-        stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
-
+        stH.openActiveDatafile(dataDir, activeOutputStream);
         restore(stH);
 
-        /* Set to active datafile to read by default. */
+        /* Set active datafile to be read from by default. */
         updateActiveInputStream(stH.getActiveDatafilePath());
 
         std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
         return stH;
     }
 
+    // Not a store.
     fs::create_directories(dataDir);
 
-    // stH.updateActiveDatafile(dataDir, activeOutputStream);
-    stH.updateActiveDatafileID(dataDir);
-    fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
-                                                          stH.getActiveDatafileID(), 
-                                                          stH.getDatafileExt()); 
-    
-    stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
-
-    /* Set to active datafile to read by default at beginning. */
-    updateActiveInputStream(stH.getActiveDatafilePath());
+    stH.openActiveDatafile(dataDir, activeOutputStream);
+    /* Set active datafile to be read from by default. */
+    updateActiveInputStream(stH.getActiveDatafilePath()); 
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
-
     return stH;
 }
 
@@ -117,8 +103,6 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
 
     KeyDirEntry entry = it->second;
 
-    std::cout << entry.fileID << "\n"; // ZEROO?????
-
     fs::path readPath = stH.createDatafilePath(dataDir, entry.fileID, stH.getDatafileExt());
     if (!fs::exists(readPath)) 
         return std::nullopt;
@@ -146,7 +130,7 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
     rec.setCRC32();
 
     if (rec.getCRC32() != crc)
-        return std::nullopt; // CRC mismatch from disk and expected.
+        return std::nullopt; // Mismatch between disk and expected crc.
     
     return val;
 }
