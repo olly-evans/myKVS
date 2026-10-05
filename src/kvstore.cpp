@@ -24,23 +24,19 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     if (DetectStore::isStore(dataDir)) {
 
+        // stH.updateActiveDatafile(dataDir, activeOutputStream);
         stH.updateActiveDatafileID(dataDir);
-
-        // restore here and not active datafile set for updatekeydir.
-
         fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
                                                               stH.getActiveDatafileID(), 
                                                               stH.getDatafileExt()); 
         
         stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
-        
+
         restore(stH);
 
         /* Set to active datafile by default. */
 
-        std::ifstream in(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
-        setActiveInputStream(in);
-        setActiveInputStreamPath(stH.getActiveDatafilePath());
+        updateActiveInputStream(stH.getActiveDatafilePath());
 
         std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
         return stH;
@@ -48,20 +44,16 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     fs::create_directories(dataDir);
 
-    // we can make a setter for this for this case.
+    // stH.updateActiveDatafile(dataDir, activeOutputStream);
     stH.updateActiveDatafileID(dataDir);
     fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
                                                           stH.getActiveDatafileID(), 
                                                           stH.getDatafileExt()); 
     
-    // function.
     stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
 
-    /* Set to active datafile by default. */
-
-    std::ifstream in(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
-    setActiveInputStream(in);
-    setActiveInputStreamPath(stH.getActiveDatafilePath());
+    /* Set to active datafile to read by default at beginning. */
+    updateActiveInputStream(stH.getActiveDatafilePath());
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
 
