@@ -15,13 +15,21 @@ TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
 
     Record rec("key", "val");
 
+    // Simulating a put.
     kvs.setActiveOutputStream(std::move(mockFile1));
     rec.serialize(kvs.getActiveOutputStream());
 
-    mockFile1.close();
+    kvs.getActiveOutputStream().close();
 
     // Note: We aren't updating the keyDir here as we want to restore it.
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
+    REQUIRE(HandleTestAccess::keyDir(stH).size() == 1);
+
+    KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("key");
+    REQUIRE(entry.fileID == 0);
+    REQUIRE(entry.tstamp == rec.getTimestamp());
+    REQUIRE(entry.valFileOffset == 23);
+    REQUIRE(entry.valSz == 3);
 }

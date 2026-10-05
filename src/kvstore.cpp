@@ -24,16 +24,18 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
 
     if (DetectStore::isStore(dataDir)) {
 
-        restore(stH);
-
-        // FUNCTION
         stH.updateActiveDatafileID(dataDir);
+
+        // restore here and not active datafile set for updatekeydir.
+
         fs::path currentDatafilePath = stH.createDatafilePath(dataDir, 
                                                               stH.getActiveDatafileID(), 
                                                               stH.getDatafileExt()); 
         
         stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
         
+        restore(stH);
+
         /* Set to active datafile by default. */
 
         std::ifstream in(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
@@ -97,6 +99,7 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     if (fs::file_size(df) + rec.byteSize() < getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
+        stH.updateActiveDatafileID(dataDir);
         rec.serialize(activeOutputStream);
         stH.updateKeyDir(df, rec);
         return;
@@ -124,7 +127,11 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
 
     KeyDirEntry entry = it->second;
 
+    std::cout << entry.fileID << "\n"; // ZEROO?????
+
     fs::path readPath = stH.createDatafilePath(dataDir, entry.fileID, stH.getDatafileExt());
+    if (!fs::exists(readPath)) 
+        return std::nullopt;
 
     /* if input stream already reading from stH.getActiveDatafilePath(), no set */
     if (getActiveInputStreamPath().empty() || (getActiveInputStreamPath() != readPath))
@@ -176,7 +183,7 @@ void KVStore::restore(KVStoreHandle& stH) {
             
             /* Zero offset as we're reading through whole file here sequentially. */
             Record rec = stH.readRecord(activeInputStream, 0);
-            stH.updateKeyDir(df.path(), rec);
+            stH.updateKeyDir(df.path(), rec); // needs to take id
         }
     }
 }

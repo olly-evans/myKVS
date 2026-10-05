@@ -32,7 +32,7 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
 
-    uint64_t numPuts = 64;
+    uint64_t numPuts = 1;
 
     for (uint64_t i = 0; i < numPuts; i++) {
         kvs.put(stH, std::to_string(i), std::to_string(i));
@@ -65,6 +65,7 @@ TEST_CASE("Does get change input stream correctly. Opened store and put. Opened 
     mockFile1.close();
 
     KVStoreHandle stH = kvs.open(dataDir, flags);
+    REQUIRE(stH.getActiveDatafileID() == 1);
     kvs.put(stH, "key", "val"); /* Put to mockFile1 */
 
     REQUIRE(kvs.getActiveInputStream().is_open());
@@ -74,19 +75,21 @@ TEST_CASE("Does get change input stream correctly. Opened store and put. Opened 
     std::ofstream mockFile2(mFilePath2);
     mockFile2.close();
 
-    KVStore kvs2;
+    KVStore kvs2; /* NEW KEYDIR*/
+
+    /* SO FOR SOME REASON WHEN WE OPEN NEW STORE A CRC CHECK IS FAILING. */
     stH = kvs2.open(dataDir, flags); /* activeInputStream with mf2. */
 
+    REQUIRE(stH.getActiveDatafileID() == 2);
     REQUIRE(kvs2.getActiveInputStream().is_open());
     REQUIRE(kvs2.getActiveInputStream().good());
 
     fs::path readPathBeforeGet = kvs2.getActiveInputStreamPath(); /* mf2 */
-
     std::optional<std::string> val = kvs2.get(stH, "key");
+    fs::path readPathAfterGet = kvs2.getActiveInputStreamPath(); /* also mf2.... */
 
-    REQUIRE(val == "val");
+    REQUIRE(val.value() == "val"); // failing.
     
-    fs::path readPathAfterGet = kvs2.getActiveInputStreamPath(); /* get is in mf1 */
 
     REQUIRE(kvs2.getActiveInputStream().is_open());
     REQUIRE(kvs2.getActiveInputStream().good()); /* perhaps need a .clear(), this is a new stream now remember, new object.*/

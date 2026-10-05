@@ -52,6 +52,10 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
 
 }
 
+uint32_t KVStoreHandle::validDatafileToID(fs::path path) {
+    return std::stoul(path.stem().stem().string());
+}
+
 std::string KVStoreHandle::readString(std::ifstream& in, size_t n) {
     std::string s(n, '\0');
     if (!in.read(s.data(), static_cast<std::streamsize>(n)))
@@ -79,7 +83,8 @@ Record KVStoreHandle::readRecord(std::ifstream& in, const std::streamoff recFile
 
     Record rec(key, val);
     rec.setTimestamp(timestamp);
-    
+    rec.setCRC32();
+
     if (rec.getCRC32() != crc)
         throw std::runtime_error("Read CRC and Calculated CRC not equal.");
         
@@ -87,11 +92,16 @@ Record KVStoreHandle::readRecord(std::ifstream& in, const std::streamoff recFile
 }
 
 void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {
-        
-    size_t fileBytes = fs::file_size(path);
+    
+    bool readPathIsActiveDatafile = fs::equivalent(path, activeDatafilePath);
+
+    uint32_t readPathID = validDatafileToID(path);
+    uint32_t id = readPathIsActiveDatafile ? getActiveDatafileID() : readPathID;
+
+    size_t fileBytes = fs::file_size(path); // Put before this is used, file must have bytes.
     uint64_t valueByteOffset = fileBytes - rec.getValueSize();
 
-    keyDir[rec.getKey()] = KeyDirEntry{getActiveDatafileID(),
+    keyDir[rec.getKey()] = KeyDirEntry{id,
                                        rec.getValueSize(),
                                        valueByteOffset,
                                        rec.getTimestamp()};
@@ -117,7 +127,7 @@ void KVStoreHandle::updateActiveDatafileID(fs::path dataDir) {
     for (const auto& datafile : fs::directory_iterator(dataDir)) {
         
         if (datafile.path().extension() == datafileExtension) {
-            uint32_t currentID = std::stoul(datafile.path().stem().stem().string());
+            uint32_t currentID = validDatafileToID(datafile);
             maxID = std::max(maxID, currentID);
             found = true;
         }
