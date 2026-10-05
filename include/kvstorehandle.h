@@ -41,8 +41,9 @@ class KVStoreHandle {
         void rollOverDatafile(const fs::path& dataDir, std::ofstream& out);
 
         template <typename T>
-        T readField(std::istream& in);
-        static std::string readString(std::istream& in, size_t n);
+        [[nodiscard]] T readField(std::ifstream& in);
+        [[nodiscard]] static std::string readString(std::ifstream& in, size_t n);
+        [[nodiscard]] Record readRecord(std::ifstream& in, const size_t recFileOffset);
 
         void updateKeyDir(fs::path path, const Record rec);
 
@@ -65,7 +66,7 @@ class KVStoreHandle {
 };
 
 template <typename T>
-T KVStoreHandle::readField(std::istream& in) {
+T KVStoreHandle::readField(std::ifstream& in) {
     static_assert(std::is_trivially_copyable_v<T>);
     T v{};
     if (!in.read(reinterpret_cast<char*>(&v), sizeof(T)))

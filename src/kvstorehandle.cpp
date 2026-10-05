@@ -52,11 +52,37 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
 
 }
 
-std::string KVStoreHandle::readString(std::istream& in, size_t n) {
+std::string KVStoreHandle::readString(std::ifstream& in, size_t n) {
     std::string s(n, '\0');
     if (!in.read(s.data(), static_cast<std::streamsize>(n)))
         throw std::runtime_error("short read");
     return s;
+}
+
+Record KVStoreHandle::readRecord(std::ifstream& in, const size_t recFileOffset) {
+
+    /* 
+        Can take a path and in.open(), we will be using this for restore. 
+        Only one run at init. 
+    */
+
+    if (recFileOffset > 0)
+        in.seekg(recFileOffset, std::ios_base::beg);
+
+    uint32_t crc       = readField<uint32_t>(in);
+    uint64_t timestamp = readField<uint64_t>(in);
+    uint32_t keySize   = readField<uint32_t>(in);
+    uint32_t valSize   = readField<uint32_t>(in);
+    std::string key    = readString(in, keySize);
+    std::string val    = readString(in, valSize);
+
+    Record rec(key, val);
+    rec.setTimestamp(timestamp);
+    
+    if (rec.getCRC32() != crc)
+        throw std::runtime_error("Read CRC and Calculated CRC not equal.");
+        
+    return rec;
 }
 
 void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {

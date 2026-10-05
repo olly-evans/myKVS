@@ -40,7 +40,7 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
     REQUIRE(stH.getActiveDatafileID() == 5);
 }
 
-TEST_CASE("Reading sequentially over a full record correctly from start of file.", "KVStoreHandle::readField<T>(), KVStoreHandle::readString()") {
+TEST_CASE("Reading sequentially over a full record correctly from zero offset.", "KVStoreHandle::readRecord()") {
 
     fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
     TempDirGuard cleanup{dataDir};
@@ -55,24 +55,48 @@ TEST_CASE("Reading sequentially over a full record correctly from start of file.
 
     kvs.updateActiveInputStream(stH.getActiveDatafilePath());
 
-    uint32_t crc = stH.readField<uint32_t>(kvs.getActiveInputStream());
-    REQUIRE(crc == rec.getCRC32());
+    Record readRec = stH.readRecord(kvs.getActiveInputStream(), 0);
 
-    uint64_t ts = stH.readField<uint64_t>(kvs.getActiveInputStream());
-    uint32_t keySize = stH.readField<uint32_t>(kvs.getActiveInputStream());
-    uint32_t valSize = stH.readField<uint32_t>(kvs.getActiveInputStream());
+    REQUIRE(readRec.byteSize() == rec.byteSize());
+    REQUIRE(readRec.getCRC32() == rec.getCRC32());
 
-    std::string key = stH.readString(kvs.getActiveInputStream(), keySize);
-    std::string val = stH.readString(kvs.getActiveInputStream(), valSize);
+    REQUIRE(readRec.getKeySize() == rec.getKeySize());
+    REQUIRE(readRec.getValueSize() == rec.getValueSize());
 
-    REQUIRE(key == "key");
-    REQUIRE(val == "value");
+    REQUIRE(readRec.getKey() == rec.getKey());
+    REQUIRE(readRec.getValue() == rec.getValue());
 
 }
 
+TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVStoreHandle::readRecord()") {
+
+    fs::path dataDir = createTempTestDir("test_kvstorehandle_3");
+    TempDirGuard cleanup{dataDir};
+
+    KVStore kvs;
+    StoreFlags flags;
+    
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+    kvs.put(stH, "key", "value");
+    kvs.put(stH, "key2", "value2");
+
+    Record rec("key", "value");
+
+    kvs.updateActiveInputStream(stH.getActiveDatafilePath());
+
+    /* Offset to second record. */
+    Record readRec = stH.readRecord(kvs.getActiveInputStream(), rec.byteSize());
+
+    REQUIRE(readRec.getKeySize() == 4);
+    REQUIRE(readRec.getValueSize() == 6);
+
+    REQUIRE(readRec.getKey() == "key2");
+    REQUIRE(readRec.getValue() == "value2");
+
+}
 TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::readField<T>()") {
 
-    fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
+    fs::path dataDir = createTempTestDir("test_kvstorehandle_4");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;

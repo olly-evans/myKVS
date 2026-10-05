@@ -25,8 +25,6 @@
 
 - test for replacing key. should just update it to new value.
 
-- make an input stream for kvstore.
-
 # 1 use readfield and readstring in get and get the tests to pass.
 # 2 create a restoreRecord() function.
 # 3 Test restore.

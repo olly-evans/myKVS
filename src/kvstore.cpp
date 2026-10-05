@@ -159,31 +159,15 @@ std::vector<std::string> KVStore::listKeys(const KVStoreHandle& stH) {
 
 void KVStore::restore(KVStoreHandle& stH) {
 
-        
     for (const auto& df : fs::directory_iterator(dataDir)) {
 
-        // readRecord()
-
         updateActiveInputStream(df);
-        // reading through whole file, so no seek required.
 
         while(activeInputStream.peek() != std::char_traits<char>::eof()) {
-                        
-            uint32_t crc = stH.readField<uint32_t>(activeInputStream);
-            uint64_t timestamp = stH.readField<uint64_t>(activeInputStream);
-            uint32_t keySize = stH.readField<uint32_t>(activeInputStream);
-            uint32_t valSize = stH.readField<uint32_t>(activeInputStream);
-            std::string key = stH.readString(activeInputStream, keySize);
-            std::string val = stH.readString(activeInputStream, valSize);
-
-            // Record rec(key, val);
-            // // rec.setTimestamp();
             
-            // // if (rec.byteSize() != bytesRead)
-            // //     return;
-
-            // stH.updateKeyDir(df.path(), rec);
-            return;
+            /* Zero offset as we're reading through whole file here sequentially. */
+            Record rec = stH.readRecord(activeInputStream, 0);
+            stH.updateKeyDir(df.path(), rec);
         }
     }
 }
@@ -221,9 +205,9 @@ void KVStore::updateActiveOutputStream(fs::path path) {
     if (activeOutputStream.is_open())
         activeOutputStream.close();
     
-        activeOutputStream.clear();
+    activeOutputStream.clear();
 
-        activeOutputStream.open(path, std::ios::binary | std::ios::app);
+    activeOutputStream.open(path, std::ios::binary | std::ios::app);
 }
 
 std::ifstream& KVStore::getActiveInputStream() {
