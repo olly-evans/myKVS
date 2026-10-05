@@ -8,3 +8,5 @@
 - KVStore::open() should just be called in kvs constructor.
 - Make a testing build in workflows.
 - Make two instances and run on the same directory.
+- How do I handle a mid-crash write? How does restore deal with a half complete record write?
+- How will restore() handle changes to StoreFlags?
