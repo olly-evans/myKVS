@@ -25,5 +25,4 @@
 
 - test for replacing key. should just update it to new value.
 
-# Cleanup open() into more functions.
-# 4 Migrate get() to use std::expected, error struct type.
+# 4 Migrate get() to use std::expected perhaps with an error struct.

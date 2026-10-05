@@ -30,7 +30,7 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
         /* Set active datafile to be read from by default. */
         updateActiveInputStream(stH.getActiveDatafilePath());
 
-        std::cout << "Existing store opened successfully in:\n << dataDir" << std::endl;
+        std::cout << "Existing store opened successfully in:\n" << dataDir << std::endl;
         return stH;
     }
 
