@@ -27,7 +27,7 @@
 
 - make an input stream for kvstore.
 
-# 1 test readfield and readstring seperately.
+# 1 use readfield and readstring in get and get the tests to pass.
 # 2 create a restoreRecord() function.
 # 3 Test restore.
 # 4 Test inputstream for existing open after a put to previous open.

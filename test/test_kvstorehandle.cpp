@@ -62,30 +62,31 @@ TEST_CASE("Reading sequentially over a full record correctly from start of file.
     uint32_t keySize = stH.readField<uint32_t>(kvs.getActiveInputStream());
     uint32_t valSize = stH.readField<uint32_t>(kvs.getActiveInputStream());
 
-    REQUIRE(keySize == 3);
-    REQUIRE(valSize == 5);
-
     std::string key = stH.readString(kvs.getActiveInputStream(), keySize);
     std::string val = stH.readString(kvs.getActiveInputStream(), valSize);
 
     REQUIRE(key == "key");
-    REQUIRE(val == "val");
+    REQUIRE(val == "value");
 
-    std::
 }
 
-// TEST_CASE("Reading sequentially over a full record correctly", "KVStoreHandle::readField<T>(), KVStoreHandle::readString()") {
+TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::readField<T>()") {
 
-//     fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
-//     TempDirGuard cleanup{dataDir};
+    fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
+    TempDirGuard cleanup{dataDir};
 
-//     KVStore kvs;
-//     StoreFlags flags;
+    KVStore kvs;
+    StoreFlags flags;
     
-//     KVStoreHandle stH = kvs.open(dataDir, flags);
-//     kvs.put(stH, "key", "value");
+    KVStoreHandle stH = kvs.open(dataDir, flags);
+    kvs.put(stH, "key", "value");
 
-//     kvs.updateActiveInputStream(stH.getActiveDatafilePath());
+    kvs.updateActiveInputStream(stH.getActiveDatafilePath());
+    kvs.getActiveInputStream().seekg(sizeof(uint32_t) + sizeof(uint64_t), std::ios_base::beg);
 
+    uint32_t keySize = stH.readField<uint32_t>(kvs.getActiveInputStream());
+    REQUIRE(keySize == 3); 
 
-// }
+    uint32_t valSize = stH.readField<uint32_t>(kvs.getActiveInputStream());
+    REQUIRE(valSize == 5);
+}

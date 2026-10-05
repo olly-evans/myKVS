@@ -42,6 +42,7 @@ class KVStore {
 
         [[nodiscard]] std::ofstream& getActiveOutputStream();
         void setActiveOutputStream(std::ofstream stream);
+        void updateActiveOutputStream(fs::path path);
 
         [[nodiscard]] std::ifstream& getActiveInputStream();
         void setActiveInputStream(std::ifstream& in);

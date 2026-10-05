@@ -52,7 +52,9 @@ KVStoreHandle KVStore::open(const fs::path relDataDir, const StoreFlags stFlags)
                                                           stH.getActiveDatafileID(), 
                                                           stH.getDatafileExt()); 
     
+    // function.
     stH.setActiveDatafile(currentDatafilePath, activeOutputStream);
+
     /* Set to active datafile by default. */
 
     std::ifstream in(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
@@ -104,6 +106,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
 
     stH.rollOverDatafile(dataDir, activeOutputStream);
     stH.updateActiveDatafileID(dataDir);
+
+    updateActiveOutputStream(stH.getActiveDatafilePath());
     
     rec.serialize(activeOutputStream);
     stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
@@ -212,6 +216,16 @@ void KVStore::setActiveOutputStream(std::ofstream stream) {
     activeOutputStream = std::move(stream);
 }
 
+void KVStore::updateActiveOutputStream(fs::path path) {
+
+    if (activeOutputStream.is_open())
+        activeOutputStream.close();
+    
+        activeOutputStream.clear();
+
+        activeOutputStream.open(path, std::ios::binary | std::ios::app);
+}
+
 std::ifstream& KVStore::getActiveInputStream() {
     return activeInputStream;
 }
@@ -221,6 +235,12 @@ void KVStore::setActiveInputStream(std::ifstream& in) {
 }
 
 void KVStore::updateActiveInputStream(fs::path path) {
+    
+    if (activeInputStream.is_open()) 
+        activeInputStream.close();
+
+    activeInputStream.clear();                         // close() doesn't always reset state pre-C++11
+
     activeInputStream.open(path, std::ios::binary | std::ios::in);
     setActiveInputStreamPath(path);
 }
