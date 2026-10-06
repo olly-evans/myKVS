@@ -1,4 +1,6 @@
 # Immediate
+- Move datafile functionality to namespace Datafile::createPath(), Datafile::openActive();
+
 - No discard needed in a lot of new functions.
 - Use mockfile functions throughout tests.
 - TestHelpers::writeToOffset(path, offset);

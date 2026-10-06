@@ -21,25 +21,25 @@ namespace TestHelpers {
     fs::path create_tmp_dir(std::string dirname);
 
     fs::path create_append_only_datafile_path(const fs::path tmpDir, 
-                                                   const std::string ext, 
-                                                   const uint32_t id);
+                                              const std::string ext, 
+                                              const uint32_t id);
 
     fs::path create_read_only_datafile_path(const fs::path tmpDir, 
-                                                 const std::string ext, 
-                                                 const uint32_t id);
+                                            const std::string ext, 
+                                            const uint32_t id);
 
     void create_mock_aol_file(const fs::path tmpDir, 
-                                   const std::string ext, 
-                                   const uint32_t id);
+                              const std::string ext, 
+                              const uint32_t id);
 
     void create_mock_rol_file(const fs::path tmpDir, 
-                                   const std::string ext, 
-                                   const uint32_t id);
+                              const std::string ext, 
+                              const uint32_t id);
 
     void create_n_mock_files(const fs::path tmpDir, 
-                                  const std::string ext, 
-                                  const uint32_t startID, 
-                                  const uint32_t n);
+                             const std::string ext, 
+                             const uint32_t startID, 
+                             const uint32_t n);
 }
 
 // KVResult test_simulate_put(fs::path tmpDir); // seperate testing_put file perhaps.

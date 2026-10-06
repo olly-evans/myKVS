@@ -1,2 +1,2 @@
 - Datafiles have a .data extension.
-- A Storefile (.hint, .lock, .data) filename must contain two periods.
+- A Storefile (.hint, .lock, .data) filename must contain two periods, 0.aol.data for example. Haven't got to .lock or .hint files yet but datafiles for now will always contain a .aol or .rol for append or read-only log.
