@@ -9,15 +9,15 @@ fs::path test_create_tmp_dir(std::string dirname) {
     return path;
 }
 
-fs::path test_create_append_only_datafile_path(const fs::path tmpDir, std::string ext, const uint32_t id) {
+fs::path test_create_append_only_datafile_path(const fs::path tmpDir, const std::string ext, const uint32_t id) {
     return tmpDir / (std::to_string(id) + ".aol" + ext);
 }
 
-fs::path test_create_read_only_datafile_path(const fs::path tmpDir, std::string ext, const uint32_t id) {
+fs::path test_create_read_only_datafile_path(const fs::path tmpDir, const std::string ext, const uint32_t id) {
     return tmpDir / (std::to_string(id) + ".rol" + ext);
 }
 
-void test_create_mock_file(fs::path tmpDir, std::string ext, const uint32_t id) {
+void test_create_mock_file(const fs::path tmpDir, const std::string ext, const uint32_t id) {
 
     fs::path file = test_create_append_only_datafile_path(tmpDir, ext, id);
     std::ofstream out(file, std::ios::app | std::ios::binary);
