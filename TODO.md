@@ -1,8 +1,9 @@
 # Immediate
-- Make a testing mock directory function for dir/open/etc..
-
+- Only one .data file should contain .aol
+- Make a testing wrapper around making mock directory for dir/open/etc.. difficult with ~tempdirguard()
+- Testing one api function cannot call another has to be seperate/simulated.
 - Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS.
-- Store a counter for temporary directories in a test_.cpp and construct the path somewhere incrementing, labelling the directory manually is inefficient and error-prone.
+- Store a static counter for temporary directories in a test_.cpp and construct the path somewhere incrementing, labelling the directory manually is inefficient and error-prone.
 - Minimum file bytes should not be less than minimum record bytes.
 - Choose an error handling system and stay consistent with it. Especially in put().
 

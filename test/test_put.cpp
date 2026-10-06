@@ -8,17 +8,21 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_put_1/");
+    fs::path dataDir = test_create_tmp_dir("test_put_1/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
-    kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
+    auto putresult1 = kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
+    REQUIRE(putresult1);
+
     REQUIRE(fs::file_size(stH.getActiveDatafilePath()) == 22); /* Filesize should be 22 bytes after put. */
 
-    kvs.put(stH, "k2", "v2"); // 24 bytes.
+    auto putresult2 = kvs.put(stH, "k2", "v2"); // 24 bytes.
+    REQUIRE(putresult2);
+
     REQUIRE(fs::file_size(stH.getActiveDatafilePath()) == 46); /* Filesize should be 46 bytes after put. */
     
     std::ifstream readDatafileStream(stH.getActiveDatafilePath(), std::ios::binary | std::ios::in);
@@ -36,7 +40,8 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
 void simulate_puts_in_range(KVStore& kvs, KVStoreHandle& stH, uint64_t startID, uint64_t count) {
 
     for (uint64_t i = startID; i < startID + count; ++i) {
-        kvs.put(stH, std::to_string(i), std::to_string(i));
+        auto putresult = kvs.put(stH, std::to_string(i), std::to_string(i));
+        REQUIRE(putresult);
     }
 }
 
@@ -45,7 +50,7 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_put_2/");
+    fs::path dataDir = test_create_tmp_dir("test_put_2/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -78,7 +83,8 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
     StoreFlags flags;
 
     KVStoreHandle stH;
-    kvs.put(stH, "testkey", "testvalue");
+    auto putresult = kvs.put(stH, "testkey", "testvalue");
+    REQUIRE(!putresult); /* Should return a KVError */
 
     REQUIRE(stH.getActiveDatafilePath().empty());
     REQUIRE(!kvs.getActiveOutputStream().is_open());
@@ -90,7 +96,7 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_put_3/");
+    fs::path dataDir = test_create_tmp_dir("test_put_3/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -102,7 +108,8 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
 
     uint32_t oldDatafileID = stH.getActiveDatafileID();
 
-    kvs.put(stH, "foo", "bar");
+    auto putresult = kvs.put(stH, "foo", "bar");
+    REQUIRE(putresult);
 
     uint32_t newDatafileID = stH.getActiveDatafileID();
 
@@ -121,7 +128,7 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_get_4/");
+    fs::path dataDir = test_create_tmp_dir("test_get_4/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -132,8 +139,12 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     std::string v = "value";
     std::string newv = "newvalue";
 
-    kvs.put(stH, k, v);
-    kvs.put(stH, k, newv);
+    auto putresult1 = kvs.put(stH, k, v);
+    REQUIRE(putresult1);
+    
+    auto putresult2 = kvs.put(stH, k, newv);
+    REQUIRE(putresult2);
+    
 
     KeyDirEntry entry = HandleTestAccess::keyDir(stH).at(k);
 
@@ -154,7 +165,7 @@ TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") 
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_get_5/");
+    fs::path dataDir = test_create_tmp_dir("test_get_5/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -163,7 +174,8 @@ TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") 
 
     uint64_t putNum = 32;
     for (uint64_t i = 0; i < putNum; i++) {
-        kvs.put(stH, std::to_string(i), std::to_string(i));
+        auto putresult = kvs.put(stH, std::to_string(i), std::to_string(i));
+        REQUIRE(putresult);
     }
 
     std::vector<std::string> keys = kvs.listKeys(stH);

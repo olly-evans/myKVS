@@ -7,7 +7,7 @@ TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_get_1/");
+    fs::path dataDir = test_create_tmp_dir("test_get_1/");
     TempDirGuard cleanup{dataDir};
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -29,7 +29,7 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_get_2/");
+    fs::path dataDir = test_create_tmp_dir("test_get_2/");
     TempDirGuard cleanup{dataDir};
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -39,7 +39,8 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
     uint64_t numPuts = 64;
 
     for (uint64_t i = 0; i < numPuts; i++) {
-        kvs.put(stH, std::to_string(i), std::to_string(i));
+        auto putresult = kvs.put(stH, std::to_string(i), std::to_string(i));
+        REQUIRE(putresult);
     }
     
     REQUIRE(HandleTestAccess::keyDir(stH).size() == numPuts);
@@ -61,19 +62,21 @@ TEST_CASE("Does get change input stream correctly. Opened store and put. Opened 
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_get_3/");
+    fs::path dataDir = test_create_tmp_dir("test_get_3/");
     TempDirGuard cleanup{dataDir};
 
     fs::path mFilePath1 = dataDir / "1.aol.data";
     std::ofstream mockFile1(mFilePath1);
     mockFile1.close();
 
-    KVExpected result = kvs.open(dataDir, flags);
-    REQUIRE(result);
-    KVStoreHandle& stH = result.value();
+    KVExpected openresult1 = kvs.open(dataDir, flags);
+    REQUIRE(openresult1);
+    KVStoreHandle& stH = openresult1.value();
 
     REQUIRE(stH.getActiveDatafileID() == 1);
-    kvs.put(stH, "key", "val"); /* Put to mockFile1 */
+    
+    auto putresult = kvs.put(stH, "key", "val"); /* Put to mockFile1 */
+    REQUIRE(putresult);
 
     REQUIRE(kvs.getActiveInputStream().is_open());
     REQUIRE(kvs.getActiveInputStream().good());
@@ -85,7 +88,9 @@ TEST_CASE("Does get change input stream correctly. Opened store and put. Opened 
     KVStore kvs2; /* NEW KEYDIR*/
 
     /* SO FOR SOME REASON WHEN WE OPEN NEW STORE A CRC CHECK IS FAILING. */
-    result = kvs2.open(dataDir, flags); /* activeInputStream with mf2. */
+    KVExpected openresult2 = kvs2.open(dataDir, flags); /* activeInputStream with mf2. */
+    REQUIRE(openresult2);
+    stH = openresult2.value();
 
     REQUIRE(stH.getActiveDatafileID() == 2);
     REQUIRE(kvs2.getActiveInputStream().is_open());
@@ -110,15 +115,16 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = createTempTestDir("test_get_4/");
+    fs::path dataDir = test_create_tmp_dir("test_get_4/");
     TempDirGuard cleanup{dataDir};
 
     KVExpected result = kvs.open(dataDir, flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
-    kvs.put(stH, "key", "val");
-   
+    auto putresult = kvs.put(stH, "key", "val");
+    REQUIRE(putresult);
+    
     KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("key");
 
     std::optional<std::string> noncorruptval = kvs.get(stH, "key");

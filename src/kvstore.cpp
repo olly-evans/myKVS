@@ -45,20 +45,20 @@ KVExpected KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) 
     return stH;
 }
 
-void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string val) {
+KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::string val) {
 
     std::unique_lock<std::shared_mutex> lock(rwMutex);
 
     if (!fs::exists(dataDir)) {
-        std::cout << "[WARNING] You must open a store before using put." << std::endl;
-        return;
+        KVError err = {KVErrorCode::StoreNotOpen, "No store available to write to, consider opening one."}; 
+        return std::unexpected(err);
     }
     
     const fs::path df = stH.getActiveDatafilePath();
 
     if (!(fs::exists(df) && fs::is_regular_file(df))) {
-        std::cout << "[WARNING] No active datafile path. Consider opening a store!" << std::endl;
-        return;
+        KVError err = {KVErrorCode::StoreNotOpen, "No active datafile path, consider opening a store."}; 
+        return std::unexpected(err);
     }
 
     uint32_t activePathID = stH.validDatafileToID(df);
@@ -75,7 +75,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
         stH.updateActiveDatafileID(dataDir);
         rec.serialize(activeOutputStream);
         stH.updateKeyDir(df, rec);
-        return;
+
+        return {};
     } 
 
     std::cout << "Datafile full, rolling-over..." << std::endl;
@@ -86,6 +87,8 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     
     rec.serialize(activeOutputStream);
     stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
+
+    return {};
 }
 
 std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string key) {

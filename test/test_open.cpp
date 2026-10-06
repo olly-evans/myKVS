@@ -24,7 +24,7 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
     KVStore kvs;
     StoreFlags flags;
     
-    fs::path dataDir = createTempTestDir("test_open_1/");
+    fs::path dataDir = test_create_tmp_dir("test_open_1/");
     TempDirGuard cleanup{dataDir};
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -49,20 +49,12 @@ TEST_CASE("Open gets the correct active id for a mock existing store", "KVStore:
     
     KVStore kvs;
 
-    fs::path dataDir = createTempTestDir("test_open_1");
+    fs::path dataDir = test_create_tmp_dir("test_open_1");
     TempDirGuard cleanup(dataDir);
 
-    fs::path mFilePath1 = dataDir / "1.aol.data";
-    std::ofstream mockFile1(mFilePath1);
-    mockFile1.close();
-
-    fs::path mFilePath2 = dataDir / "2.aol.data";
-    std::ofstream mockFile2(mFilePath2);
-    mockFile2.close();
-
-    fs::path mFilePath3 = dataDir / "3.aol.data";
-    std::ofstream mockFile3(mFilePath3);
-    mockFile3.close();
+    size_t startID = 1;
+    size_t nFiles = 3;
+    test_create_n_mock_files(dataDir, ".data", startID, nFiles);
     
     StoreFlags flags;
 

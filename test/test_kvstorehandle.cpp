@@ -25,7 +25,7 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
     KVStoreHandle stH;
 
-    fs::path dataDir = createTempTestDir("test_kvstorehandle_1");
+    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_1");
     TempDirGuard cleanup{dataDir};
 
     stH.setDatafileExt(".data"); // Only have default extension if KVStore::open ran.
@@ -42,7 +42,7 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
 TEST_CASE("Reading sequentially over a full record correctly from zero offset.", "KVStoreHandle::readRecord()") {
 
-    fs::path dataDir = createTempTestDir("test_kvstorehandle_2");
+    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_2");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;
@@ -52,7 +52,8 @@ TEST_CASE("Reading sequentially over a full record correctly from zero offset.",
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
-    kvs.put(stH, "key", "value");
+    auto putresult = kvs.put(stH, "key", "value");
+    REQUIRE(putresult);
     
     Record rec("key", "value");
 
@@ -68,12 +69,11 @@ TEST_CASE("Reading sequentially over a full record correctly from zero offset.",
 
     REQUIRE(readRec.getKey() == rec.getKey());
     REQUIRE(readRec.getValue() == rec.getValue());
-
 }
 
 TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVStoreHandle::readRecord()") {
 
-    fs::path dataDir = createTempTestDir("test_kvstorehandle_3");
+    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_3");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;
@@ -83,8 +83,11 @@ TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVS
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
-    kvs.put(stH, "key", "value");
-    kvs.put(stH, "key2", "value2");
+    auto putresult1 = kvs.put(stH, "key", "value");
+    REQUIRE(putresult1);
+
+    auto putresult2 = kvs.put(stH, "key2", "value2");
+    REQUIRE(putresult1);
 
     Record rec("key", "value");
 
@@ -102,7 +105,7 @@ TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVS
 }
 TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::readField<T>()") {
 
-    fs::path dataDir = createTempTestDir("test_kvstorehandle_4");
+    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_4");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;
@@ -112,7 +115,8 @@ TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::re
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
-    kvs.put(stH, "key", "value");
+    auto putresult = kvs.put(stH, "key", "value");
+    REQUIRE(putresult);
 
     kvs.updateActiveInputStream(stH.getActiveDatafilePath());
 

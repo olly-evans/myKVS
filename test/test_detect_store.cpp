@@ -30,7 +30,7 @@ TEST_CASE("Does isNumericStem() detect a non-numeric stem", "DetectStore::isNume
 
 TEST_CASE("isValidStoreFile() stripping filename correctly", "DetectStore::isValidStoreFile()") {
     
-    fs::path dataDir = createTempTestDir("test_detect_store_1");
+    fs::path dataDir = test_create_tmp_dir("test_detect_store_1");
     TempDirGuard cleanup{dataDir};
 
     fs::path mFilePath1 = dataDir / "0.aol.data";
@@ -41,7 +41,7 @@ TEST_CASE("isValidStoreFile() stripping filename correctly", "DetectStore::isVal
 }
 
 TEST_CASE("Does data directory exist for isStore()", "KVStore::isStore()") {
-    fs::path dataDir = createTempTestDir("test_detect_store_2");
+    fs::path dataDir = test_create_tmp_dir("test_detect_store_2");
     TempDirGuard cleanup{dataDir};
 
     REQUIRE(!DetectStore::hasOnlyValidStoreFiles(dataDir));
@@ -50,26 +50,16 @@ TEST_CASE("Does data directory exist for isStore()", "KVStore::isStore()") {
 }
 TEST_CASE("Detecting mock real store correctly", "KVStore::isStore()") {
 
-    fs::path dataDir = createTempTestDir("test_detect_store_3");
+    fs::path dataDir = test_create_tmp_dir("test_detect_store_3");
     TempDirGuard cleanup{dataDir};
 
-    fs::path mFilePath1 = dataDir / "1.aol.hint";
-    std::ofstream mockFile1(mFilePath1);
-    mockFile1.close();
-
-    fs::path mFilePath2 = dataDir / "2.aol.data";
-    std::ofstream mockFile2(mFilePath2);
-    mockFile2.close();
-
-    fs::path mFilePath3 = dataDir / "3.aol.lock";
-    std::ofstream mockFile3(mFilePath3);
-    mockFile3.close();    
-
+    test_create_mock_file(dataDir, ".hint", 1);
+    test_create_mock_file(dataDir, ".data", 2);
+    test_create_mock_file(dataDir, ".lock", 3);
+   
     REQUIRE(DetectStore::isStore(dataDir));
 
-    fs::path mFilePath4 = dataDir / "4.aol.log"; /* Not a valid store file extension. */
-    std::ofstream mockFile4(mFilePath4);
-    mockFile4.close(); 
+    test_create_mock_file(dataDir, ".log", 4);
     
     REQUIRE(!DetectStore::isStore(dataDir));
 }

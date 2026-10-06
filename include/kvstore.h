@@ -35,7 +35,7 @@ class KVStore {
         [[nodiscard]] KVExpected open(const fs::path& dirRelToRoot, const StoreFlags& flags); 
 
         /* Put a key/value pair to an existing data store. */
-        void put(KVStoreHandle& stH, const std::string key, const std::string val);
+        KVResult put(KVStoreHandle& stH, const std::string key, const std::string val);
 
         /* Retrieve data from an existing data store using a key */
         std::optional<std::string> get(KVStoreHandle& stH, const std::string key);
