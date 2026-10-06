@@ -3,9 +3,21 @@
 
 namespace DetectStore {
 
+    std::string getDatafileStatus(DatafileStatus status) {
+
+        switch (status) {
+            case DatafileStatus::Active:   
+                return ".aol";
+            case DatafileStatus::ReadOnly:
+                return ".rol";
+            default:
+                throw std::runtime_error("Uknown datafile status.");
+        }
+    }
+
     bool isAppendOnlyDatafile(fs::path datafile) {
         fs::path datafileStatus = datafile.stem().extension().string();
-        return datafileStatus == ".aol";
+        return getDatafileStatus(DatafileStatus::Active) == datafileStatus;
     }
 
     bool isNumericStem(const std::string& stem) {

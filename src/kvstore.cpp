@@ -102,9 +102,13 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
 
     KeyDirEntry entry = it->second;
 
-    fs::path readPath = stH.getActiveDatafilePath();
-    if (!(entry.fileID == stH.getActiveDatafileID()))
-        readPath = stH.createDatafilePath(dataDir, entry.fileID, false, stH.getDatafileExt());
+    bool isReadPathActiveDatafile = entry.fileID == stH.getActiveDatafileID();
+    fs::path oldDatafilePath = stH.createDatafilePath(dataDir, 
+                                      entry.fileID, 
+                                      DatafileStatus::ReadOnly, 
+                                      stH.getDatafileExt());
+
+    fs::path readPath = isReadPathActiveDatafile ? stH.getActiveDatafilePath() : oldDatafilePath; 
 
     if (!fs::exists(readPath)) 
         return std::nullopt;
@@ -114,9 +118,10 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
         !fs::equivalent(getActiveInputStreamPath(), readPath))
         updateActiveInputStream(readPath);
 
+    // Don't read past eof.
     uintmax_t fileSize = fs::file_size(readPath);
     if ((entry.valFileOffset + entry.valSz) > fileSize)
-        return std::nullopt; // Woud read past the file size.
+        return std::nullopt; 
 
     activeInputStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string val = stH.readString(activeInputStream, entry.valSz);

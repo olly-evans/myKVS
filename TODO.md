@@ -1,5 +1,5 @@
 # Immediate
-- Store only valid with one aol .data file.
+- Test for input stream before/after a get().
 - Finish using mock file creation in tests wherever needed.
 - Only one .data file should contain .aol
 - Make a testing wrapper around making mock directory for dir/open/etc.. difficult with ~tempdirguard()

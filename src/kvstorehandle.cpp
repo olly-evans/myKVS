@@ -6,31 +6,28 @@
 void KVStoreHandle::openActiveDatafile(fs::path dataDir, std::ofstream& out) {
 
     updateActiveDatafileID(dataDir);
-    
-    bool write = true;
     fs::path currentDatafilePath = createDatafilePath(dataDir, 
-                                                      getActiveDatafileID(),
-                                                      write, 
-                                                      getDatafileExt()); 
+                                   getActiveDatafileID(),
+                                   DatafileStatus::Active, 
+                                   getDatafileExt()); 
         
     setActiveDatafile(currentDatafilePath, out);
 
 }
+
 fs::path KVStoreHandle::createDatafilePath(const fs::path& dataDir, 
                                            uint32_t fID, 
-                                           bool write, 
+                                           DatafileStatus status, 
                                            std::string fExt) const {
-    std::string status = ".aol";
-    if (!write)
-        status = ".rol";
-
+    
     std::string strID = std::to_string(fID);
-    fs::path appendOnlyName(strID + status + fExt);
+    fs::path appendOnlyName(strID + DetectStore::getDatafileStatus(status) + fExt);
     return dataDir / appendOnlyName;
 }
 
 void KVStoreHandle::setActiveDatafile(const fs::path& path, std::ofstream& out) {
 
+    // In Datafile permissions struct i think.
     fs::perms rwPerms = fs::perms::owner_write | fs::perms::group_write | 
                         fs::perms::owner_read  | fs::perms::group_read;
 
@@ -52,7 +49,11 @@ void KVStoreHandle::makeDatafileReadOnly(const fs::path& path, std::ofstream& ou
 
     fs::path newPath = path;
     std::string filename = newPath.filename().string();
-    filename.replace(filename.find("aol"), 3, "rol"); 
+
+    std::string activeStatus = DetectStore::getDatafileStatus(DatafileStatus::Active);
+    std::string readOnlyStatus = DetectStore::getDatafileStatus(DatafileStatus::ReadOnly);
+
+    filename.replace(filename.find(activeStatus), activeStatus.size(), readOnlyStatus); 
     newPath.replace_filename(filename);
 
     fs::rename(path, newPath);
@@ -68,10 +69,9 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
 
     makeDatafileReadOnly(activeDatafilePath, out);
 
-    bool write = true;
     fs::path nextDatafilePath = createDatafilePath(dataDir, 
                                                    getActiveDatafileID() + 1, 
-                                                   write, 
+                                                   DatafileStatus::Active, 
                                                    getDatafileExt());
     setActiveDatafile(nextDatafilePath, out);
     updateActiveDatafileID(dataDir);
