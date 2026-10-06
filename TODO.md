@@ -1,4 +1,7 @@
 # Immediate
+- No discard needed in a lot of new functions.
+- Use mockfile functions throughout tests.
+- TestHelpers::writeToOffset(path, offset);
 - Test for input stream before/after a get().
 - Get should return a KVResult. Update and be specific with the errors where std::nullopt is.
 - Finish using mock file creation in tests wherever needed.
