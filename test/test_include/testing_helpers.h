@@ -21,7 +21,9 @@ fs::path test_create_tmp_dir(std::string dirname);
 fs::path test_create_append_only_datafile_path(const fs::path tmpDir, const std::string ext, const uint32_t id);
 fs::path test_create_read_only_datafile_path(const fs::path tmpDir, const std::string ext, const uint32_t id);
 
-void test_create_mock_file(const fs::path tmpDir, const std::string ext, const uint32_t id);
+void test_create_mock_aol_file(const fs::path tmpDir, const std::string ext, const uint32_t id);
+void test_create_mock_rol_file(const fs::path tmpDir, const std::string ext, const uint32_t id);
+
 void test_create_n_mock_files(const fs::path tmpDir, const std::string ext, const uint32_t startID, const uint32_t n);
 
 KVResult test_simulate_put(fs::path tmpDir); // seperate testing_put file perhaps.

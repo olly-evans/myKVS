@@ -102,7 +102,10 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
 
     KeyDirEntry entry = it->second;
 
-    fs::path readPath = stH.createDatafilePath(dataDir, entry.fileID, stH.getDatafileExt());
+    fs::path readPath = stH.getActiveDatafilePath();
+    if (!(entry.fileID == stH.getActiveDatafileID()))
+        readPath = stH.createDatafilePath(dataDir, entry.fileID, false, stH.getDatafileExt());
+
     if (!fs::exists(readPath)) 
         return std::nullopt;
 

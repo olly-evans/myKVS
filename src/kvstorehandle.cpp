@@ -1,21 +1,31 @@
 #include "kvstorehandle.h"
+#include "detect_store.h"
 
 /* HVStoreHandle Methods */
 
 void KVStoreHandle::openActiveDatafile(fs::path dataDir, std::ofstream& out) {
 
     updateActiveDatafileID(dataDir);
+    
+    bool write = true;
     fs::path currentDatafilePath = createDatafilePath(dataDir, 
-                                                      getActiveDatafileID(), 
+                                                      getActiveDatafileID(),
+                                                      write, 
                                                       getDatafileExt()); 
         
     setActiveDatafile(currentDatafilePath, out);
 
 }
-fs::path KVStoreHandle::createDatafilePath(const fs::path& dataDir, uint32_t fID, std::string fExt) const {
-    
+fs::path KVStoreHandle::createDatafilePath(const fs::path& dataDir, 
+                                           uint32_t fID, 
+                                           bool write, 
+                                           std::string fExt) const {
+    std::string status = ".aol";
+    if (!write)
+        status = ".rol";
+
     std::string strID = std::to_string(fID);
-    fs::path appendOnlyName(strID + ".aol" + fExt);
+    fs::path appendOnlyName(strID + status + fExt);
     return dataDir / appendOnlyName;
 }
 
@@ -57,7 +67,12 @@ void KVStoreHandle::makeDatafileReadOnly(const fs::path& path, std::ofstream& ou
 void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out) {
 
     makeDatafileReadOnly(activeDatafilePath, out);
-    fs::path nextDatafilePath = createDatafilePath(dataDir, getActiveDatafileID() + 1, getDatafileExt());
+
+    bool write = true;
+    fs::path nextDatafilePath = createDatafilePath(dataDir, 
+                                                   getActiveDatafileID() + 1, 
+                                                   write, 
+                                                   getDatafileExt());
     setActiveDatafile(nextDatafilePath, out);
     updateActiveDatafileID(dataDir);
 }

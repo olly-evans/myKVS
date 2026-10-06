@@ -5,6 +5,10 @@
 
 // perhaps a function to check two periods in str.
 
+// TEST_CASE("Does isAppendOnlyDatafile detect status in a datafile", "DetectStore::isAppendOnlyDatafile()") {
+//     fs::path mockDatafile = test_create_append_only_datafile_path("test_detect_store_aol", ".data", 0);
+//     REQUIRE(DetectStore::isAppendOnlyDatafile(mockDatafile));
+// }
 TEST_CASE("Does isNumericStem() detect a numeric stem in range", "DetectStore::isNumericStem()") {
 
     uint64_t num = 64;
@@ -53,13 +57,26 @@ TEST_CASE("Detecting mock real store correctly", "KVStore::isStore()") {
     fs::path dataDir = test_create_tmp_dir("test_detect_store_3");
     TempDirGuard cleanup{dataDir};
 
-    test_create_mock_file(dataDir, ".hint", 1);
-    test_create_mock_file(dataDir, ".data", 2);
-    test_create_mock_file(dataDir, ".lock", 3);
+    test_create_mock_rol_file(dataDir, ".hint", 1);
+    test_create_mock_rol_file(dataDir, ".lock", 3);
+
+    test_create_mock_aol_file(dataDir, ".data", 2);
    
     REQUIRE(DetectStore::isStore(dataDir));
 
-    test_create_mock_file(dataDir, ".log", 4);
+    test_create_mock_rol_file(dataDir, ".log", 4);
     
+    REQUIRE(!DetectStore::isStore(dataDir));
+}
+
+TEST_CASE("Detecting two append-only files in data directory", "KVStore::isStore()") {
+
+    fs::path dataDir = test_create_tmp_dir("test_detect_store_4");
+    TempDirGuard cleanup{dataDir};
+
+    test_create_mock_aol_file(dataDir, ".data", 0);
+    REQUIRE(DetectStore::isStore(dataDir));
+
+    test_create_mock_aol_file(dataDir, ".data", 1);
     REQUIRE(!DetectStore::isStore(dataDir));
 }

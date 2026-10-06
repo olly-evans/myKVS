@@ -3,6 +3,11 @@
 
 namespace DetectStore {
 
+    bool isAppendOnlyDatafile(fs::path datafile) {
+        fs::path datafileStatus = datafile.stem().extension().string();
+        return datafileStatus == ".aol";
+    }
+
     bool isNumericStem(const std::string& stem) {
         return !stem.empty() && std::all_of(stem.begin(), stem.end(), ::isdigit);
     }
@@ -45,14 +50,19 @@ namespace DetectStore {
         if (fs::is_empty(dir))
             return false;
 
-        for (const auto& candidateFile : fs::directory_iterator(dir)) {
+        bool foundAnAppendOnlyDatafile = false;
 
-            if (!candidateFile.is_regular_file())
+        for (const auto& currentFile : fs::directory_iterator(dir)) {
+            
+            if (!currentFile.is_regular_file())
                 return false;
-            if (!isValidStoreFile(candidateFile))
+            if (!isValidStoreFile(currentFile))
                 return false;
+            
+            if (foundAnAppendOnlyDatafile && isAppendOnlyDatafile(currentFile.path()))
+                return false;
+            foundAnAppendOnlyDatafile = isAppendOnlyDatafile(currentFile.path());            
         }
-
         return true;
     }
 

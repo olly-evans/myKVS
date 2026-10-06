@@ -10,6 +10,8 @@ namespace fs = std::filesystem;
 
 namespace DetectStore {
 
+    bool isAppendOnlyDatafile(fs::path datafile);
+
     bool isNumericStem(const std::string& stem);
 
     bool isValidStoreExtension(const std::string& fileExt);
