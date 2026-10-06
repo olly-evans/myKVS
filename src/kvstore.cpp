@@ -25,18 +25,18 @@ KVStoreHandle KVStore::open(const fs::path pathDirRelativeToRoot, const StoreFla
         stH.openActiveDatafile(dataDir, activeOutputStream);
         restore(stH);
 
-        /* Set active datafile to be read from by default. */
+        /* Set active datafile to be read-from by default. */
         updateActiveInputStream(stH.getActiveDatafilePath());
 
         std::cout << "Existing store opened successfully in:\n" << dataDir << std::endl;
         return stH;
     }
 
-    // Not a store.
+    /* Not an existing store. */
     fs::create_directories(dataDir);
 
     stH.openActiveDatafile(dataDir, activeOutputStream);
-    /* Set active datafile to be read from by default. */
+    /* Set active datafile to be read-from by default. */
     updateActiveInputStream(stH.getActiveDatafilePath()); 
 
     std::cout << "Store opened successfully in:\n" << dataDir << std::endl;
