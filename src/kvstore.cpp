@@ -6,7 +6,7 @@ namespace fs = std::filesystem;
 
 /* KVStore Methods */
 
-KVStoreHandle KVStore::open(const fs::path pathDirRelativeToRoot, const StoreFlags stFlags) {
+KVStoreHandle KVStore::open(const fs::path pathDirRelToRoot, const StoreFlags flags) {
 
     // if stFlags.syncOnPut ... -> mutex in put function???
     // if stFlags.readWrite ... -> not fully fleshed out and tested
@@ -15,10 +15,10 @@ KVStoreHandle KVStore::open(const fs::path pathDirRelativeToRoot, const StoreFla
     KVStoreHandle stH;
 
     updateRootDirPath();
-    setDataDir(getRootDirPath(), pathDirRelativeToRoot);    
-    setMaxDatafileBytes(stFlags.maxDatafileBytes);
+    setDataDir(getRootDirPath(), pathDirRelToRoot);    
+    setMaxDatafileBytes(flags.maxDatafileBytes);
     stH.setDatafileExt(".data");
-    stH.setReadWrite(stFlags.readWrite); 
+    stH.setReadWrite(flags.readWrite); 
 
     if (DetectStore::isStore(dataDir)) {
 
@@ -60,14 +60,11 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     }
 
     uint32_t activePathID = stH.validDatafileToID(df);
-
-    if (activePathID != stH.getActiveDatafileID()) {
-        std::cerr << "[ERROR] Active datafile doesn't match the active ID." << std::endl;
-        return;
-    }
+    if (activePathID != stH.getActiveDatafileID())
+        throw std::runtime_error("Active datafile path and active ID mismatch - cannot process with write.");    
 
     if (!activeOutputStream.is_open() || activeOutputStream.bad())
-        std::cerr << "[ERROR] Filestream error!" << std::endl;
+        throw std::runtime_error("Output filestream is closed or in a bad state - cannot proceed with write.");
     
     Record rec(key, val);
 
