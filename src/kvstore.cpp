@@ -2,11 +2,9 @@
 #include "detect_store.h"
 #include "kvstore.h"
 
-namespace fs = std::filesystem;
-
 /* KVStore Methods */
 
-KVStoreHandle KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) {
+KVResult KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) {
 
     // if stFlags.syncOnPut ... -> mutex in put function???
     // if stFlags.readWrite ... -> not fully fleshed out and tested
@@ -34,6 +32,10 @@ KVStoreHandle KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flag
 
     /* Not an existing store. */
     fs::create_directories(dataDir);
+    if (!fs::exists(dataDir)) {
+        KVError err = {KVErrorCode::StoreNotOpen, "Should have opened a data store but didn't."}; 
+        return std::unexpected(err);
+    }
 
     stH.openActiveDatafile(dataDir, activeOutputStream);
     /* Set active datafile to be read-from by default. */

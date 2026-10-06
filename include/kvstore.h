@@ -5,10 +5,9 @@
 #include <shared_mutex>
 #include <optional> 
 #include <vector>
-#include <expected>
 
 #include "kvstorehandle.h"
-
+#include "kverror.h"
 
 namespace fs = std::filesystem;
 
@@ -33,7 +32,7 @@ class KVStore {
             directory if it doesn't already exist. 
         */
 
-        [[nodiscard]] KVStoreHandle open(const fs::path& dirRelToRoot, const StoreFlags& flags); 
+        [[nodiscard]] KVResult open(const fs::path& dirRelToRoot, const StoreFlags& flags); 
 
         /* Put a key/value pair to an existing data store. */
         void put(KVStoreHandle& stH, const std::string key, const std::string val);
