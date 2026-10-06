@@ -82,7 +82,6 @@ void KVStore::put(KVStoreHandle& stH, const std::string key, const std::string v
     std::cout << "Datafile full, rolling-over..." << std::endl;
 
     stH.rollOverDatafile(dataDir, activeOutputStream);
-    stH.updateActiveDatafileID(dataDir);
 
     updateActiveOutputStream(stH.getActiveDatafilePath());
     
@@ -105,8 +104,9 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
     if (!fs::exists(readPath)) 
         return std::nullopt;
 
-    /* if input stream already reading from stH.getActiveDatafilePath(), no set */
-    if (getActiveInputStreamPath().empty() || (getActiveInputStreamPath() != readPath))
+    /* If input stream already reading from stH.getActiveDatafilePath(), no need to update the stream. */
+    if (getActiveInputStreamPath().empty() || 
+        !fs::equivalent(getActiveInputStreamPath(), readPath))
         updateActiveInputStream(readPath);
 
     uintmax_t fileSize = fs::file_size(readPath);
@@ -155,7 +155,7 @@ void KVStore::restore(KVStoreHandle& stH) {
             
             /* Zero offset as we're reading through whole file here sequentially. */
             Record rec = stH.readRecord(activeInputStream, 0);
-            stH.updateKeyDir(df.path(), rec); // needs to take id
+            stH.updateKeyDir(df.path(), rec);
         }
     }
 }

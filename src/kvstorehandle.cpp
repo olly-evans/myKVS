@@ -59,6 +59,7 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
     makeDatafileReadOnly(activeDatafilePath, out);
     fs::path nextDatafilePath = createDatafilePath(dataDir, getActiveDatafileID() + 1, getDatafileExt());
     setActiveDatafile(nextDatafilePath, out);
+    updateActiveDatafileID(dataDir);
 
 }
 
