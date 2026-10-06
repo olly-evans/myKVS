@@ -6,7 +6,7 @@ namespace fs = std::filesystem;
 
 /* KVStore Methods */
 
-KVStoreHandle KVStore::open(const fs::path& pathDirRelToRoot, const StoreFlags& flags) {
+KVStoreHandle KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) {
 
     // if stFlags.syncOnPut ... -> mutex in put function???
     // if stFlags.readWrite ... -> not fully fleshed out and tested
@@ -15,7 +15,7 @@ KVStoreHandle KVStore::open(const fs::path& pathDirRelToRoot, const StoreFlags& 
     KVStoreHandle stH;
 
     updateRootDirPath();
-    setDataDir(getRootDirPath(), pathDirRelToRoot);    
+    setDataDir(getRootDirPath(), dirRelToRoot);    
     setMaxDatafileBytes(flags.maxDatafileBytes);
     stH.setDatafileExt(".data");
     stH.setReadWrite(flags.readWrite); 
