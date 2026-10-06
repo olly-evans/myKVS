@@ -48,8 +48,9 @@ TEST_CASE("Reading sequentially over a full record correctly from zero offset.",
     KVStore kvs;
     StoreFlags flags;
     
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
     kvs.put(stH, "key", "value");
     
@@ -78,8 +79,9 @@ TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVS
     KVStore kvs;
     StoreFlags flags;
     
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
     kvs.put(stH, "key", "value");
     kvs.put(stH, "key2", "value2");
@@ -106,9 +108,10 @@ TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::re
     KVStore kvs;
     StoreFlags flags;
     
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
-    
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
+
     kvs.put(stH, "key", "value");
 
     kvs.updateActiveInputStream(stH.getActiveDatafilePath());

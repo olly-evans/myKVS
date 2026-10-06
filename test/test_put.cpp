@@ -11,8 +11,9 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
     fs::path dataDir = createTempTestDir("test_put_1/");
     TempDirGuard cleanup(dataDir);
 
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
     kvs.put(stH, "k", "v"); // Size of all record members, 22 bytes for "k" and "v".
     REQUIRE(fs::file_size(stH.getActiveDatafilePath()) == 22); /* Filesize should be 22 bytes after put. */
@@ -47,8 +48,10 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     fs::path dataDir = createTempTestDir("test_put_2/");
     TempDirGuard cleanup(dataDir);
 
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
+
 
     std::thread t1(simulate_puts_in_range, std::ref(kvs), std::ref(stH), 0, 100);
     std::thread t2(simulate_puts_in_range, std::ref(kvs), std::ref(stH), 100, 100);
@@ -70,7 +73,7 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
 }
 
 TEST_CASE("Put before opening a store.", "KVStore::put()") {
-    
+
     KVStore kvs;
     StoreFlags flags;
 
@@ -90,8 +93,9 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
     fs::path dataDir = createTempTestDir("test_put_3/");
     TempDirGuard cleanup(dataDir);
 
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
     size_t mockFileSize = 10;
     kvs.setMaxDatafileBytes(mockFileSize);
@@ -120,8 +124,9 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     fs::path dataDir = createTempTestDir("test_get_4/");
     TempDirGuard cleanup(dataDir);
 
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
     std::string k = "key";
     std::string v = "value";
@@ -152,8 +157,9 @@ TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") 
     fs::path dataDir = createTempTestDir("test_get_5/");
     TempDirGuard cleanup(dataDir);
 
-    KVResult result = kvs.open(dataDir, flags);
-    KVStoreHandle stH = result.value();
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
     uint64_t putNum = 32;
     for (uint64_t i = 0; i < putNum; i++) {

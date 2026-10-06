@@ -4,7 +4,7 @@
 
 /* KVStore Methods */
 
-KVResult KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) {
+KVExpected KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) {
 
     // if stFlags.syncOnPut ... -> mutex in put function???
     // if stFlags.readWrite ... -> not fully fleshed out and tested

@@ -10,11 +10,13 @@ TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
     fs::path dataDir = createTempTestDir("test_get_1/");
     TempDirGuard cleanup{dataDir};
 
-    KVResult result = kvs.open(dataDir, flags);
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
-    kvs.put(result.value(), "key", "val");
+    kvs.put(stH, "key", "val");
 
-    std::optional<std::string> val = kvs.get(result.value(), "key");
+    std::optional<std::string> val = kvs.get(stH, "key");
 
     Record rec("key", "val");
 
@@ -30,20 +32,22 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
     fs::path dataDir = createTempTestDir("test_get_2/");
     TempDirGuard cleanup{dataDir};
 
-    KVResult result = kvs.open(dataDir, flags);
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
     uint64_t numPuts = 64;
 
     for (uint64_t i = 0; i < numPuts; i++) {
-        kvs.put(result.value(), std::to_string(i), std::to_string(i));
+        kvs.put(stH, std::to_string(i), std::to_string(i));
     }
     
-    REQUIRE(HandleTestAccess::keyDir(result.value()).size() == numPuts);
+    REQUIRE(HandleTestAccess::keyDir(stH).size() == numPuts);
 
     for (uint64_t i = 0; i < numPuts; i++) {
 
         std::string key = std::to_string(i);
-        std::optional<std::string> val = kvs.get(result.value(), key);
+        std::optional<std::string> val = kvs.get(stH, key);
         Record rec(key, val.value());
 
         REQUIRE(val != std::nullopt);
@@ -64,9 +68,12 @@ TEST_CASE("Does get change input stream correctly. Opened store and put. Opened 
     std::ofstream mockFile1(mFilePath1);
     mockFile1.close();
 
-    KVResult result = kvs.open(dataDir, flags);
-    REQUIRE(result.value().getActiveDatafileID() == 1);
-    kvs.put(result.value(), "key", "val"); /* Put to mockFile1 */
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
+
+    REQUIRE(stH.getActiveDatafileID() == 1);
+    kvs.put(stH, "key", "val"); /* Put to mockFile1 */
 
     REQUIRE(kvs.getActiveInputStream().is_open());
     REQUIRE(kvs.getActiveInputStream().good());
@@ -80,12 +87,12 @@ TEST_CASE("Does get change input stream correctly. Opened store and put. Opened 
     /* SO FOR SOME REASON WHEN WE OPEN NEW STORE A CRC CHECK IS FAILING. */
     result = kvs2.open(dataDir, flags); /* activeInputStream with mf2. */
 
-    REQUIRE(result.value().getActiveDatafileID() == 2);
+    REQUIRE(stH.getActiveDatafileID() == 2);
     REQUIRE(kvs2.getActiveInputStream().is_open());
     REQUIRE(kvs2.getActiveInputStream().good());
 
     fs::path readPathBeforeGet = kvs2.getActiveInputStreamPath(); /* mf2 */
-    std::optional<std::string> val = kvs2.get(result.value(), "key");
+    std::optional<std::string> val = kvs2.get(stH, "key");
     fs::path readPathAfterGet = kvs2.getActiveInputStreamPath(); /* also mf2.... */
 
     REQUIRE(val.value() == "val"); // failing.
@@ -106,17 +113,20 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     fs::path dataDir = createTempTestDir("test_get_4/");
     TempDirGuard cleanup{dataDir};
 
-    KVResult result = kvs.open(dataDir, flags);
-    kvs.put(result.value(), "key", "val");
-   
-    KeyDirEntry entry = HandleTestAccess::keyDir(result.value()).at("key");
+    KVExpected result = kvs.open(dataDir, flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
 
-    std::optional<std::string> noncorruptval = kvs.get(result.value(), "key");
+    kvs.put(stH, "key", "val");
+   
+    KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("key");
+
+    std::optional<std::string> noncorruptval = kvs.get(stH, "key");
 
     std::string corrupt = "Xp";
 
     // std::ios::out on its own usually means a new file hence it truncates. Need std::ios::in too.
-    std::ofstream f(result.value().getActiveDatafilePath(), std::ios::in  | 
+    std::ofstream f(stH.getActiveDatafilePath(), std::ios::in  | 
                                                  std::ios::out | 
                                                  std::ios::binary);
 
@@ -124,7 +134,7 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     f.write(corrupt.data(), 2);
     f.close();
 
-    std::optional<std::string> corruptval = kvs.get(result.value(), "key");
+    std::optional<std::string> corruptval = kvs.get(stH, "key");
 
     REQUIRE(corruptval == std::nullopt);    /* val being std::nullopt after corruption implies computed and 
                                               read crc values are different, desired. */

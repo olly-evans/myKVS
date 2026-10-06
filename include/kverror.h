@@ -16,4 +16,5 @@ struct KVError {
     std::string message;
 };
 
-using KVResult = std::expected<KVStoreHandle, KVError>;
+using KVExpected = std::expected<KVStoreHandle, KVError>;
+using KVResult = std::expected<void, KVError>;
