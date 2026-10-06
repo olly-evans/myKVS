@@ -7,7 +7,7 @@ TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_get_1/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_1/");
     TempDirGuard cleanup{dataDir};
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -29,7 +29,7 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_get_2/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_2/");
     TempDirGuard cleanup{dataDir};
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -65,10 +65,10 @@ TEST_CASE("Opened store and put. Opened store again and get works.", "KVStore::g
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_get_3/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_3/");
     TempDirGuard cleanup{dataDir};
 
-    test_create_mock_aol_file(dataDir, ".data", 1);
+    TestHelpers::create_mock_aol_file(dataDir, ".data", 1);
 
     KVExpected openresult1 = kvs.open(dataDir, flags);
     REQUIRE(openresult1);
@@ -95,7 +95,7 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_get_4/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_4/");
     TempDirGuard cleanup{dataDir};
 
     KVExpected result = kvs.open(dataDir, flags);

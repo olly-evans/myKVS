@@ -25,7 +25,7 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
     KVStoreHandle stH;
 
-    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_1");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_1");
     TempDirGuard cleanup{dataDir};
 
     stH.setDatafileExt(".data"); // Only have default extension if KVStore::open ran.
@@ -42,7 +42,7 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
 TEST_CASE("Reading sequentially over a full record correctly from zero offset.", "KVStoreHandle::readRecord()") {
 
-    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_2");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_2");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;
@@ -73,7 +73,7 @@ TEST_CASE("Reading sequentially over a full record correctly from zero offset.",
 
 TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVStoreHandle::readRecord()") {
 
-    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_3");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_3");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;
@@ -105,7 +105,7 @@ TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVS
 }
 TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::readField<T>()") {
 
-    fs::path dataDir = test_create_tmp_dir("test_kvstorehandle_4");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_4");
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs;

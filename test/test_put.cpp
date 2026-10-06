@@ -8,7 +8,7 @@ TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_put_1/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_put_1/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -50,7 +50,7 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_put_2/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_put_2/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -96,7 +96,7 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_put_3/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_put_3/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -128,7 +128,7 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_get_4/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_4/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
@@ -165,7 +165,7 @@ TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") 
     KVStore kvs;
     StoreFlags flags;
 
-    fs::path dataDir = test_create_tmp_dir("test_get_5/");
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_5/");
     TempDirGuard cleanup(dataDir);
 
     KVExpected result = kvs.open(dataDir, flags);
