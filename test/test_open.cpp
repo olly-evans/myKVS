@@ -27,7 +27,8 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
     fs::path dataDir = createTempTestDir("test_open_1/");
     TempDirGuard cleanup{dataDir};
 
-    KVStoreHandle stH = kvs.open(dataDir, flags);
+    KVResult result = kvs.open(dataDir, flags);
+    KVStoreHandle stH = result.value();
 
     REQUIRE(fs::exists(kvs.getDataDir()));             /* Should have existing data directory. */
     REQUIRE(!stH.getDatafileExt().empty());            /* Datafile extension cannot be empty. */
@@ -64,7 +65,8 @@ TEST_CASE("Open gets the correct active id for a mock existing store", "KVStore:
     
     StoreFlags flags;
 
-    KVStoreHandle stH = kvs.open(dataDir, flags);
+    KVResult result = kvs.open(dataDir, flags);
+    KVStoreHandle stH = result.value();
 
     REQUIRE(fs::exists(kvs.getDataDir()));            /* Should have existing data directory. */
     REQUIRE(!stH.getDatafileExt().empty());           /* Datafile extension cannot be empty. */

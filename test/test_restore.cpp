@@ -23,8 +23,9 @@ TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
 
     // Note: We aren't updating the keyDir here as we want to restore it.
 
-    KVStoreHandle stH = kvs.open(dataDir, flags);
-
+    KVResult result = kvs.open(dataDir, flags);
+    KVStoreHandle stH = result.value();
+    
     REQUIRE(HandleTestAccess::keyDir(stH).size() == 1);
 
     KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("key");
