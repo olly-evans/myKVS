@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <expected>
 
-// class KVStoreHandle;
 enum class KVErrorCode : uint8_t {
     StoreNotOpen = 1,
     NoActiveDatafilePath,

@@ -5,3 +5,4 @@
 - stream.close() doesn't always reset state pre-C++11
 - any read and write is called under put() and get() get respectively, mutexes mean put() is 
 - Read and write encoded in filename with aol or rol.
+- Compiling test_*.cpp into seperate executables as its easier to debug with gdb.
