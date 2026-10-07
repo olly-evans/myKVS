@@ -50,7 +50,7 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
     std::unique_lock<std::shared_mutex> lock(rwMutex);
 
     if (!fs::exists(dataDir)) {
-        KVError err = {KVErrorCode::StoreNotOpen, "No store available to write to, consider opening one."}; 
+        KVError err = {KVErrorCode::StoreNotOpen, "No store open to write to."}; 
         return std::unexpected(err);
     }
     

@@ -119,10 +119,8 @@ void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {
     size_t fileBytes = fs::file_size(path); // Put before this is used, file must have bytes.
     uint64_t valueByteOffset = fileBytes - rec.getValueSize();
 
-    keyDir[rec.getKey()] = KeyDirEntry{id,
-                                       rec.getValueSize(),
-                                       valueByteOffset,
-                                       rec.getTimestamp()};
+    KeyDirEntry entry = {id, rec.getValueSize(), valueByteOffset, rec.getTimestamp()};
+    keyDir.insert_or_assign(rec.getKey(), entry);
 }
 
 void KVStoreHandle::setActiveDatafilePath(fs::path path) {

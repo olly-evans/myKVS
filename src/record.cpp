@@ -7,8 +7,8 @@
 Record::Record(std::string k, std::string v) : 
     keySize(static_cast<uint32_t>(k.size())),
     valSize(static_cast<uint32_t>(v.size())),
-    key(std::move(k)),
-    val(std::move(v)) {
+    key(k.data()),
+    val(v.data()) {
     
     setTimestampNow();
     setCRC32();
@@ -21,8 +21,8 @@ void Record::serialize(std::ostream& out) const {
     out.write(reinterpret_cast<const char*>(&keySize), sizeof(keySize));
     out.write(reinterpret_cast<const char*>(&valSize), sizeof(valSize));
 
-    out.write(key.data(), key.size());
-    out.write(val.data(), val.size());
+    out.write(key.data(), getKeySize());
+    out.write(val.data(), getValueSize());
     
     out.flush();
 }

@@ -1,7 +1,6 @@
 # Immediate
 - test_open for each KVError.code that can happen.
 - use file permissions in testing_helpers mock files.
-- No discard needed in a lot of new functions.
 - Use mockfile functions throughout tests.
 - TestHelpers::writeToOffset(stream, path, offset);
 - Test for input stream before/after a get().
@@ -14,6 +13,7 @@
 - Store a static counter for temporary directories in a test_.cpp and construct the path somewhere incrementing, labelling the directory manually is inefficient and error-prone.
 
 # Less Immediate
+- Data-align record class members will perhaps become a bottleneck eventually, could compare current version with a data-aligned version.
 - What if user opens an existing store but changes the max filesize? reading from a file isnt always accurate as if a file is too big for the next write we roll-over and write to the next file which means the number of bytes in a full file will rarely be the actual max byte size. Perhaps we store a json or something in our datadir with some metadata, this probably solves multiple problems too.
 - KVStore::open() should just be called in kvs constructor.
 - Make a testing build in workflows.

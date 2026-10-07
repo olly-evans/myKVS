@@ -20,18 +20,6 @@ struct KeyDirEntry {
 
 class KVStoreHandle {
 
-    friend class KVStore;
-
-    private:
-
-        fs::path activeDatafilePath;
-        std::string datafileExtension;
-        uint32_t activeDatafileID;
-
-        bool readWrite;
-
-        std::unordered_map<std::string, KeyDirEntry> keyDir;
-
     public:
         // KVStoreHandle(mutex.lock());
         // ~KVStoreHandle();
@@ -71,9 +59,23 @@ class KVStoreHandle {
         void setReadWrite(bool readWrite);
 
     private:
+        friend class KVStore;
+
+
+        fs::path activeDatafilePath;
+        std::string datafileExtension;
+        uint32_t activeDatafileID;
+
+        bool readWrite;
+
+        std::unordered_map<std::string, KeyDirEntry> keyDir;
+
+    private:
 
         /* Testing */
         friend struct HandleTestAccess;
+
+
 };
 
 template <typename T>
