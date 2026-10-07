@@ -21,7 +21,7 @@ struct StoreFlags {
 class KVStore {
 
     public:
-        // KVStore();
+        KVStore(const fs::path& dir);
         // ~KVStore();
 
         /* Main API */
@@ -32,7 +32,7 @@ class KVStore {
             directory if it doesn't already exist. 
         */
 
-        [[nodiscard]] KVExpected open(const fs::path& dirRelToRoot, const StoreFlags& flags); 
+        [[nodiscard]] KVExpected open(const StoreFlags& flags); 
 
         /* Put a key/value pair to an existing data store. */
         [[nodiscard]] KVResult put(KVStoreHandle& stH, const std::string key, const std::string val);
@@ -45,7 +45,7 @@ class KVStore {
 
         /* Restore the keyDir from an existing store. Brute-force for now, no hint files. */
         void restore(KVStoreHandle& stH);
-
+        
         /* Getters/Setters */
 
         [[nodiscard]] fs::path getRootDirPath() const;

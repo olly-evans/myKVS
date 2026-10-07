@@ -5,13 +5,13 @@
 
 TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore::put()") {
 
-    KVStore kvs;
-    StoreFlags flags;
-
     fs::path dataDir = TestHelpers::create_tmp_dir("test_put_1/");
     TempDirGuard cleanup(dataDir);
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVStore kvs(dataDir);
+    StoreFlags flags;
+
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
@@ -47,16 +47,15 @@ void simulate_puts_in_range(KVStore& kvs, KVStoreHandle& stH, uint64_t startID, 
 
 TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
 
-    KVStore kvs;
-    StoreFlags flags;
-
     fs::path dataDir = TestHelpers::create_tmp_dir("test_put_2/");
     TempDirGuard cleanup(dataDir);
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVStore kvs(dataDir);
+    StoreFlags flags;
+
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
-
 
     std::thread t1(simulate_puts_in_range, std::ref(kvs), std::ref(stH), 0, 100);
     std::thread t2(simulate_puts_in_range, std::ref(kvs), std::ref(stH), 100, 100);
@@ -79,7 +78,8 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
 
 TEST_CASE("Put before opening a store.", "KVStore::put()") {
 
-    KVStore kvs;
+    fs::path mock = "mock_path/";
+    KVStore kvs(mock);
     StoreFlags flags;
 
     KVStoreHandle stH;
@@ -93,13 +93,13 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
 
 TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
 
-    KVStore kvs;
-    StoreFlags flags;
-
     fs::path dataDir = TestHelpers::create_tmp_dir("test_put_3/");
     TempDirGuard cleanup(dataDir);
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVStore kvs(dataDir);
+    StoreFlags flags;
+
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
@@ -125,13 +125,13 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
 
 TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStore::put()") {
     
-    KVStore kvs;
-    StoreFlags flags;
-
     fs::path dataDir = TestHelpers::create_tmp_dir("test_get_4/");
     TempDirGuard cleanup(dataDir);
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVStore kvs(dataDir);
+    StoreFlags flags;
+
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
@@ -162,13 +162,13 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
 
 TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") {
     
-    KVStore kvs;
-    StoreFlags flags;
-
     fs::path dataDir = TestHelpers::create_tmp_dir("test_get_5/");
     TempDirGuard cleanup(dataDir);
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVStore kvs(dataDir);
+    StoreFlags flags;
+
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 

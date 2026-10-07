@@ -4,7 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("KVStore sets the max datafile bytes.", "KVStore::setMaxDatafileBytes()") {
-    KVStore kvs;
+    KVStore kvs("mock/");
 
     size_t bytes = 3;
     kvs.setMaxDatafileBytes(bytes);
@@ -13,7 +13,7 @@ TEST_CASE("KVStore sets the max datafile bytes.", "KVStore::setMaxDatafileBytes(
 
 TEST_CASE("KVStore sets the absolute directory", "KVStore::updateAbsDirPath") {
 
-    KVStore kvs;
+    KVStore kvs("mock/");
     kvs.updateRootDirPath();
 
     REQUIRE(fs::exists(kvs.getRootDirPath()));
@@ -22,22 +22,23 @@ TEST_CASE("KVStore sets the absolute directory", "KVStore::updateAbsDirPath") {
 TEST_CASE("Open rejects a non-absolute directory argument.", "KVStore::open()") {
     fs::path mock("not/absolute/");
 
-    KVStore kvs;
+    KVStore kvs(mock);
     StoreFlags flags;
-    KVExpected result = kvs.open(mock, flags);
+    KVExpected result = kvs.open(flags);
     REQUIRE(result.error().code == KVErrorCode::ProvidedPathNotAbsolute);
 
 }
 
 TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
-    KVStore kvs;
-    StoreFlags flags;
-    
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_open_1/");
-    TempDirGuard cleanup{dataDir};
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_open_1");
+    TempDirGuard cleanup(dataDir);
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVStore kvs(dataDir);
+
+    StoreFlags flags;
+
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
@@ -57,16 +58,16 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
 TEST_CASE("Open gets the correct active id for a mock existing store", "KVStore::open()") {
     
-    KVStore kvs;
-
     fs::path dataDir = TestHelpers::create_tmp_dir("test_open_1");
     TempDirGuard cleanup(dataDir);
+
+    KVStore kvs(dataDir);
 
     TestHelpers::create_n_mock_files(dataDir, ".data", 1, 3);
     
     StoreFlags flags;
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 

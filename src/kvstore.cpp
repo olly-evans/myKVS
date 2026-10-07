@@ -4,20 +4,21 @@
 
 /* KVStore Methods */
 
-KVExpected KVStore::open(const fs::path& dir, const StoreFlags& flags) {
+KVStore::KVStore(const fs::path& dir) : dataDir(dir) {};
+
+KVExpected KVStore::open(const StoreFlags& flags) {
 
     /* DataFileExt not changed right now. Just default to .data and this is a valid store file. */
     /* Work is done beforehand in the main loop to deduce the root/relative path of dir. */
 
     KVStoreHandle stH;
 
-    if (!dir.is_absolute()) {
+    if (!dataDir.is_absolute()) {
         KVError err = {KVErrorCode::ProvidedPathNotAbsolute, 
                       "Path provided isn't relative. Cannot open."}; 
         return std::unexpected(err);
     }
 
-    dataDir = dir;
     setMaxDatafileBytes(flags.maxDatafileBytes);
     stH.setDatafileExt(".data");
     stH.setReadWrite(flags.readWrite); 

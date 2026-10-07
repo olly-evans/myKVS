@@ -4,11 +4,11 @@
 
 TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
     
-    KVStore kvs;
-    StoreFlags flags;
-
     fs::path dataDir = TestHelpers::create_tmp_dir("test_restore_1/");
     TempDirGuard cleanup(dataDir);
+
+    KVStore kvs(dataDir);
+    StoreFlags flags;
 
     fs::path mFilePath1 = dataDir / "0.aol.data";
     std::ofstream mockFile1(mFilePath1);
@@ -23,7 +23,7 @@ TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
 
     // Note: We aren't updating the keyDir here as we want to restore it.
 
-    KVExpected result = kvs.open(dataDir, flags);
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
     
