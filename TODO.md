@@ -1,9 +1,9 @@
 # Immediate
+- Use mockfile functions throughout tests.
 - init() for KVStore that sets the variables that open does now.
 - open takes just the flags, datadir assigned in KVStore::KVStore()
 - test_open for each KVError.code that can happen.
 - use file permissions in testing_helpers mock files.
-- Use mockfile functions throughout tests.
 - TestHelpers::writeToOffset(stream, path, offset);
 - Test for input stream before/after a get().
 - Get should return a KVResult. Update and be specific with the errors where std::nullopt is.
