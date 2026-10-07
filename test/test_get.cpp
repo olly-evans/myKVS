@@ -14,7 +14,8 @@ TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
-    kvs.put(stH, "key", "val");
+    auto putresult = kvs.put(stH, "key", "val");
+    REQUIRE(putresult);
 
     std::optional<std::string> val = kvs.get(stH, "key");
 

@@ -49,7 +49,7 @@ class KVStoreHandle {
         void makeDatafileReadOnly(const fs::path& path, std::ofstream& out);
         void rollOverDatafile(const fs::path& dataDir, std::ofstream& out);
 
-        uint32_t validDatafileToID(fs::path path);
+        [[nodiscard]] uint32_t validDatafilePathToID(fs::path path);
 
         template <typename T>
         [[nodiscard]] T readField(std::ifstream& in);

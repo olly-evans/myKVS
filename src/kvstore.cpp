@@ -61,7 +61,7 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
         return std::unexpected(err);
     }
 
-    uint32_t activePathID = stH.validDatafileToID(df);
+    uint32_t activePathID = stH.validDatafilePathToID(df);
     if (activePathID != stH.getActiveDatafileID())
         throw std::runtime_error("Active datafile path and active ID mismatch - cannot process with write.");    
 

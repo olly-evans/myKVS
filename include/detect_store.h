@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 
 namespace DetectStore {
 
-    std::string getDatafileStatus(DatafileStatus status);
+    [[nodiscard]] std::string getDatafileStatus(DatafileStatus status);
 
     bool isAppendOnlyDatafile(fs::path datafile);
 
@@ -21,5 +21,4 @@ namespace DetectStore {
     bool hasOnlyValidStoreFiles(const fs::path& dir);
 
     bool isStore(const fs::path& dir);
-
 }

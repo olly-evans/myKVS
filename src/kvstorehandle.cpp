@@ -77,7 +77,7 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
     updateActiveDatafileID(dataDir);
 }
 
-uint32_t KVStoreHandle::validDatafileToID(fs::path path) {
+uint32_t KVStoreHandle::validDatafilePathToID(fs::path path) {
     return std::stoul(path.stem().stem().string());
 }
 
@@ -113,7 +113,7 @@ void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {
     
     bool readPathIsActiveDatafile = fs::equivalent(path, activeDatafilePath);
 
-    uint32_t readPathID = validDatafileToID(path);
+    uint32_t readPathID = validDatafilePathToID(path);
     uint32_t id = readPathIsActiveDatafile ? getActiveDatafileID() : readPathID;
 
     size_t fileBytes = fs::file_size(path); // Put before this is used, file must have bytes.
@@ -145,7 +145,7 @@ void KVStoreHandle::updateActiveDatafileID(fs::path dataDir) {
     for (const auto& datafile : fs::directory_iterator(dataDir)) {
         
         if (datafile.path().extension() == datafileExtension) {
-            uint32_t currentID = validDatafileToID(datafile);
+            uint32_t currentID = validDatafilePathToID(datafile);
             maxID = std::max(maxID, currentID);
             found = true;
         }
