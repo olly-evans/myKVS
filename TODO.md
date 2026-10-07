@@ -1,6 +1,6 @@
 # Immediate
 - init() for KVStore that sets the variables that open does now.
-
+- open takes just the flags, datadir assigned in KVStore::KVStore()
 - test_open for each KVError.code that can happen.
 - use file permissions in testing_helpers mock files.
 - Use mockfile functions throughout tests.

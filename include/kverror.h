@@ -5,7 +5,7 @@
 
 enum class KVErrorCode : uint8_t {
     StoreNotOpen = 1,
-    ProvidedNotAbsolute,
+    ProvidedPathNotAbsolute,
     NoActiveDatafilePath,
     OutputFilestreamBad,
     InputFilestreamBad,

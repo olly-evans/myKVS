@@ -12,12 +12,12 @@ KVExpected KVStore::open(const fs::path& dir, const StoreFlags& flags) {
     KVStoreHandle stH;
 
     if (!dir.is_absolute()) {
-        KVError err = {KVErrorCode::ProvidedNotAbsolute, 
+        KVError err = {KVErrorCode::ProvidedPathNotAbsolute, 
                       "Path provided isn't relative. Cannot open."}; 
         return std::unexpected(err);
     }
 
-    dataDir = dir;    
+    dataDir = dir;
     setMaxDatafileBytes(flags.maxDatafileBytes);
     stH.setDatafileExt(".data");
     stH.setReadWrite(flags.readWrite); 

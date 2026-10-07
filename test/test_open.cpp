@@ -19,6 +19,16 @@ TEST_CASE("KVStore sets the absolute directory", "KVStore::updateAbsDirPath") {
     REQUIRE(fs::exists(kvs.getRootDirPath()));
 }
 
+TEST_CASE("Open rejects a non-absolute directory argument.", "KVStore::open()") {
+    fs::path mock("not/absolute/");
+
+    KVStore kvs;
+    StoreFlags flags;
+    KVExpected result = kvs.open(mock, flags);
+    REQUIRE(result.error().code == KVErrorCode::ProvidedPathNotAbsolute);
+
+}
+
 TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
     KVStore kvs;
