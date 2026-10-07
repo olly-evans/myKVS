@@ -40,16 +40,15 @@ namespace DetectStore {
         if (filepath.empty())
             return false;
 
-        std::string stem = filepath.filename().stem().stem(); // "0.aol.data" -> "0", "0.data" -> 0
+        // "0.aol.data" -> "0", "0.data" -> 0
+        std::string stem = filepath.filename().stem().stem(); 
 
         if (!isNumericStem(stem))
             return false;
 
         // "0.aol.data" -> "0" also "0.data" -> 0
-        if (stem == filepath.filename().stem())
+        if (stem == filepath.filename().stem().string())
             return false;
-
-        // either .lock .hint or .data ext.
 
         if (!isValidStoreExtension(filepath.extension()))
             return false;

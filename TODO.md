@@ -1,16 +1,16 @@
 # Immediate
-- Move datafile functionality to namespace Datafile::createPath(), Datafile::openActive();
-
+- rec.getExpectedCRC(timestamp) ->     rec.setTimestamp(timestamp); rec.setCRC32();
+- use file permissions in testing_helpers mock files.
 - No discard needed in a lot of new functions.
 - Use mockfile functions throughout tests.
-- TestHelpers::writeToOffset(path, offset);
+- TestHelpers::writeToOffset(stream, path, offset);
 - Test for input stream before/after a get().
 - Get should return a KVResult. Update and be specific with the errors where std::nullopt is.
 - Finish using mock file creation in tests wherever needed.
-- Only one .data file should contain .aol
-- Make a testing wrapper around making mock directory for dir/open/etc.. difficult with ~tempdirguard()
+- Make a testing wrapper function for making mock directory for dir/open/etc.. difficult with ~tempdirguard()
 - Testing one api function cannot call another has to be seperate/simulated. Most should be on its own. But some can use other calls.
-- Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS.
+- Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS. We can also test restore against an incomplete record too.
+- Move datafile functionality to namespace DF::createPath(), DF::openActive();
 - Store a static counter for temporary directories in a test_.cpp and construct the path somewhere incrementing, labelling the directory manually is inefficient and error-prone.
 
 # Less Immediate
@@ -18,5 +18,7 @@
 - KVStore::open() should just be called in kvs constructor.
 - Make a testing build in workflows.
 - Make two instances and run on the same directory.
-- How do I handle a mid-crash write? How does restore deal with a half complete record write?
+
+- How do I handle a mid-crash write? How does restore deal with a half complete record write? Do we have enough information to restore the data. If yes then restore it and if not then delete the data from disk and keyDir.
+
 - How will restore() handle changes to StoreFlags?
