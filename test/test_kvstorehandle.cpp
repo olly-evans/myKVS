@@ -42,10 +42,10 @@ TEST_CASE("Reading sequentially over a full record correctly from zero offset.",
     fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_2");
     TempDirGuard cleanup{dataDir};
 
-    KVStore kvs;
+    KVStore kvs(dataDir);
     StoreFlags flags;
     
-    KVExpected result = kvs.open(dataDir, flags);
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
@@ -73,10 +73,10 @@ TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVS
     fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_3");
     TempDirGuard cleanup{dataDir};
 
-    KVStore kvs;
+    KVStore kvs(dataDir);
     StoreFlags flags;
     
-    KVExpected result = kvs.open(dataDir, flags);
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
@@ -105,10 +105,10 @@ TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::re
     fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_4");
     TempDirGuard cleanup{dataDir};
 
-    KVStore kvs;
+    KVStore kvs(dataDir);
     StoreFlags flags;
     
-    KVExpected result = kvs.open(dataDir, flags);
+    KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
