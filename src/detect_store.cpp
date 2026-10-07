@@ -87,6 +87,8 @@ namespace DetectStore {
 
         // More criteria if required.
 
+        // files in the dir > 0
+
         bool isStore = pathExists && pathIsDir && allValidStoreFiles;
 
         return isStore;

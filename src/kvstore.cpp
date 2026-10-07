@@ -4,21 +4,25 @@
 
 /* KVStore Methods */
 
-KVExpected KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) {
+KVExpected KVStore::open(const fs::path& dir, const StoreFlags& flags) {
 
-    // if stFlags.syncOnPut ... -> mutex in put function???
-    // if stFlags.readWrite ... -> not fully fleshed out and tested
-    // dataFileExt not changed right now. Just default to .data and this is a valid store file.
+    /* DataFileExt not changed right now. Just default to .data and this is a valid store file. */
+    /* Work is done beforehand in the main loop to deduce the root/relative path of dir. */
 
     KVStoreHandle stH;
 
-    updateRootDirPath();
-    setDataDir(getRootDirPath(), dirRelToRoot);    
+    if (!dir.is_absolute()) {
+        KVError err = {KVErrorCode::ProvidedNotAbsolute, 
+                      "Path provided isn't relative. Cannot open."}; 
+        return std::unexpected(err);
+    }
+
+    dataDir = dir;    
     setMaxDatafileBytes(flags.maxDatafileBytes);
     stH.setDatafileExt(".data");
     stH.setReadWrite(flags.readWrite); 
 
-    if (DetectStore::isStore(dataDir)) {
+    if (fs::exists(dataDir) && DetectStore::isStore(dataDir) ) {
 
         stH.openActiveDatafile(dataDir, activeOutputStream);
         restore(stH);
@@ -32,10 +36,6 @@ KVExpected KVStore::open(const fs::path& dirRelToRoot, const StoreFlags& flags) 
 
     /* Not an existing store. */
     fs::create_directories(dataDir);
-    if (!fs::exists(dataDir)) {
-        KVError err = {KVErrorCode::StoreNotOpen, "Should have opened a data store but didn't."}; 
-        return std::unexpected(err);
-    }
 
     stH.openActiveDatafile(dataDir, activeOutputStream);
     /* Set active datafile to be read-from by default. */
@@ -180,8 +180,8 @@ fs::path KVStore::getDataDir() const {
     return dataDir;
 }
 
-void KVStore::setDataDir(fs::path root, std::string dirName) {
-    dataDir = root.append(dirName);
+void KVStore::setDataDir(fs::path dir) {
+    dataDir = dir;
 }
 
 std::ofstream& KVStore::getActiveOutputStream() {

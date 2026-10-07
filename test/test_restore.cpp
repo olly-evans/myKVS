@@ -6,7 +6,7 @@ TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
     
     KVStore kvs;
     StoreFlags flags;
-
+    
     fs::path dataDir = TestHelpers::create_tmp_dir("test_restore_1/");
     TempDirGuard cleanup(dataDir);
 

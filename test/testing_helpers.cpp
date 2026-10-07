@@ -4,7 +4,7 @@
 namespace TestHelpers {
 
     fs::path create_tmp_dir(std::string dirname) {
-        fs::path src = TEST_ROOT;
+        fs::path src = fs::temp_directory_path();
         fs::path path = src / dirname;
         fs::create_directories(path);
         return path;

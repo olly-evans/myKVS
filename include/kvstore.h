@@ -52,7 +52,7 @@ class KVStore {
         void updateRootDirPath();
 
         [[nodiscard]] fs::path getDataDir() const;        
-        void setDataDir(fs::path dir, std::string dirName);
+        void setDataDir(fs::path dir);
 
         [[nodiscard]] std::ofstream& getActiveOutputStream();
         void setActiveOutputStream(std::ofstream stream);
