@@ -132,12 +132,8 @@ std::optional<std::string> KVStore::get(KVStoreHandle& stH, const std::string ke
     std::streampos crcOff = activeInputStream.tellg() - static_cast<std::streampos>(rec.byteSize());
     activeInputStream.seekg(crcOff, std::ios_base::beg);
     uint32_t crc = stH.readField<uint32_t>(activeInputStream);
-    
-    // Calculate expected CRC. rec.getExpectedCRC();
-    rec.setTimestamp(entry.tstamp);
-    rec.setCRC32();
 
-    if (rec.getCRC32() != crc)
+    if (rec.getExpectedCRC32(entry.tstamp) != crc)
         return std::nullopt; // Mismatch between disk and expected crc.
     
     return val;

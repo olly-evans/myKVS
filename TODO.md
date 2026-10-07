@@ -1,4 +1,5 @@
 # Immediate
+- test_open for each KVError.code that can happen.
 - rec.getExpectedCRC(timestamp) ->     rec.setTimestamp(timestamp); rec.setCRC32();
 - use file permissions in testing_helpers mock files.
 - No discard needed in a lot of new functions.

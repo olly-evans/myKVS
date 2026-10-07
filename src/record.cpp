@@ -32,6 +32,17 @@ size_t Record::byteSize() const {
     sizeof(valSize) + keySize + valSize;
 }
 
+uint32_t Record::getCRC32() const {
+    return crc32;
+}
+
+uint32_t Record::getExpectedCRC32(uint64_t timestamp) {
+    setTimestamp(timestamp);
+    setCRC32();
+    return crc32;
+}
+
+
 void Record::setCRC32() {
     boost::crc_32_type result;
     result.process_bytes(&timestamp, sizeof(timestamp));
@@ -40,11 +51,6 @@ void Record::setCRC32() {
     result.process_bytes(key.data(), keySize);
     result.process_bytes(val.data(), valSize);
     crc32 = result.checksum();
-}
-
-
-uint32_t Record::getCRC32() const {
-    return crc32;
 }
 
 void Record::setTimestamp(uint64_t ts) {

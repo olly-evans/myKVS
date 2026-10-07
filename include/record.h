@@ -23,13 +23,14 @@ class Record {
 
         size_t byteSize() const;
 
-        void setCRC32();
         [[nodiscard]] uint32_t getCRC32() const;
+        [[nodiscard]] uint32_t getExpectedCRC32(uint64_t timestamp);
+        void setCRC32();
 
+        [[nodiscard]] uint64_t getTimestamp() const;
         void setTimestamp(uint64_t ts);
         void setTimestampNow();
 
-        [[nodiscard]] uint64_t getTimestamp() const;
         [[nodiscard]] uint32_t getKeySize() const;
         [[nodiscard]] uint32_t getValueSize() const;
         [[nodiscard]] std::string getKey() const;

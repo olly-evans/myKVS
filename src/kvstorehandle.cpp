@@ -84,16 +84,11 @@ uint32_t KVStoreHandle::validDatafileToID(fs::path path) {
 std::string KVStoreHandle::readString(std::ifstream& in, size_t n) {
     std::string s(n, '\0');
     if (!in.read(s.data(), static_cast<std::streamsize>(n)))
-        throw std::runtime_error("short read");
+        throw std::runtime_error("String read failed.");
     return s;
 }
 
 Record KVStoreHandle::readRecord(std::ifstream& in, const std::streamoff recFileOffset) {
-
-    /* 
-        Can take a path and in.open(), we will be using this for restore. 
-        Only one run at init. 
-    */
 
     /* size_t sometimes used as offset, hence cast. */
     if (recFileOffset > 0)
@@ -107,11 +102,9 @@ Record KVStoreHandle::readRecord(std::ifstream& in, const std::streamoff recFile
     std::string val    = readString(in, valSize);
 
     Record rec(key, val);
-    rec.setTimestamp(timestamp);
-    rec.setCRC32();
 
-    if (rec.getCRC32() != crc)
-        throw std::runtime_error("Read CRC and Calculated CRC not equal.");
+    if (rec.getExpectedCRC32(timestamp) != crc)
+        throw std::runtime_error("Read CRC and expected CRC not equal.");
         
     return rec;
 }
