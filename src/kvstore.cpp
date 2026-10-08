@@ -64,7 +64,7 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
 
     uint32_t activePathID = stH.validDatafilePathToID(df);
     if (activePathID != stH.getActiveDatafileID())
-        throw std::runtime_error("Active datafile path and active ID mismatch - cannot process with write.");    
+        throw std::runtime_error("Active datafile path and active ID mismatch - cannot proceed with write.");    
 
     if (!activeOutputStream.is_open() || activeOutputStream.bad())
         throw std::runtime_error("Output filestream is closed or in a bad state - cannot proceed with write.");

@@ -1,5 +1,5 @@
 # Immediate
-- older executables in bin rn which is why theyre passing tests. finish using constructor and open appropriate
+- getting a missing key  test.
 - init() for KVStore that sets the variables that open does now.
 - open takes just the flags, datadir assigned in KVStore::KVStore()
 - use file permissions in testing_helpers mock files.
