@@ -15,7 +15,7 @@ KVExpected KVStore::open(const StoreFlags& flags) {
 
     if (!dataDir.is_absolute()) {
         KVError err = {KVErrorCode::ProvidedPathNotAbsolute, 
-                      "Path provided isn't relative. Cannot open."}; 
+                      "Path provided isn't absolute. Cannot open."}; 
         return std::unexpected(err);
     }
 
