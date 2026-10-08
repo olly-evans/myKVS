@@ -97,11 +97,9 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
     std::shared_lock<std::shared_mutex> lock(rwMutex);
 
     auto it = stH.keyDir.find(key);
-    if (it == stH.keyDir.end()) {
-        KVError err{KVErrorCode::KeyNotFound,
-                    "Key does not exist - cannot proceed with get."};
-        return std::unexpected(err);
-    }
+    if (it == stH.keyDir.end()) 
+        return std::unexpected(KVError{KVErrorCode::KeyNotFound,
+                                      "Key does not exist - cannot proceed with get."});
 
     KeyDirEntry entry = it->second;
 
@@ -113,13 +111,10 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
 
     fs::path readPath = isReadPathActiveDatafile ? stH.getActiveDatafilePath() : oldDatafilePath; 
 
-    if (!fs::exists(readPath)) {
-        KVError err{KVErrorCode::ReadPathDoesNotExist,
-                    "File containing key does not exist - cannot proceed with get."};
-        return std::unexpected(err);
-
-    }
-
+    if (!fs::exists(readPath)) 
+        return std::unexpected(KVError{KVErrorCode::ReadPathDoesNotExist,
+                    "File containing key does not exist - cannot proceed with get."});
+    
     /* If input stream already reading from stH.getActiveDatafilePath(), no need to update the stream. */
     if (getActiveInputStreamPath().empty() || 
         !fs::equivalent(getActiveInputStreamPath(), readPath))
@@ -127,11 +122,9 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
 
     // Don't read past eof.
     uintmax_t fileSize = fs::file_size(readPath);
-    if ((entry.valFileOffset + entry.valSz) > fileSize) {
-        KVError err{KVErrorCode::ValueOffsetGreaterThanFileSize,
-        "Value's offset plus its size is greater than the total file size - cannot proceed with get."};
-        return std::unexpected(err);
-    }
+    if ((entry.valFileOffset + entry.valSz) > fileSize) 
+        return std::unexpected(KVError{KVErrorCode::ValueOffsetGreaterThanFileSize,
+        "Value's offset plus its size is greater than the total file size - cannot proceed with get."});
 
     activeInputStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string val = stH.readString(activeInputStream, entry.valSz);
@@ -143,11 +136,9 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
     activeInputStream.seekg(crcOff, std::ios_base::beg);
     uint32_t crc = stH.readField<uint32_t>(activeInputStream);
 
-    if (rec.getExpectedCRC32(entry.tstamp) != crc) {
-        KVError err{KVErrorCode::CRCMismatch,
-                    "Mismatch between read and expected CRC value - cannot proceed with get."};
-        return std::unexpected(err);
-    }
+    if (rec.getExpectedCRC32(entry.tstamp) != crc)
+        return std::unexpected(KVError{KVErrorCode::CRCMismatch, 
+                                      "CRC mismatch: data may be corrupt."});
     
     return val;
 }

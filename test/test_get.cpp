@@ -37,7 +37,6 @@ TEST_CASE("Does get() handle a missing key correctly", "KVStore::get()") {
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
-    // std::optional<std::string> 
 }
 
 TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
