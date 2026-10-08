@@ -8,7 +8,7 @@ void KVStoreHandle::openActiveDatafile(fs::path dataDir, std::ofstream& out) {
     updateActiveDatafileID(dataDir);
     fs::path currentDatafilePath = createDatafilePath(dataDir, 
                                    getActiveDatafileID(),
-                                   DatafileStatus::Active, 
+                                   DFStatus::Active, 
                                    getDatafileExt()); 
         
     setActiveDatafile(currentDatafilePath, out);
@@ -17,7 +17,7 @@ void KVStoreHandle::openActiveDatafile(fs::path dataDir, std::ofstream& out) {
 
 fs::path KVStoreHandle::createDatafilePath(const fs::path& dataDir, 
                                            uint32_t fID, 
-                                           DatafileStatus status, 
+                                           DFStatus status, 
                                            std::string fExt) const {
     
     std::string strID = std::to_string(fID);
@@ -50,8 +50,8 @@ void KVStoreHandle::makeDatafileReadOnly(const fs::path& path, std::ofstream& ou
     fs::path newPath = path;
     std::string filename = newPath.filename().string();
 
-    std::string activeStatus = DetectStore::getDatafileStatus(DatafileStatus::Active);
-    std::string readOnlyStatus = DetectStore::getDatafileStatus(DatafileStatus::ReadOnly);
+    std::string activeStatus = DetectStore::getDatafileStatus(DFStatus::Active);
+    std::string readOnlyStatus = DetectStore::getDatafileStatus(DFStatus::ReadOnly);
 
     filename.replace(filename.find(activeStatus), activeStatus.size(), readOnlyStatus); 
     newPath.replace_filename(filename);
@@ -71,7 +71,7 @@ void KVStoreHandle::rollOverDatafile(const fs::path& dataDir, std::ofstream& out
 
     fs::path nextDatafilePath = createDatafilePath(dataDir, 
                                                    getActiveDatafileID() + 1, 
-                                                   DatafileStatus::Active, 
+                                                   DFStatus::Active, 
                                                    getDatafileExt());
     setActiveDatafile(nextDatafilePath, out);
     updateActiveDatafileID(dataDir);

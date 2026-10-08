@@ -9,6 +9,10 @@ enum class KVErrorCode : uint8_t {
     NoActiveDatafilePath,
     OutputFilestreamBad,
     InputFilestreamBad,
+    KeyNotFound,
+    ReadPathDoesNotExist,
+    ValueOffsetGreaterThanFileSize,
+    CRCMismatch
 };
 
 struct KVError {
@@ -17,4 +21,4 @@ struct KVError {
 };
 
 using KVExpected = std::expected<KVStoreHandle, KVError>;
-using KVResult = std::expected<void, KVError>;
+using KVResult = std::expected<std::string, KVError>;

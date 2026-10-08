@@ -11,7 +11,7 @@ namespace TestHelpers {
     }
 
     fs::path create_append_only_datafile_path(const fs::path tmpDir, const std::string ext, const uint32_t id) {
-        return tmpDir / (std::to_string(id) + DetectStore::getDatafileStatus(DatafileStatus::Active) + ext);
+        return tmpDir / (std::to_string(id) + DetectStore::getDatafileStatus(DFStatus::Active) + ext);
     }
 
     fs::path create_read_only_datafile_path(const fs::path tmpDir, const std::string ext, const uint32_t id) {

@@ -9,7 +9,7 @@
 
 namespace fs = std::filesystem;
 
-enum class DatafileStatus {Active, ReadOnly};
+enum class DFStatus {Active, ReadOnly};
 
 struct KeyDirEntry {
     uint32_t fileID;
@@ -30,7 +30,7 @@ class KVStoreHandle {
 
         [[nodiscard]] fs::path createDatafilePath(const fs::path& dataDir, 
                                                   uint32_t fID,  
-                                                  DatafileStatus stat, 
+                                                  DFStatus stat, 
                                                   std::string fExt) const;
 
         void setActiveDatafile(const fs::path& path, std::ofstream& out);

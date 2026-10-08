@@ -68,10 +68,10 @@ TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
     /* Validate all keys and values are the same as they are for this test. */
     
     for (auto it = HandleTestAccess::keyDir(stH).begin(); it != HandleTestAccess::keyDir(stH).end(); it++) {
-        std::optional<std::string> val = kvs.get(stH, it->first);
+        KVResult val = kvs.get(stH, it->first);
 
         // std::cout << it->first << val->first << std::endl;
-        REQUIRE(val != std::nullopt);
+        REQUIRE(val.has_value());
         REQUIRE(it->first == val); 
     }
 }

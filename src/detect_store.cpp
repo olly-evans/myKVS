@@ -3,12 +3,12 @@
 
 namespace DetectStore {
 
-    std::string getDatafileStatus(DatafileStatus status) {
+    std::string getDatafileStatus(DFStatus status) {
 
         switch (status) {
-            case DatafileStatus::Active:   
+            case DFStatus::Active:   
                 return ".aol";
-            case DatafileStatus::ReadOnly:
+            case DFStatus::ReadOnly:
                 return ".rol";
             default:
                 throw std::runtime_error("Uknown datafile status.");
@@ -17,7 +17,7 @@ namespace DetectStore {
 
     bool isAppendOnlyDatafile(fs::path datafile) {
         fs::path datafileStatus = datafile.stem().extension().string();
-        return getDatafileStatus(DatafileStatus::Active) == datafileStatus;
+        return getDatafileStatus(DFStatus::Active) == datafileStatus;
     }
 
     bool isNumericStem(const std::string& stem) {

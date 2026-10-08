@@ -1,6 +1,5 @@
 #pragma once
 
-#include <unordered_map>
 #include <mutex>
 #include <shared_mutex>
 #include <optional> 
@@ -38,7 +37,7 @@ class KVStore {
         [[nodiscard]] KVResult put(KVStoreHandle& stH, const std::string key, const std::string val);
 
         /* Retrieve data from an existing data store using a key */
-        std::optional<std::string> get(KVStoreHandle& stH, const std::string key);
+        KVResult get(KVStoreHandle& stH, const std::string key);
 
         /* List all the keys in the keyDir */
         std::vector<std::string> listKeys(const KVStoreHandle& stH);

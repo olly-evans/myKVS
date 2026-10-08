@@ -17,12 +17,27 @@ TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
     auto putresult = kvs.put(stH, "key", "val");
     REQUIRE(putresult);
 
-    std::optional<std::string> val = kvs.get(stH, "key");
+    KVResult val = kvs.get(stH, "key");
 
     Record rec("key", "val");
 
     REQUIRE(val.has_value());
     REQUIRE(val.value() == "val");
+}
+
+TEST_CASE("Does get() handle a missing key correctly", "KVStore::get()") {
+    
+    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_2/");
+    TempDirGuard cleanup{dataDir};
+    
+    KVStore kvs(dataDir);
+    StoreFlags flags;
+
+    KVExpected result = kvs.open(flags);
+    REQUIRE(result);
+    KVStoreHandle& stH = result.value();
+
+    // std::optional<std::string> 
 }
 
 TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
@@ -49,10 +64,10 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
     for (uint64_t i = 0; i < numPuts; i++) {
 
         std::string key = std::to_string(i);
-        std::optional<std::string> val = kvs.get(stH, key);
+        KVResult val = kvs.get(stH, key);
         Record rec(key, val.value());
 
-        REQUIRE(val != std::nullopt);
+        REQUIRE(val.has_value());
         REQUIRE(key == val);
     }
 
@@ -86,7 +101,7 @@ TEST_CASE("Opened store and put. Opened store again and get works.", "KVStore::g
     REQUIRE(openresult2);
     stH = openresult2.value();
 
-    std::optional<std::string> val = newkvs.get(stH, "key");
+    KVResult val = newkvs.get(stH, "key");
 
     REQUIRE(val.value() == "val"); 
 }
@@ -109,7 +124,7 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     
     KeyDirEntry entry = HandleTestAccess::keyDir(stH).at("key");
 
-    std::optional<std::string> noncorruptval = kvs.get(stH, "key");
+    KVResult noncorruptval = kvs.get(stH, "key");
 
     std::string corrupt = "Xp";
 
@@ -122,10 +137,9 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     in.write(corrupt.data(), corrupt.size());
     in.close();
 
-    std::optional<std::string> corruptval = kvs.get(stH, "key");
+    KVResult corruptval = kvs.get(stH, "key");
 
-    REQUIRE(corruptval == std::nullopt);    /* val being std::nullopt after corruption implies computed and 
-                                              read crc values are different, desired. */
+    REQUIRE(corruptval.error().code == KVErrorCode::CRCMismatch);    
 
     REQUIRE(noncorruptval == "val");        /* Before corruption read should be original value, "val" */
 }
