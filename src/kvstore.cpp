@@ -99,10 +99,11 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
     auto it = stH.keyDir.find(key);
     if (it == stH.keyDir.end()) 
         return std::unexpected(KVError{KVErrorCode::KeyNotFound,
-                                      "Key does not exist - cannot proceed with get."});
+                                      "Key does not exist."});
 
     KeyDirEntry entry = it->second;
 
+    // getReadPath().
     bool isReadPathActiveDatafile = entry.fileID == stH.getActiveDatafileID();
     fs::path oldDatafilePath = stH.createDatafilePath(dataDir, 
                                       entry.fileID, 
@@ -113,7 +114,7 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
 
     if (!fs::exists(readPath)) 
         return std::unexpected(KVError{KVErrorCode::ReadPathDoesNotExist,
-                    "File containing key does not exist - cannot proceed with get."});
+                                      "File containing key does not exist."});
     
     /* If input stream already reading from stH.getActiveDatafilePath(), no need to update the stream. */
     if (getActiveInputStreamPath().empty() || 
@@ -123,8 +124,8 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
     // Don't read past eof.
     uintmax_t fileSize = fs::file_size(readPath);
     if ((entry.valFileOffset + entry.valSz) > fileSize) 
-        return std::unexpected(KVError{KVErrorCode::ValueOffsetGreaterThanFileSize,
-        "Value's offset plus its size is greater than the total file size - cannot proceed with get."});
+        return std::unexpected(KVError{KVErrorCode::ReadExceedsFileSize,
+                                      "Value's offset plus its size is greater than the total file size."});
 
     activeInputStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string val = stH.readString(activeInputStream, entry.valSz);
@@ -137,7 +138,7 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
     uint32_t crc = stH.readField<uint32_t>(activeInputStream);
 
     if (rec.getExpectedCRC32(entry.tstamp) != crc)
-        return std::unexpected(KVError{KVErrorCode::CRCMismatch, 
+        return std::unexpected(KVError{KVErrorCode::MismatchedCRC, 
                                       "CRC mismatch: data may be corrupt."});
     
     return val;

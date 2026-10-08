@@ -1,4 +1,5 @@
 # Immediate
+- Move datafile functionality to namespace DF::createPath(), DF::openActive();
 - getDatafileToRead() in get().
 - getting a missing key  test.
 - init() for KVStore that sets the variables that open does now.
@@ -9,7 +10,6 @@
 - Make a testing wrapper function for making mock directory for dir/open/etc.. difficult with ~tempdirguard()
 - Testing one api function cannot call another has to be seperate/simulated. Most should be on its own. But some can use other calls.
 - Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS. We can also test restore against an incomplete record too.
-- Move datafile functionality to namespace DF::createPath(), DF::openActive();
 - Store a static counter for temporary directories in a test_.cpp and construct the path somewhere incrementing, labelling the directory manually is inefficient and error-prone.
 
 # Less Immediate

@@ -11,8 +11,8 @@ enum class KVErrorCode : uint8_t {
     InputFilestreamBad,
     KeyNotFound,
     ReadPathDoesNotExist,
-    ValueOffsetGreaterThanFileSize,
-    CRCMismatch
+    ReadExceedsFileSize,
+    MismatchedCRC
 };
 
 struct KVError {

@@ -138,7 +138,7 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
 
     KVResult corruptval = kvs.get(stH, "key");
 
-    REQUIRE(corruptval.error().code == KVErrorCode::CRCMismatch);    
+    REQUIRE(corruptval.error().code == KVErrorCode::MismatchedCRC);    
 
     REQUIRE(noncorruptval == "val");        /* Before corruption read should be original value, "val" */
 }
