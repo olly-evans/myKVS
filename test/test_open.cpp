@@ -42,7 +42,7 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
     KVStoreHandle& stH = result.value();
 
     REQUIRE(fs::exists(kvs.getDataDir()));             /* Should have existing data directory. */
-    REQUIRE(!stH.getDatafileExt().empty());            /* Datafile extension cannot be empty. */
+    REQUIRE_FALSE(stH.getDatafileExt().empty());            /* Datafile extension cannot be empty. */
     REQUIRE(kvs.getActiveOutputStream().good());       /* No error state in stream. */
     REQUIRE(kvs.getActiveOutputStream().is_open());    /* File should be open. */
 
@@ -70,7 +70,7 @@ TEST_CASE("Open gets the correct active id for a mock existing store", "KVStore:
     KVStoreHandle& stH = result.value();
 
     REQUIRE(fs::exists(kvs.getDataDir()));            /* Should have existing data directory. */
-    REQUIRE(!stH.getDatafileExt().empty());           /* Datafile extension cannot be empty. */
+    REQUIRE_FALSE(stH.getDatafileExt().empty());           /* Datafile extension cannot be empty. */
     REQUIRE(kvs.getActiveOutputStream().good());      /* No error state in stream. */
     REQUIRE(kvs.getActiveOutputStream().is_open());   /* File should be open. */
 

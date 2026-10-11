@@ -42,7 +42,7 @@ TEST_CASE("Does restore work for an existing store with a series of previous put
     KVStore kvs(guard.dir);
     StoreFlags flags;
 
-    flags.maxDatafileBytes = 30; /* Put sizes below both 30. */
+    flags.maxDatafileBytes = 30; /* Put sizes both 30 bytes. */
 
     KVExpected openresult = kvs.open(flags);
     

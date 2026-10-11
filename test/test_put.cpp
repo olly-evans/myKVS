@@ -82,11 +82,11 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
 
     KVStoreHandle stH;
     auto putresult = kvs.put(stH, "testkey", "testvalue");
-    REQUIRE(!putresult); /* Should return a KVError */
+    REQUIRE_FALSE(putresult); /* Should return a KVError */
 
     REQUIRE(stH.getActiveDatafilePath().empty());
-    REQUIRE(!kvs.getActiveOutputStream().is_open());
-    REQUIRE(!fs::exists(kvs.getDataDir()));
+    REQUIRE_FALSE(kvs.getActiveOutputStream().is_open());
+    REQUIRE_FALSE(fs::exists(kvs.getDataDir()));
 }
 
 TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
