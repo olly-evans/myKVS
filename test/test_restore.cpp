@@ -42,6 +42,27 @@ TEST_CASE("Does restore work for an existing store with a series of previous put
     KVStore kvs(guard.dir);
     StoreFlags flags;
 
-    fs::path mockfile = TestHelpers::create_append_only_datafile_path(guard.dir, ".data", 0);
+    flags.maxDatafileBytes = 30; /* Put sizes below both 30. */
+
+    KVExpected openresult = kvs.open(flags);
+    
+    KVResult put1 = kvs.put(openresult.value(), "key1", "value1");
+    KVResult put2 = kvs.put(openresult.value(), "key2", "value2");
+
+    REQUIRE(openresult.value().getActiveDatafileID() == 1); 
+
+    KVStore restorekvs(guard.dir);
+    KVExpected restoreresult = restorekvs.open(flags);
+    KVStoreHandle stH = restoreresult.value();
+
+    REQUIRE(stH.getActiveDatafileID() == 1);
+    REQUIRE(HandleTestAccess::keyDir(stH).size() == 2);
+
+    KVResult getresult1 = restorekvs.get(stH, "key1");
+    REQUIRE(getresult1.value() == "value1");
+    
+    KVResult getresult2 = restorekvs.get(stH, "key2");
+    REQUIRE(getresult2.value() == "value2");
+
 }
 

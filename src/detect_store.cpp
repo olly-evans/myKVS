@@ -81,13 +81,12 @@ namespace DetectStore {
         
         std::error_code ec;
 
+        
         bool pathExists = fs::exists(dir, ec);
         bool pathIsDir = fs::is_directory(dir, ec);
         bool allValidStoreFiles = hasOnlyValidStoreFiles(dir);
 
         // More criteria if required.
-
-        // files in the dir > 0
 
         bool isStore = pathExists && pathIsDir && allValidStoreFiles;
 

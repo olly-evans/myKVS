@@ -1,4 +1,5 @@
 # Immediate
+- have createmockfile create the path and pass it to create mockfiles.
 - finish tests for each error in get().
 - init() for KVStore that sets the variables that open does now. Can also init read/write if we need it or not.
 - perhaps use a union for filestreams.

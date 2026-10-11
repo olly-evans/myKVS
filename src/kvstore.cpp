@@ -72,7 +72,7 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
     
     Record rec(key, val);
 
-    if (fs::file_size(df) + rec.byteSize() < getMaxDatafileBytes()) {
+    if (fs::file_size(df) + rec.byteSize() <= getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
         stH.updateActiveDatafileID(dataDir);
         rec.serialize(activeOutputStream);
@@ -140,7 +140,7 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
 
     if (rec.getExpectedCRC32(entry.tstamp) != crc)
         return std::unexpected(KVError{KVErrorCode::MismatchedCRC, 
-                                      "CRC mismatch: data may be corrupt."});
+                                      "CRC mismatch - data may be corrupt."});
     
     return val;
 }

@@ -24,9 +24,9 @@ TEST_CASE("Does isNumericStem() detect a non-numeric stem", "DetectStore::isNume
     std::string example2 = ".aol.data";
     std::string example3 = ".data";
 
-    REQUIRE(!DetectStore::isNumericStem(example1));
-    REQUIRE(!DetectStore::isNumericStem(example2));
-    REQUIRE(!DetectStore::isNumericStem(example3));
+    REQUIRE_FALSE(DetectStore::isNumericStem(example1));
+    REQUIRE_FALSE(DetectStore::isNumericStem(example2));
+    REQUIRE_FALSE(DetectStore::isNumericStem(example3));
     
     std::string example4 = "000001";
 
@@ -41,17 +41,24 @@ TEST_CASE("isValidStoreFile() stripping filename correctly", "DetectStore::isVal
     fs::path mFilePath2 = guard.dir / "0.data";
 
     REQUIRE(DetectStore::isValidStoreFile(mFilePath1));
-    REQUIRE(!DetectStore::isValidStoreFile(mFilePath2));
+    REQUIRE_FALSE(DetectStore::isValidStoreFile(mFilePath2));
 }
 
-TEST_CASE("Does data directory exist for isStore()", "KVStore::isStore()") {
+TEST_CASE("Does data directory exist for isStore()", "DetectStore::isStore()") {
     TempDirGuard guard{TestHelpers::create_tmp_dir()};
 
-    REQUIRE(!DetectStore::hasOnlyValidStoreFiles(guard.dir));
-    REQUIRE(!DetectStore::isStore(guard.dir));
+    REQUIRE_FALSE(DetectStore::hasOnlyValidStoreFiles(guard.dir));
+    REQUIRE_FALSE(DetectStore::isStore(guard.dir));
 
 }
-TEST_CASE("Detecting mock real store correctly", "KVStore::isStore()") {
+
+TEST_CASE("Does empty directory return false.", "DetectStore::isStore()") {
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
+
+    REQUIRE_FALSE(DetectStore::isStore(guard.dir));
+
+}
+TEST_CASE("Detecting mock real store correctly", "DetectStore::isStore()") {
 
     TempDirGuard guard{TestHelpers::create_tmp_dir()};
 
@@ -64,10 +71,10 @@ TEST_CASE("Detecting mock real store correctly", "KVStore::isStore()") {
 
     TestHelpers::create_mock_rol_file(guard.dir, ".log", 4);
     
-    REQUIRE(!DetectStore::isStore(guard.dir));
+    REQUIRE_FALSE(DetectStore::isStore(guard.dir));
 }
 
-TEST_CASE("Detecting two append-only files in data directory", "KVStore::isStore()") {
+TEST_CASE("Detecting two append-only files in data directory", "DetectStore::isStore()") {
 
     TempDirGuard guard{TestHelpers::create_tmp_dir()};
 
@@ -75,5 +82,5 @@ TEST_CASE("Detecting two append-only files in data directory", "KVStore::isStore
     REQUIRE(DetectStore::isStore(guard.dir));
 
     TestHelpers::create_mock_aol_file(guard.dir, ".data", 1);
-    REQUIRE(!DetectStore::isStore(guard.dir));
+    REQUIRE_FALSE(DetectStore::isStore(guard.dir));
 }
