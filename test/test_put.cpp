@@ -5,9 +5,9 @@
 
 TEST_CASE("Put writes correct bytes and these bytes can be read back.", "KVStore::put()") {
 
-    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);
@@ -46,9 +46,9 @@ void simulate_puts_in_range(KVStore& kvs, KVStoreHandle& stH, uint64_t startID, 
 
 TEST_CASE("Threads use put on same kvs", "KVStore::put()") {
 
-    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);
@@ -91,9 +91,9 @@ TEST_CASE("Put before opening a store.", "KVStore::put()") {
 
 TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
 
-    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);
@@ -112,9 +112,9 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
 
     REQUIRE(oldDatafileID + 1 == newDatafileID);        /* Should have incremented datafile ID by one. */
     
-    REQUIRE(stH.getActiveDatafilePath() == cleanup.dir / "1.aol.data");
+    REQUIRE(stH.getActiveDatafilePath() == guard.dir / "1.aol.data");
 
-    fs::path oldDatafilePath = cleanup.dir / "0.rol.data";
+    fs::path oldDatafilePath = guard.dir / "0.rol.data";
 
     REQUIRE(fs::exists(oldDatafilePath)); /* Old path exists as read-only. */
     REQUIRE(fs::file_size(oldDatafilePath) < kvs.getMaxDatafileBytes()); /* Less than max size. */   
@@ -122,9 +122,9 @@ TEST_CASE("Rolling over a datafile in put", "KVStore::put()") {
 
 TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStore::put()") {
     
-    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);
@@ -158,9 +158,9 @@ TEST_CASE("Put responds appropriately to a key collision in the keydir", "KVStor
 
 TEST_CASE("listKeys returns vector of appropriate size", "KVStore::listKeys()") {
     
-    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);

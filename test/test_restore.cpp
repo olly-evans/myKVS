@@ -4,12 +4,12 @@
 
 TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
     
-    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
 
-    fs::path mFilePath1 = cleanup.dir/ "0.aol.data";
+    fs::path mFilePath1 = guard.dir/ "0.aol.data";
     std::ofstream mockFile1(mFilePath1);
 
     Record rec("key", "val");
@@ -37,11 +37,11 @@ TEST_CASE("Does restore reboot for one put", "KVStore::restore()") {
 
 TEST_CASE("Does restore work for an existing store with a series of previous puts", "KVStore::restore()") {
         
-    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
 
-    fs::path mockfile = TestHelpers::create_append_only_datafile_path(cleanup.dir, ".data", 0);
+    fs::path mockfile = TestHelpers::create_append_only_datafile_path(guard.dir, ".data", 0);
 }
 

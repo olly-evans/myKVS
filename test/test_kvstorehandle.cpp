@@ -25,22 +25,22 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
     KVStoreHandle stH;
 
-    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
+    TempDirGuard guard{TestHelpers::create_tmp_dir()};
 
-    TestHelpers::create_mock_aol_file(cleanup.dir, ".data", 1);
-    TestHelpers::create_mock_rol_file(cleanup.dir, ".data", 5);
+    TestHelpers::create_mock_aol_file(guard.dir, ".data", 1);
+    TestHelpers::create_mock_rol_file(guard.dir, ".data", 5);
 
     stH.setDatafileExt(".data"); /* Must be set for datafiles. */
-    stH.updateActiveDatafileID(cleanup.dir);
+    stH.updateActiveDatafileID(guard.dir);
 
     REQUIRE(stH.getActiveDatafileID() == 5);
 }
 
 TEST_CASE("Reading sequentially over a full record correctly from zero offset.", "KVStoreHandle::readRecord()") {
 
-    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
+    TempDirGuard guard{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
     
     KVExpected result = kvs.open(flags);
@@ -68,9 +68,9 @@ TEST_CASE("Reading sequentially over a full record correctly from zero offset.",
 
 TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVStoreHandle::readRecord()") {
 
-    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
+    TempDirGuard guard{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
     
     KVExpected result = kvs.open(flags);
@@ -99,9 +99,9 @@ TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVS
 }
 TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::readField<T>()") {
 
-    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
+    TempDirGuard guard{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(cleanup.dir);
+    KVStore kvs(guard.dir);
     StoreFlags flags;
     
     KVExpected result = kvs.open(flags);
