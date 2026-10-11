@@ -5,6 +5,7 @@
 /* KVStore Methods */
 
 KVStore::KVStore(const fs::path& dir) : dataDir(dir) {};
+KVStore::~KVStore() {};
 
 KVExpected KVStore::open(const StoreFlags& flags) {
 

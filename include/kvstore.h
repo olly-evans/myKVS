@@ -21,7 +21,7 @@ class KVStore {
 
     public:
         KVStore(const fs::path& dir);
-        // ~KVStore();
+        ~KVStore();
 
         /* Main API */
 

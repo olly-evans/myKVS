@@ -1,8 +1,10 @@
 # Immediate
+- init() for KVStore that sets the variables that open does now. Can also init read/write if we need it or not.
+- perhaps use a union for filestreams.
+- readwrite stores. read-only store. (no active datafile, no active output).
 - Move datafile functionality to namespace DF::createPath(), DF::openActive();
 - getDatafileToRead() in get().
 - getting a missing key  test.
-- init() for KVStore that sets the variables that open does now.
 - open takes just the flags, datadir assigned in KVStore::KVStore()
 - use file permissions in testing_helpers mock files.
 - TestHelpers::writeToOffset(stream, path, offset);

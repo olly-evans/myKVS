@@ -31,10 +31,9 @@ TEST_CASE("Open rejects a non-absolute directory argument.", "KVStore::open()") 
 
 TEST_CASE("On kvstore open are members set", "KVStore::open()") {
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_open_1");
-    TempDirGuard cleanup(dataDir);
+    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
 
     StoreFlags flags;
 
@@ -53,17 +52,16 @@ TEST_CASE("On kvstore open are members set", "KVStore::open()") {
     REQUIRE(stH.getActiveDatafileID() == 0);           /* No puts so id should default to zero. */
 
     REQUIRE(stH.getActiveDatafilePath() == 
-           dataDir / "0.aol.data");
+           cleanup.dir / "0.aol.data");
 }
 
 TEST_CASE("Open gets the correct active id for a mock existing store", "KVStore::open()") {
     
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_open_1");
-    TempDirGuard cleanup(dataDir);
+    TempDirGuard cleanup(TestHelpers::create_tmp_dir());
 
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
 
-    TestHelpers::create_n_mock_files(dataDir, ".data", 1, 3);
+    TestHelpers::create_n_mock_files(cleanup.dir, ".data", 1, 3);
     
     StoreFlags flags;
 
@@ -81,5 +79,5 @@ TEST_CASE("Open gets the correct active id for a mock existing store", "KVStore:
 
     REQUIRE(stH.getActiveDatafileID() == 3);           
     REQUIRE(stH.getActiveDatafilePath() == 
-           dataDir / "3.aol.data");
+           cleanup.dir / "3.aol.data");
 }

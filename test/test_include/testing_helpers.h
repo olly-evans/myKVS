@@ -1,11 +1,13 @@
 #pragma once
 
+#include <source_location>
+
 #include "kvstore.h"
 
 struct TempDirGuard {
 
     fs::path dir;
-
+    TempDirGuard(fs::path tmp) : dir(tmp) {};
     ~TempDirGuard() { 
         std::error_code ec;
         fs::remove_all(dir, ec);
@@ -18,7 +20,7 @@ struct HandleTestAccess {
 
 namespace TestHelpers { 
 
-    fs::path create_tmp_dir(std::string dirname);
+    fs::path create_tmp_dir(const std::source_location loc = std::source_location::current());
 
     fs::path create_append_only_datafile_path(const fs::path tmpDir, 
                                               const std::string ext, 

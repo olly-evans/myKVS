@@ -4,10 +4,9 @@
 
 TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
     
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_1/");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);
@@ -27,24 +26,27 @@ TEST_CASE("Does get retrieve one value correctly", "KVStore::get()") {
 
 TEST_CASE("Does get() handle a missing key correctly", "KVStore::get()") {
     
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_2/");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
     
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);
     REQUIRE(result);
     KVStoreHandle& stH = result.value();
 
+    KVResult getresult = kvs.get(stH, "invalidkey");
+    
+    REQUIRE_FALSE(getresult.has_value());
+    REQUIRE(getresult.error().code == KVErrorCode::KeyNotFound);
+
 }
 
 TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_2/");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
     
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
     StoreFlags flags;
 
     KVExpected result = kvs.open(flags);
@@ -77,13 +79,12 @@ TEST_CASE("Does get retrieve multiple values correctly", "KVStore::get()") {
 
 TEST_CASE("Opened store and put. Opened store again and get works.", "KVStore::get()") {
     
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_3/");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
     StoreFlags flags;
 
-    TestHelpers::create_mock_aol_file(dataDir, ".data", 1);
+    TestHelpers::create_mock_aol_file(cleanup.dir, ".data", 1);
 
     KVExpected openresult1 = kvs.open(flags);
     REQUIRE(openresult1);
@@ -92,9 +93,9 @@ TEST_CASE("Opened store and put. Opened store again and get works.", "KVStore::g
     auto putresult = kvs.put(stH, "key", "val"); /* Put to mockFile1 */
     REQUIRE(putresult);
 
-    stH.rollOverDatafile(dataDir, kvs.getActiveOutputStream());
+    stH.rollOverDatafile(cleanup.dir, kvs.getActiveOutputStream());
 
-    KVStore newkvs(dataDir);
+    KVStore newkvs(cleanup.dir);
 
     KVExpected openresult2 = newkvs.open(flags); /* activeInputStream with mf2. */
     REQUIRE(openresult2);
@@ -108,7 +109,7 @@ TEST_CASE("Opened store and put. Opened store again and get works.", "KVStore::g
 TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
     
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_get_4/");
+    fs::path dataDir = TestHelpers::create_tmp_dir();
     TempDirGuard cleanup{dataDir};
 
     KVStore kvs(dataDir);

@@ -35,49 +35,45 @@ TEST_CASE("Does isNumericStem() detect a non-numeric stem", "DetectStore::isNume
 
 TEST_CASE("isValidStoreFile() stripping filename correctly", "DetectStore::isValidStoreFile()") {
     
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_detect_store_1");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    fs::path mFilePath1 = dataDir / "0.aol.data";
-    fs::path mFilePath2 = dataDir / "0.data";
+    fs::path mFilePath1 = cleanup.dir / "0.aol.data";
+    fs::path mFilePath2 = cleanup.dir / "0.data";
 
     REQUIRE(DetectStore::isValidStoreFile(mFilePath1));
     REQUIRE(!DetectStore::isValidStoreFile(mFilePath2));
 }
 
 TEST_CASE("Does data directory exist for isStore()", "KVStore::isStore()") {
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_detect_store_2");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    REQUIRE(!DetectStore::hasOnlyValidStoreFiles(dataDir));
-    REQUIRE(!DetectStore::isStore(dataDir));
+    REQUIRE(!DetectStore::hasOnlyValidStoreFiles(cleanup.dir));
+    REQUIRE(!DetectStore::isStore(cleanup.dir));
 
 }
 TEST_CASE("Detecting mock real store correctly", "KVStore::isStore()") {
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_detect_store_3");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    TestHelpers::create_mock_rol_file(dataDir, ".hint", 1);
-    TestHelpers::create_mock_rol_file(dataDir, ".lock", 3);
+    TestHelpers::create_mock_rol_file(cleanup.dir, ".hint", 1);
+    TestHelpers::create_mock_rol_file(cleanup.dir, ".lock", 3);
 
-    TestHelpers::create_mock_aol_file(dataDir, ".data", 2);
+    TestHelpers::create_mock_aol_file(cleanup.dir, ".data", 2);
    
-    REQUIRE(DetectStore::isStore(dataDir));
+    REQUIRE(DetectStore::isStore(cleanup.dir));
 
-    TestHelpers::create_mock_rol_file(dataDir, ".log", 4);
+    TestHelpers::create_mock_rol_file(cleanup.dir, ".log", 4);
     
-    REQUIRE(!DetectStore::isStore(dataDir));
+    REQUIRE(!DetectStore::isStore(cleanup.dir));
 }
 
 TEST_CASE("Detecting two append-only files in data directory", "KVStore::isStore()") {
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_detect_store_4");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    TestHelpers::create_mock_aol_file(dataDir, ".data", 0);
-    REQUIRE(DetectStore::isStore(dataDir));
+    TestHelpers::create_mock_aol_file(cleanup.dir, ".data", 0);
+    REQUIRE(DetectStore::isStore(cleanup.dir));
 
-    TestHelpers::create_mock_aol_file(dataDir, ".data", 1);
-    REQUIRE(!DetectStore::isStore(dataDir));
+    TestHelpers::create_mock_aol_file(cleanup.dir, ".data", 1);
+    REQUIRE(!DetectStore::isStore(cleanup.dir));
 }

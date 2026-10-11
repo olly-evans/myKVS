@@ -25,24 +25,22 @@ TEST_CASE("KVStoreHandle updates the active datafile id in datadir", "updateActi
 
     KVStoreHandle stH;
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_1");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    TestHelpers::create_mock_aol_file(dataDir, ".data", 1);
-    TestHelpers::create_mock_rol_file(dataDir, ".data", 5);
+    TestHelpers::create_mock_aol_file(cleanup.dir, ".data", 1);
+    TestHelpers::create_mock_rol_file(cleanup.dir, ".data", 5);
 
     stH.setDatafileExt(".data"); /* Must be set for datafiles. */
-    stH.updateActiveDatafileID(dataDir);
+    stH.updateActiveDatafileID(cleanup.dir);
 
     REQUIRE(stH.getActiveDatafileID() == 5);
 }
 
 TEST_CASE("Reading sequentially over a full record correctly from zero offset.", "KVStoreHandle::readRecord()") {
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_2");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
     StoreFlags flags;
     
     KVExpected result = kvs.open(flags);
@@ -70,10 +68,9 @@ TEST_CASE("Reading sequentially over a full record correctly from zero offset.",
 
 TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVStoreHandle::readRecord()") {
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_3");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
     StoreFlags flags;
     
     KVExpected result = kvs.open(flags);
@@ -102,10 +99,9 @@ TEST_CASE("Reading sequentially over a full record correctly from offset.", "KVS
 }
 TEST_CASE("Reading fields via seeking in ifstream correctly", "KVStoreHandle::readField<T>()") {
 
-    fs::path dataDir = TestHelpers::create_tmp_dir("test_kvstorehandle_4");
-    TempDirGuard cleanup{dataDir};
+    TempDirGuard cleanup{TestHelpers::create_tmp_dir()};
 
-    KVStore kvs(dataDir);
+    KVStore kvs(cleanup.dir);
     StoreFlags flags;
     
     KVExpected result = kvs.open(flags);
