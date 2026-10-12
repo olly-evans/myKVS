@@ -2,3 +2,4 @@
 - Filestream truncates existing file if stream options is just std::ios::out as it assumes a new file for writing, so reading a value from this filestream didnt return the full string.
 - Was corrupting input stream with restore in one position and not being provided path for the active datafile with it in another, correct position was in the middle.
 - Create datafile using .aol hardcoded meant get() when trying to read from 0.rol.data for example was failing. My solution was a DatafileStatus struct mapped to the appropriate string using a function that switches on the DatafileStatus. Which is fast as there are only two cases.
+- Great bug which I'm very happy to have solved whereby we were miscalculating the values byte offset in the file which was based on the total file size. This assumption works when were appending but not when restoring. Fix I think will be the make a static variable in updateKeyDir or create a seperate function for restoring.

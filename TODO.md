@@ -1,4 +1,5 @@
 # Immediate
+- Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS. We can also test restore against an incomplete record too.
 - have createmockfile create the path and pass it to create mockfiles.
 - finish tests for each error in get().
 - init() for KVStore that sets the variables that open does now. Can also init read/write if we need it or not.
@@ -12,15 +13,13 @@
 - TestHelpers::writeToOffset(stream, path, offset);
 - Test for input stream before/after a get().
 - Make a testing wrapper function for making mock directory for dir/open/etc.. difficult with ~tempdirguard()
-- Testing one api function cannot call another has to be seperate/simulated. Most should be on its own. But some can use other calls.
-- Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS. We can also test restore against an incomplete record too.
 - Store a static counter for temporary directories in a test_.cpp and construct the path somewhere incrementing, labelling the directory manually is inefficient and error-prone.
 
 # Less Immediate
 - stFlags.syncOnPut what is it, how do i implement if i haven't by accident.
 - stFlags.readWrite not fully fleshed out and tested. 
 - Data-align record class members will perhaps become a bottleneck eventually, could compare current version with a data-aligned version.
-- What if user opens an existing store but changes the max filesize? reading from a file isnt always accurate as if a file is too big for the next write we roll-over and write to the next file which means the number of bytes in a full file will rarely be the actual max byte size. Perhaps we store a json or something in our datadir with some metadata, this probably solves multiple problems too.
+- What if user opens an existing store but changes the max filesize? reading from a file isnt always accurate as if a file is too big for the next write we roll-over and write to the next file which means the number of bytes in a full file will rarely be the actual max byte size. Perhaps we store a json or something in our datadir with some metadata, this probably solves multiple problems too. Perhaps just the max file size present?
 - KVStore::open() should just be called in kvs constructor.
 - Make a testing build in workflows.
 - Make two instances and run on the same directory.

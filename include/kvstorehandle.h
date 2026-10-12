@@ -44,6 +44,7 @@ class KVStoreHandle {
         [[nodiscard]] static std::string readString(std::ifstream& in, size_t n);
         [[nodiscard]] Record readRecord(std::ifstream& in, const std::streamoff recFileOffset);
 
+        void restoreKeyDir(fs::path path, const Record rec, std::streampos bytes);
         void updateKeyDir(fs::path path, const Record rec);
 
         [[nodiscard]] fs::path getActiveDatafilePath() const;
@@ -73,9 +74,8 @@ class KVStoreHandle {
     private:
 
         /* Testing */
+
         friend struct HandleTestAccess;
-
-
 };
 
 template <typename T>

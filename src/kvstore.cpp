@@ -106,12 +106,12 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
 
     // getReadPath().
     bool isReadPathActiveDatafile = entry.fileID == stH.getActiveDatafileID();
-    fs::path oldDatafilePath = stH.createDatafilePath(dataDir, 
+    fs::path prevDatafilePath = stH.createDatafilePath(dataDir, 
                                       entry.fileID, 
                                       DFStatus::ReadOnly, 
                                       stH.getDatafileExt());
 
-    fs::path readPath = isReadPathActiveDatafile ? stH.getActiveDatafilePath() : oldDatafilePath; 
+    fs::path readPath = isReadPathActiveDatafile ? stH.getActiveDatafilePath() : prevDatafilePath; 
 
     if (!fs::exists(readPath)) 
         return std::unexpected(KVError{KVErrorCode::ReadPathDoesNotExist,
@@ -127,7 +127,7 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
     if ((entry.valFileOffset + entry.valSz) > fileSize) 
         return std::unexpected(KVError{KVErrorCode::ReadExceedsFileSize,
                                       "Value's offset plus its size is greater than the total file size."});
-
+    
     activeInputStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string val = stH.readString(activeInputStream, entry.valSz);
 
@@ -167,7 +167,7 @@ void KVStore::restore(KVStoreHandle& stH) {
             
             /* Zero offset as we're reading through whole file here sequentially. */
             Record rec = stH.readRecord(activeInputStream, 0);
-            stH.updateKeyDir(df.path(), rec);
+            stH.restoreKeyDir(df.path(), rec, activeInputStream.tellg());
         }
     }
 }
