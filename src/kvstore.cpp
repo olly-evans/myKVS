@@ -77,11 +77,8 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
         stH.updateActiveDatafileID(dataDir);
         rec.serialize(activeOutputStream);
 
-        // 
-        size_t fileSize = fs::file_size(stH.getActiveDatafilePath());
+        uint64_t fileSize = fs::file_size(stH.getActiveDatafilePath());
         stH.setKeyDirEntry(stH.getActiveDatafilePath(), rec, fileSize - rec.getValueSize());
-
-        // stH.updateKeyDir(df, rec);
 
         return {};
     } 
@@ -94,10 +91,8 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
     
     rec.serialize(activeOutputStream);
 
-    // 
-    size_t fileSize = fs::file_size(stH.getActiveDatafilePath());
+    uint64_t fileSize = fs::file_size(stH.getActiveDatafilePath());
     stH.setKeyDirEntry(stH.getActiveDatafilePath(), rec, fileSize - rec.getValueSize());
-    // stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
 
     return {};
 }
@@ -177,7 +172,14 @@ void KVStore::restore(KVStoreHandle& stH) {
             /* Zero offset as we're reading through whole file here sequentially. */
             Record rec = stH.readRecord(activeInputStream, 0);
 
-            size_t valueOffset = static_cast<size_t>(activeInputStream.tellg()) - rec.getValueSize();
+            /* Convert streampos to uint64_t */
+            std::streampos pos = activeInputStream.tellg();
+            if (pos == std::streampos(-1))
+                return;
+
+            const auto recordEnd = static_cast<uint64_t>(static_cast<std::streamoff>(pos));
+            const uint64_t valueOffset = recordEnd - rec.getValueSize();
+
             stH.setKeyDirEntry(df.path(), rec, valueOffset);
         }
     }

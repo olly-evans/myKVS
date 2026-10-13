@@ -42,7 +42,7 @@ class KVStoreHandle {
         template <typename T>
         [[nodiscard]] T readField(std::ifstream& in);
         [[nodiscard]] static std::string readString(std::ifstream& in, size_t n);
-        [[nodiscard]] Record readRecord(std::ifstream& in, const std::streamoff recFileOffset);
+        [[nodiscard]] Record readRecord(std::ifstream& in, const uint64_t recFileOffset);
 
         void setKeyDirEntry(const fs::path path, const Record rec, const uint64_t valueOffset);
 

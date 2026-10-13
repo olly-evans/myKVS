@@ -88,7 +88,7 @@ std::string KVStoreHandle::readString(std::ifstream& in, size_t n) {
     return s;
 }
 
-Record KVStoreHandle::readRecord(std::ifstream& in, const std::streamoff recFileOffset) {
+Record KVStoreHandle::readRecord(std::ifstream& in, const uint64_t recFileOffset) {
 
     /* size_t sometimes used as offset, hence cast. */
     if (recFileOffset > 0)
