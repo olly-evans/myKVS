@@ -76,7 +76,12 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
         stH.updateActiveDatafileID(dataDir);
         rec.serialize(activeOutputStream);
-        stH.updateKeyDir(df, rec);
+
+        // 
+        size_t fileSize = fs::file_size(stH.getActiveDatafilePath());
+        stH.setKeyDirEntry(stH.getActiveDatafilePath(), rec, fileSize - rec.getValueSize());
+
+        // stH.updateKeyDir(df, rec);
 
         return {};
     } 
@@ -88,7 +93,11 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
     updateActiveOutputStream(stH.getActiveDatafilePath());
     
     rec.serialize(activeOutputStream);
-    stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
+
+    // 
+    size_t fileSize = fs::file_size(stH.getActiveDatafilePath());
+    stH.setKeyDirEntry(stH.getActiveDatafilePath(), rec, fileSize - rec.getValueSize());
+    // stH.updateKeyDir(stH.getActiveDatafilePath(), rec);
 
     return {};
 }
@@ -161,13 +170,15 @@ void KVStore::restore(KVStoreHandle& stH) {
 
     for (const auto& df : fs::directory_iterator(dataDir)) {
 
-        updateActiveInputStream(df);
+        updateActiveInputStream(df.path());
 
         while(activeInputStream.peek() != std::char_traits<char>::eof()) {
             
             /* Zero offset as we're reading through whole file here sequentially. */
             Record rec = stH.readRecord(activeInputStream, 0);
-            stH.restoreKeyDir(df.path(), rec, activeInputStream.tellg());
+
+            size_t valueOffset = static_cast<size_t>(activeInputStream.tellg()) - rec.getValueSize();
+            stH.setKeyDirEntry(df.path(), rec, valueOffset);
         }
     }
 }

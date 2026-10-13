@@ -1,4 +1,6 @@
 # Immediate
+- any var representing bytes must use a uint64_t not size_t for consistency.
+- do we need updateKeyDir can we use the restore implementation for both.
 - Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS. We can also test restore against an incomplete record too.
 - have createmockfile create the path and pass it to create mockfiles.
 - finish tests for each error in get().

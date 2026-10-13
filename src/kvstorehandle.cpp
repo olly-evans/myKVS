@@ -109,28 +109,11 @@ Record KVStoreHandle::readRecord(std::ifstream& in, const std::streamoff recFile
     return rec;
 }
 
-void KVStoreHandle::restoreKeyDir(fs::path path, const Record rec, std::streampos bytes) {
-    uint64_t valByteOffset = static_cast<uint64_t>(bytes) - rec.getValueSize();
+void KVStoreHandle::setKeyDirEntry(const fs::path path, const Record rec, const uint64_t valueOffset) {
 
     uint32_t id = validDatafilePathToID(path);
 
-    KeyDirEntry entry = {id, rec.getValueSize(), valByteOffset, rec.getTimestamp()};
-    keyDir.insert_or_assign(rec.getKey(), entry);
-
-}
-
-void KVStoreHandle::updateKeyDir(fs::path path, const Record rec) {
-        
-    /* i really dont know if we need this check here. were not doing any fucking reading for one */
-    bool readPathIsActiveDatafile = fs::equivalent(path, activeDatafilePath);
-
-    uint32_t readPathID = validDatafilePathToID(path);
-    uint32_t id = readPathIsActiveDatafile ? getActiveDatafileID() : readPathID;
-
-    size_t fileBytes = fs::file_size(path); // Serialize used before this, file must have bytes.
-    uint64_t valueByteOffset = fileBytes - rec.getValueSize(); // when we restore this doesnt apply. does work for one record the size of file tho hence passing other test.
-
-    KeyDirEntry entry = {id, rec.getValueSize(), valueByteOffset, rec.getTimestamp()};
+    KeyDirEntry entry = {id, rec.getValueSize(), valueOffset, rec.getTimestamp()};
     keyDir.insert_or_assign(rec.getKey(), entry);
 }
 
