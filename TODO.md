@@ -1,4 +1,5 @@
 # Immediate
+- wrappers around open, put and get for return types and checks.
 - Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS. We can also test restore against an incomplete record too.
 - have createmockfile create the path and pass it to create mockfiles.
 - finish tests for each error in get().
@@ -14,6 +15,7 @@
 - Test for input stream before/after a get().
 - Make a testing wrapper function for making mock directory for dir/open/etc.. difficult with ~tempdirguard()
 - Store a static counter for temporary directories in a test_.cpp and construct the path somewhere incrementing, labelling the directory manually is inefficient and error-prone.
+- Overwritten data must be tombstoned at key lookup.
 
 # Less Immediate
 - stFlags.syncOnPut what is it, how do i implement if i haven't by accident.
