@@ -103,3 +103,31 @@ TEST_CASE("Does restore retrieve correct keys for a full datafile and a roll-ove
     KVResult getresult3 = restorekvs.get(newstH, rec3.getKey());
     REQUIRE(getresult3.value() == rec3.getValue());
 }
+
+TEST_CASE("Does restore handle a hash table collision", "KVStore::restore()") {
+        
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
+
+    KVStore kvs(guard.dir);
+    StoreFlags flags;
+
+    Record rec1("key1", "value1");
+    Record rec2("key1", "value2");
+
+    KVExpected openresult = kvs.open(flags);
+    KVStoreHandle stH = openresult.value();
+
+    KVResult put1 = kvs.put(stH, rec1.getKey(), rec1.getValue());
+    KVResult put2 = kvs.put(stH, rec2.getKey(), rec2.getValue());
+    
+    KVResult get = kvs.get(stH, rec1.getKey());
+    REQUIRE(get.value() == rec2.getValue());
+
+    /* One keyDir entry as insert_or_assign() used. */
+    REQUIRE(HandleTestAccess::keyDir(stH).size() == 1);
+
+    fs::path datafile = stH.getActiveDatafilePath();
+
+    /* Will need to require old data is tombstoned. But 60 bytes is correct. */
+    REQUIRE(fs::file_size(datafile) == 60);
+}

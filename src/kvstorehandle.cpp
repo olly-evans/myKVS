@@ -12,7 +12,6 @@ void KVStoreHandle::openActiveDatafile(fs::path dataDir, std::ofstream& out) {
                                    getDatafileExt()); 
         
     setActiveDatafile(currentDatafilePath, out);
-
 }
 
 fs::path KVStoreHandle::createDatafilePath(const fs::path& dataDir, 
@@ -39,8 +38,6 @@ void KVStoreHandle::setActiveDatafile(const fs::path& path, std::ofstream& out) 
     fs::permissions(path, fPermissions, fs::perm_options::replace);
 
     setActiveDatafilePath(path);
-
-    return;
 }
 
 void KVStoreHandle::makeDatafileReadOnly(const fs::path& path, std::ofstream& out) {
@@ -90,7 +87,6 @@ std::string KVStoreHandle::readString(std::ifstream& in, size_t n) {
 
 Record KVStoreHandle::readRecord(std::ifstream& in, const uint64_t recFileOffset) {
 
-    /* size_t sometimes used as offset, hence cast. */
     if (recFileOffset > 0)
         in.seekg(static_cast<std::streamoff>(recFileOffset), std::ios_base::beg);
 
