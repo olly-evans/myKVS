@@ -11,6 +11,5 @@ foreach(bench_src IN LISTS BENCH_SOURCES)
     add_executable(${bench_name} ${bench_src})
     target_include_directories(${bench_name} PUBLIC ${CMAKE_SOURCE_DIR}/include)
     target_link_libraries(${bench_name} 
-    PRIVATE Threads::Threads
-    PUBLIC app_lib)
+    PRIVATE Threads::Threads)
 endforeach()

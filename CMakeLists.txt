@@ -21,6 +21,5 @@ add_executable(myKVS src/main.cpp)
 target_link_libraries(myKVS PRIVATE app_lib)
 
 add_subdirectory(benchmarks)
-
 enable_testing()
 add_subdirectory(test)
