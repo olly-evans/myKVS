@@ -12,10 +12,10 @@ constexpr uint64_t N = 100000; /* Benchmarked puts. */
 
 int main() {
 
+    TempDirGuard guard(TestHelpers::create_tmp_dir());
+
     std::array<std::string, N> keys;
     std::array<std::string, N> values;
-
-    TempDirGuard guard(TestHelpers::create_tmp_dir());
 
     // Initialise array.
     for (uint64_t i = 0; i < N; i++) {
@@ -40,13 +40,16 @@ int main() {
 
     auto end = Clock::now(); /* Benchmark End. */
 
-    const double elapsedSec = std::chrono::duration<double>(end - start).count();
+    const double bSeconds = std::chrono::duration<double>(end - start).count();
 
-    std::cout << "Operations: " << N << '\n';
-    std::printf("Elapsed: %.2fs\n%.2f Mops/s\n%.1f ns/op\n",
-                elapsedSec,
-                (N / elapsedSec) / 1e6,
-                elapsedSec * (1e9 / N));
+    double mops = (static_cast<double>(N) / bSeconds) / 1e6;
+    double ns_per_op = bSeconds * (1e9 / N);
 
+    std::printf("--- Benchmark Summary ---\n");
+    std::printf("  Total Ops : %ld\n", N);
+    std::printf("  Elapsed   : %.2f s\n", bSeconds);
+    std::printf("  Throughput: %.2f MOps/s\n", mops);
+    std::printf("  Latency   : %.1f ns/Op\n", ns_per_op);    
+    
     return 0;
 }
