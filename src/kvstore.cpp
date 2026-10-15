@@ -108,7 +108,6 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
 
     KeyDirEntry entry = it->second;
 
-    // getReadPath().
     bool isReadPathActiveDatafile = entry.fileID == stH.getActiveDatafileID();
     fs::path prevDatafilePath = stH.createDatafilePath(dataDir, 
                                       entry.fileID, 
@@ -132,6 +131,8 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
         return std::unexpected(KVError{KVErrorCode::ReadExceedsFileSize,
                                       "Value's offset plus its size is greater than the total file size."});
     
+                                      
+    /* File system readahead cache */
     activeInputStream.seekg(entry.valFileOffset, std::ios_base::beg);
     std::string val = stH.readString(activeInputStream, entry.valSz);
 

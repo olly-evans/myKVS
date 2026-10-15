@@ -11,10 +11,8 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 find_package(Threads REQUIRED)
 
 # helpers: anything that isn't a test itself
-add_library(testing_helpers STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/testing_helpers.cpp)
-target_include_directories(testing_helpers PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_include)
+add_library(testing_helpers STATIC ${CMAKE_CURRENT_SOURCE_DIR}/testing_helpers.cpp)
+target_include_directories(testing_helpers PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/test_include)
 target_link_libraries(testing_helpers PUBLIC app_lib)
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS

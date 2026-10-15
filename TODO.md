@@ -1,6 +1,5 @@
 # Immediate
 - wrappers around open, put and get for return types and checks.
-- Test restore() with a more complex series of puts, perhaps a roll-over and a put collision too. ALL SEPERATE TESTS. We can also test restore against an incomplete record too.
 - have createmockfile create the path and pass it to create mockfiles.
 - finish tests for each error in get().
 - init() for KVStore that sets the variables that open does now. Can also init read/write if we need it or not.
@@ -18,6 +17,9 @@
 - Overwritten data must be tombstoned at key lookup.
 
 # Less Immediate
+- Test restore against an incomplete record too.
+- profile put and get.
+- filessytem readahead cache in get to speed up reads.
 - stFlags.syncOnPut what is it, how do i implement if i haven't by accident.
 - stFlags.readWrite not fully fleshed out and tested. 
 - Data-align record class members will perhaps become a bottleneck eventually, could compare current version with a data-aligned version.

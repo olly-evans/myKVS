@@ -59,8 +59,3 @@ namespace TestHelpers {
     }
 
 } // Test
-
-// KVResult test_simulate_put(fs::path tmpDir) {
-    
-//     // test_create_n_mock_files(tmpDir, 1, 3);
-// }

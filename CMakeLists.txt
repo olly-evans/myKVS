@@ -11,7 +11,6 @@ add_compile_options(-g -O0 -Wall)
 add_compile_definitions(WORKING_DIRECTORY="${CMAKE_SOURCE_DIR}")
 add_compile_definitions(TEST_ROOT="${CMAKE_SOURCE_DIR}/test/")
 
-
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 list(REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
@@ -20,6 +19,8 @@ target_include_directories(app_lib PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 add_executable(myKVS src/main.cpp)
 target_link_libraries(myKVS PRIVATE app_lib)
+
+add_subdirectory(benchmarks)
 
 enable_testing()
 add_subdirectory(test)

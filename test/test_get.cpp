@@ -106,8 +106,7 @@ TEST_CASE("Opened store and put. Opened store again and get works.", "KVStore::g
     REQUIRE(val.value() == "val"); 
 }
 
-TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
-    
+TEST_CASE("Test get handles bad crc.", "KVStore::get()") {
 
     fs::path dataDir = TestHelpers::create_tmp_dir();
     TempDirGuard guard{dataDir};
@@ -143,4 +142,3 @@ TEST_CASE("test get doesn't return corrupted data.", "KVStore::get()") {
 
     REQUIRE(noncorruptval == "val");        /* Before corruption read should be original value, "val" */
 }
-
