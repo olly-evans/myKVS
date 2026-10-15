@@ -1,5 +1,5 @@
 
-/* Benchmark program for profiling put API call. */
+/* Benchmark program for profiling KVStore::put(). */
 
 #include "kvstore.h"
 #include "testing_helpers.h"
@@ -42,14 +42,14 @@ int main() {
 
     const double bSeconds = std::chrono::duration<double>(end - start).count();
 
-    double mops = (static_cast<double>(N) / bSeconds) / 1e6;
-    double ns_per_op = bSeconds * (1e9 / N);
+    double mOps = (static_cast<double>(N) / bSeconds) / 1e6;
+    double nsPerOp = bSeconds * (1e9 / N);
 
-    std::printf("--- Benchmark Summary ---\n");
-    std::printf("  Total Ops : %ld\n", N);
-    std::printf("  Elapsed   : %.2f s\n", bSeconds);
-    std::printf("  Throughput: %.2f MOps/s\n", mops);
-    std::printf("  Latency   : %.1f ns/Op\n", ns_per_op);    
+    std::printf("---- Benchmark Summary ----\n");
+    std::printf(" Total Ops : %ld\n", N);
+    std::printf(" Elapsed   : %.2f s\n", bSeconds);
+    std::printf(" Throughput: %.2f MOps/s\n", mOps);
+    std::printf(" Latency   : %.1f ns/Op\n", nsPerOp);    
     
     return 0;
 }
