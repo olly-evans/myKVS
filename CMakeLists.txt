@@ -20,6 +20,7 @@ target_include_directories(app_lib PUBLIC ${CMAKE_SOURCE_DIR}/include)
 add_executable(myKVS src/main.cpp)
 target_link_libraries(myKVS PRIVATE app_lib)
 
-add_subdirectory(benchmarks)
 enable_testing()
 add_subdirectory(test)
+
+add_subdirectory(benchmarks)

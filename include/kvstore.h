@@ -14,7 +14,7 @@ struct StoreFlags {
     bool readWrite = true; // Reading and writing permitted in directory.
     bool syncOnPut = false;
 
-    size_t maxDatafileBytes = 65535;
+    size_t maxDatafileBytes = 1000000000;
 };
 
 class KVStore {

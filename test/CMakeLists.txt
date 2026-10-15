@@ -16,9 +16,10 @@ target_include_directories(testing_helpers PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/te
 target_link_libraries(testing_helpers PUBLIC app_lib)
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+
 list(REMOVE_ITEM TEST_SOURCES 
     ${CMAKE_CURRENT_SOURCE_DIR}/testing_helpers.cpp
-    )
+)
 
 
 include(Catch)

@@ -17,6 +17,7 @@
 - Overwritten data must be tombstoned at key lookup.
 
 # Less Immediate
+- different binaries into different folders in /bin/. test, bench, etc.
 - Test restore against an incomplete record too.
 - profile put and get.
 - filessytem readahead cache in get to speed up reads.
