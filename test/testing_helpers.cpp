@@ -30,7 +30,7 @@ namespace TestHelpers {
     }
 
     fs::path create_read_only_datafile_path(const fs::path tmpDir, const std::string ext, const uint32_t id) {
-        return tmpDir / (std::to_string(id) + ".rol" + ext);
+        return tmpDir / (std::to_string(id) + DetectStore::getDatafileStatus(DFStatus::ReadOnly) + ext);
     }
 
     void create_mock_aol_file(const fs::path tmpDir, const std::string ext, const uint32_t id) {

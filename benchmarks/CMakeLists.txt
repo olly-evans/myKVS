@@ -4,7 +4,8 @@ find_package(Threads REQUIRED)
 file(GLOB_RECURSE BENCH_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/bench_*.cpp")
 
-add_compile_options(-O2 -pg)
+# Fairly aggressive compiler optimisations for benchmark, profiling too wanted.
+add_compile_options(-O2 -pg) 
 
 foreach(bench_src IN LISTS BENCH_SOURCES)
     get_filename_component(bench_name ${bench_src} NAME_WE)
