@@ -1,6 +1,10 @@
 # Immediate
+
+- Big/little endian encoding support.
+- A record should know its metadata such as file id its located in, valoffset etc..
+- A record should have a header which is serialized in one write() followed by the key and value size.
+
 - wrappers around open, put and get for return types and checks.
-- have createmockfile create the path and pass it to create mockfiles.
 - finish tests for each error in get().
 - init() for KVStore that sets the variables that open does now. Can also init read/write if we need it or not.
 - perhaps use a union for filestreams.
@@ -9,6 +13,7 @@
 - getDatafileToRead() in get().
 - getting a missing key  test.
 - open takes just the flags, datadir assigned in KVStore::KVStore()
+- impl class for KVStore.
 - use file permissions in testing_helpers mock files.
 - TestHelpers::writeToOffset(stream, path, offset);
 - Test for input stream before/after a get().

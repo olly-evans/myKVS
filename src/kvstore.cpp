@@ -175,12 +175,9 @@ void KVStore::restore(KVStoreHandle& stH) {
 
             /* Convert streampos to uint64_t */
             std::streampos pos = activeInputStream.tellg();
-            if (pos == std::streampos(-1))
-                return;
-
             const auto recordEnd = static_cast<uint64_t>(static_cast<std::streamoff>(pos));
-            const uint64_t valueOffset = recordEnd - rec.getValueSize();
 
+            const uint64_t valueOffset = recordEnd - rec.getValueSize();
             stH.setKeyDirEntry(df.path(), rec, valueOffset);
         }
     }

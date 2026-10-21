@@ -61,7 +61,6 @@ class KVStoreHandle {
     private:
         friend class KVStore;
 
-
         fs::path activeDatafilePath;
         std::string datafileExtension;
         uint32_t activeDatafileID;
