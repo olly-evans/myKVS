@@ -1,16 +1,16 @@
 #pragma once
 
+#include "versions.h"
+
 #include <string>
-#include <cstdint>
 #include <ostream>
 
 class Record {
     private:
 
-        uint32_t crc32;
-        uint64_t timestamp;
-        uint32_t keySize;
-        uint32_t valSize;
+        // Precomputed metadata.
+
+        RecordHeader header;
 
         std::string key;
         std::string val;  
@@ -20,8 +20,7 @@ class Record {
         ~Record() = default;
         
         void serialize(std::ostream& out) const;
-
-        // static Record deserialize(std::istream& in);
+        static Record deserialize(std::istream& in);
 
         size_t byteSize() const;
 
@@ -52,6 +51,8 @@ class RecordHeader {
     uint8_t keySize; 
     uint32_t valSize;
 
+    size_t recordSize;
+
     static constexpr size_t CHECKSUM_SIZE  = sizeof(checksum);
     static constexpr size_t VERSION_SIZE   = sizeof(version);
     static constexpr size_t TIMESTAMP_SIZE = sizeof(timestamp);
@@ -67,4 +68,5 @@ class RecordHeader {
     static constexpr size_t TIMESTAMP_OFFSET = VERSION_OFFSET + TIMESTAMP_SIZE;
     static constexpr size_t KEYSIZE_OFFSET = TIMESTAMP_OFFSET + KEYSIZE_SIZE;
     static constexpr size_t VALUESIZE_OFFSET = KEYSIZE_OFFSET + VALUESIZE_SIZE;
+    
 };
