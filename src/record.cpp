@@ -2,15 +2,14 @@
 
 /* Each object is responsible for its own serialization. */
 
-Record::Record(std::string k, std::string v) {
+Record::Record(std::string k, std::string v) :
+    key(std::move(k)),
+    val(std::move(v)) {
     
     uint32_t keySize = static_cast<uint32_t>(k.size());
     uint32_t valSize = static_cast<uint32_t>(v.size());
 
-    header = RecordHeader(0, header.getTimestampNow(), keySize, valSize);
-    key = k.data();
-    val = v.data();
-
+    header = RecordHeader(0, Versions::CURRENT_DATA_FILE_VERSION, header.getTimestampNow(), keySize, valSize);
 }
 
 void Record::serialize(std::ostream& out) const {
@@ -20,6 +19,7 @@ void Record::serialize(std::ostream& out) const {
     // out.write(reinterpret_cast<const char*>(&keySize), sizeof(keySize));
     // out.write(reinterpret_cast<const char*>(&valSize), sizeof(valSize));
 
+    //std::vector<char> header.serialize();
     out.write(key.data(), getKeySize());
     out.write(val.data(), getValueSize());
     

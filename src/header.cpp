@@ -1,11 +1,12 @@
 #include "header.h"
 
-
-RecordHeader::RecordHeader(uint32_t cSum, uint32_t tStamp, uint32_t kSize, uint32_t vSize) {
-    checksum = cSum;
-    timestamp = tStamp;
-    keySize = kSize;
-    valSize = vSize;
+RecordHeader::RecordHeader(uint32_t cs, uint8_t v, uint32_t ts, uint32_t ks, uint32_t vs) {
+    checksum = cs;
+    version = v;
+    timestamp = ts;
+    keySize = ks;
+    valSize = vs;
+    
     recordSize = HEADER_SIZE + keySize + valSize;
 }
 
