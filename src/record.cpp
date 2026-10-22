@@ -1,25 +1,24 @@
 #include "record.h"
 
-#include <chrono>
-#include <boost/crc.hpp>
-#include <iostream>
+/* Each object is responsible for its own serialization. */
 
-Record::Record(std::string k, std::string v) : 
-    keySize(static_cast<uint32_t>(k.size())),
-    valSize(static_cast<uint32_t>(v.size())),
-    key(k.data()),
-    val(v.data()) {
+Record::Record(std::string k, std::string v) {
     
-    setTimestampNow();
-    setCRC32();
+    uint32_t keySize = static_cast<uint32_t>(k.size());
+    uint32_t valSize = static_cast<uint32_t>(v.size());
+
+    header = RecordHeader(0, header.getTimestampNow(), keySize, valSize);
+    key = k.data();
+    val = v.data();
+
 }
 
 void Record::serialize(std::ostream& out) const {
 
-    out.write(reinterpret_cast<const char*>(&crc32), sizeof(crc32));
-    out.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
-    out.write(reinterpret_cast<const char*>(&keySize), sizeof(keySize));
-    out.write(reinterpret_cast<const char*>(&valSize), sizeof(valSize));
+    // out.write(reinterpret_cast<const char*>(&crc32), sizeof(crc32));
+    // out.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
+    // out.write(reinterpret_cast<const char*>(&keySize), sizeof(keySize));
+    // out.write(reinterpret_cast<const char*>(&valSize), sizeof(valSize));
 
     out.write(key.data(), getKeySize());
     out.write(val.data(), getValueSize());
@@ -27,54 +26,16 @@ void Record::serialize(std::ostream& out) const {
     out.flush();
 }
 
-size_t Record::byteSize() const {
-    return sizeof(crc32) + sizeof(timestamp) + sizeof(keySize) +
-    sizeof(valSize) + keySize + valSize;
-}
-
-uint32_t Record::getCRC32() const {
-    return crc32;
-}
-
-uint32_t Record::getExpectedCRC32(uint64_t timestamp) {
-    setTimestamp(timestamp);
-    setCRC32();
-    return crc32;
-}
-
-
-void Record::setCRC32() {
-    boost::crc_32_type result;
-    result.process_bytes(&timestamp, sizeof(timestamp));
-    result.process_bytes(&keySize,   sizeof(keySize));
-    result.process_bytes(&valSize,   sizeof(valSize));
-    result.process_bytes(key.data(), keySize);
-    result.process_bytes(val.data(), valSize);
-    crc32 = result.checksum();
-}
-
-void Record::setTimestamp(uint64_t ts) {
-    timestamp = ts;
-}
-
-void Record::setTimestampNow() {
-
-    const auto p1 = std::chrono::system_clock::now();
-    uint64_t ts = std::chrono::duration_cast<std::chrono::seconds>(p1.time_since_epoch()).count();
-
-    timestamp = ts;
-}
-
-uint64_t Record::getTimestamp() const {
-    return timestamp;
+size_t Record::getRecordSize() const {
+    return header.getRecordSize();
 }
 
 uint32_t Record::getKeySize() const {
-    return keySize;
+    return header.getKeySize();
 }
 
 uint32_t Record::getValueSize() const {
-    return valSize;
+    return header.getValueSize();
 }
 
 std::string Record::getKey() const {

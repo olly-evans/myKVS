@@ -3,7 +3,6 @@
 #include <mutex>
 #include <shared_mutex>
 #include <optional> 
-#include <vector>
 
 #include "kvstorehandle.h"
 #include "kverror.h"
