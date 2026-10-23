@@ -14,8 +14,6 @@ Record::Record(std::string k, std::string v) :
 
 std::vector<char> Record::serialize() {
 
-    uint32_t crc = computeChecksum(); // {header.computeChecksum()}
-    header.setChecksum(crc);
 
     std::vector<char> buf(getRecordSize());
 
@@ -24,11 +22,15 @@ std::vector<char> Record::serialize() {
     std::memcpy(buf.data() + header.HEADER_SIZE, key.data(), getKeySize());
     std::memcpy(buf.data() + header.HEADER_SIZE + getKeySize(), value.data(), getValueSize());
 
+    header.setChecksum(computeChecksum(buf)); // {header.computeChecksum()}
+
     return buf;
 }
 
-uint32_t Record::computeChecksum() {
-    header.computeChecksum();
+uint32_t Record::computeChecksum(std::vector<char> buf) {
+    boost::crc_32_type result;
+    result.process_bytes(buf.data(), buf.size());
+    return result.checksum();   
 }
 
 size_t Record::getRecordSize() const {

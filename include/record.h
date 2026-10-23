@@ -20,6 +20,8 @@ class Record {
         std::vector<char> serialize();
         static Record deserialize(std::istream& in);
 
+        uint32_t computeChecksum(std::vector<char> header);
+
         [[nodiscard]] size_t getRecordSize() const;
 
         [[nodiscard]] uint32_t getKeySize() const;

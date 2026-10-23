@@ -30,15 +30,6 @@ uint32_t Header::getChecksum() const {
     return checksum;
 }
 
-unsigned int Header::getComputedChecksum() const {
-    boost::crc_32_type result;
-    result.process_bytes(&version, VERSION_SIZE);
-    result.process_bytes(&timestamp, TIMESTAMP_SIZE);
-    result.process_bytes(&keySize,   KEYSIZE_SIZE);
-    result.process_bytes(&valSize,   VALUESIZE_SIZE);
-    return result.checksum();
-}
-
 void Header::setChecksum(uint32_t cs) {
     checksum = cs;
 }
