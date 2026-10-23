@@ -5,16 +5,16 @@
 #include <chrono>
 #include <boost/crc.hpp>
 
-class RecordHeader {
+class Header {
 
     public:
-        RecordHeader() = default;
-        ~RecordHeader() = default;
+        Header() = default;
+        ~Header() = default;
 
-        RecordHeader(uint32_t cSum, uint8_t ver, uint32_t tStamp, uint32_t kSize, uint32_t vSize);
+        Header(uint32_t cSum, uint8_t ver, uint32_t tStamp, uint32_t kSize, uint32_t vSize);
         
         std::vector<char> serialize();
-        static RecordHeader deserialize(std::vector<char> buf);
+        static Header deserialize(std::vector<char> buf);
 
         [[nodiscard]] size_t getRecordSize() const;
 

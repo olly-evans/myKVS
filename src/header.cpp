@@ -1,6 +1,6 @@
 #include "header.h"
 
-RecordHeader::RecordHeader(uint32_t cs, uint8_t v, uint32_t ts, uint32_t ks, uint32_t vs) {
+Header::Header(uint32_t cs, uint8_t v, uint32_t ts, uint32_t ks, uint32_t vs) {
     checksum = cs;
     version = v;
     timestamp = ts;
@@ -10,21 +10,21 @@ RecordHeader::RecordHeader(uint32_t cs, uint8_t v, uint32_t ts, uint32_t ks, uin
     recordSize = HEADER_SIZE + keySize + valSize;
 }
 
-size_t RecordHeader::getRecordSize() const {
+size_t Header::getRecordSize() const {
     return recordSize;
 }
 
-uint32_t RecordHeader::getChecksum() const {
+uint32_t Header::getChecksum() const {
     return checksum;
 }
 
-uint32_t RecordHeader::getExpectedChecksum(uint32_t timestamp) {
+uint32_t Header::getExpectedChecksum(uint32_t timestamp) {
     setTimestamp(timestamp);
     computeHeaderChecksum();
     return checksum;
 }
 
-void RecordHeader::computeHeaderChecksum() {
+void Header::computeHeaderChecksum() {
     boost::crc_32_type result;
     result.process_bytes(&timestamp, TIMESTAMP_SIZE);
     result.process_bytes(&keySize,   KEYSIZE_SIZE);
@@ -32,11 +32,11 @@ void RecordHeader::computeHeaderChecksum() {
     checksum = static_cast<uint32_t>(result.checksum());
 }
 
-void RecordHeader::setTimestamp(uint32_t ts) {
+void Header::setTimestamp(uint32_t ts) {
     timestamp = ts;
 }
 
-uint32_t RecordHeader::getTimestampNow() {
+uint32_t Header::getTimestampNow() {
 
     namespace ch = std::chrono;
 
@@ -46,14 +46,14 @@ uint32_t RecordHeader::getTimestampNow() {
     return ts;
 }
 
-uint32_t RecordHeader::getTimestamp() const {
+uint32_t Header::getTimestamp() const {
     return timestamp;
 }
 
-uint32_t RecordHeader::getKeySize() const {
+uint32_t Header::getKeySize() const {
     return keySize;
 }
 
-uint32_t RecordHeader::getValueSize() const {
+uint32_t Header::getValueSize() const {
     return valSize;
 }
