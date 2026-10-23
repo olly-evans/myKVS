@@ -13,14 +13,15 @@ class Header {
 
         Header(uint32_t cSum, uint8_t ver, uint32_t tStamp, uint32_t kSize, uint32_t vSize);
         
-        std::vector<char> serialize();
+        void serialize(std::vector<char>& buf) const;
         static Header deserialize(std::vector<char> buf);
 
         [[nodiscard]] size_t getRecordSize() const;
 
         [[nodiscard]] uint32_t getChecksum() const;
-        [[nodiscard]] uint32_t getExpectedChecksum(uint32_t timestamp);
-        void computeHeaderChecksum();
+        [[nodiscard]] unsigned int getComputedChecksum() const;
+        void setChecksum(uint32_t checksum);
+
 
         [[nodiscard]] static uint32_t getTimestampNow();
         [[nodiscard]] uint32_t getTimestamp() const;
@@ -31,13 +32,19 @@ class Header {
 
     private:
 
+        /* Memory-aligned - see versions.h for datafile write order. */
+
         size_t recordSize;
         
         uint32_t checksum; 
-        uint8_t version;
         uint32_t timestamp;
+
         uint32_t keySize; 
         uint32_t valSize;
+
+        uint8_t version;
+        
+    public:
 
         static constexpr size_t CHECKSUM_SIZE  = sizeof(checksum);
         static constexpr size_t VERSION_SIZE   = sizeof(version);
@@ -50,7 +57,7 @@ class Header {
                                             VALUESIZE_SIZE;
 
         static constexpr size_t CHECKSUM_OFFSET = 0;
-        static constexpr size_t VERSION_OFFSET = CHECKSUM_OFFSET + VERSION_SIZE;
+        static constexpr size_t VERSION_OFFSET = CHECKSUM_OFFSET + CHECKSUM_SIZE;
         static constexpr size_t TIMESTAMP_OFFSET = VERSION_OFFSET + TIMESTAMP_SIZE;
         static constexpr size_t KEYSIZE_OFFSET = TIMESTAMP_OFFSET + KEYSIZE_SIZE;
         static constexpr size_t VALUESIZE_OFFSET = KEYSIZE_OFFSET + VALUESIZE_SIZE;

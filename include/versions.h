@@ -2,6 +2,14 @@
 
 #include <cstdint>
 
+/* 
+    CURRENT_DATA_FILE_VERSION 0
+    
+    crc
+    version
+    timestamp
+    
+*/
 namespace Versions {
     inline constexpr uint8_t CURRENT_DATA_FILE_VERSION = 0;
     inline constexpr uint8_t CURRENT_INDEX_FILE_VERSION = 0;

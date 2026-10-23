@@ -10,6 +10,18 @@ Header::Header(uint32_t cs, uint8_t v, uint32_t ts, uint32_t ks, uint32_t vs) {
     recordSize = HEADER_SIZE + keySize + valSize;
 }
 
+void Header::serialize(std::vector<char>& buf) const {
+
+    if (buf.size() < HEADER_SIZE)
+        throw std::invalid_argument("Buffer too small to serialize header - check call site.");
+        
+    std::memcpy(buf.data(), &checksum, CHECKSUM_SIZE);
+    std::memcpy(buf.data() + VERSION_OFFSET, &version, VERSION_SIZE);
+    std::memcpy(buf.data() + TIMESTAMP_OFFSET, &timestamp, TIMESTAMP_SIZE);
+    std::memcpy(buf.data() + KEYSIZE_OFFSET, &keySize, KEYSIZE_SIZE);
+    std::memcpy(buf.data() + VALUESIZE_OFFSET, &valSize, VALUESIZE_SIZE);
+}
+
 size_t Header::getRecordSize() const {
     return recordSize;
 }
@@ -18,18 +30,16 @@ uint32_t Header::getChecksum() const {
     return checksum;
 }
 
-uint32_t Header::getExpectedChecksum(uint32_t timestamp) {
-    setTimestamp(timestamp);
-    computeHeaderChecksum();
-    return checksum;
-}
-
-void Header::computeHeaderChecksum() {
+unsigned int Header::getComputedChecksum() const {
     boost::crc_32_type result;
     result.process_bytes(&timestamp, TIMESTAMP_SIZE);
     result.process_bytes(&keySize,   KEYSIZE_SIZE);
     result.process_bytes(&valSize,   VALUESIZE_SIZE);
-    checksum = static_cast<uint32_t>(result.checksum());
+    return result.checksum();
+}
+
+void Header::setChecksum(uint32_t cs) {
+    checksum = cs;
 }
 
 void Header::setTimestamp(uint32_t ts) {

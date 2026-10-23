@@ -8,16 +8,16 @@ class Record {
 
         // Precomputed metadata.
 
-        RecordHeader header;
+        Header header;
 
         std::string key;
-        std::string val;  
+        std::string value;  
 
     public:
         Record(std::string key, std::string value);
         ~Record() = default;
         
-        void serialize(std::ostream& out) const;
+        std::vector<char>& serialize();
         static Record deserialize(std::istream& in);
 
         [[nodiscard]] size_t getRecordSize() const;
@@ -27,4 +27,5 @@ class Record {
 
         [[nodiscard]] std::string getKey() const;
         [[nodiscard]] std::string getValue() const;
+
 };
