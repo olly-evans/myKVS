@@ -12,23 +12,23 @@ Record::Record(std::string k, std::string v) :
     header = Header(0, Versions::CURRENT_DATA_FILE_VERSION, header.getTimestampNow(), keySize, valSize);
 }
 
-std::vector<char>& Record::serialize() {
+std::vector<char> Record::serialize() {
 
-    // uint32_t crc = computeChecksum(); // header.computeChecksum()
-    // header.setChecksum(crc);
+    uint32_t crc = computeChecksum(); // {header.computeChecksum()}
+    header.setChecksum(crc);
 
-    std::vector<char> buf;
-    buf.reserve(getRecordSize());
+    std::vector<char> buf(getRecordSize());
 
     header.serialize(buf);
 
     std::memcpy(buf.data() + header.HEADER_SIZE, key.data(), getKeySize());
     std::memcpy(buf.data() + header.HEADER_SIZE + getKeySize(), value.data(), getValueSize());
-    
-    // out.write(key.data(), getKeySize());
-    // out.write(val.data(), getValueSize());
-    
-    // out.flush();
+
+    return buf;
+}
+
+uint32_t Record::computeChecksum() {
+    header.computeChecksum();
 }
 
 size_t Record::getRecordSize() const {

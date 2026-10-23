@@ -17,7 +17,7 @@ class Record {
         Record(std::string key, std::string value);
         ~Record() = default;
         
-        std::vector<char>& serialize();
+        std::vector<char> serialize();
         static Record deserialize(std::istream& in);
 
         [[nodiscard]] size_t getRecordSize() const;
