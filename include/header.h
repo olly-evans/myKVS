@@ -11,7 +11,7 @@ class Header {
         Header() = default;
         ~Header() = default;
 
-        Header(uint32_t cSum, uint8_t ver, uint32_t tStamp, uint32_t kSize, uint32_t vSize);
+        Header(uint8_t ver, uint32_t tStamp, uint32_t kSize, uint32_t vSize);
         
         void serialize(std::vector<char>& buf) const;
         static Header deserialize(std::vector<char> buf);

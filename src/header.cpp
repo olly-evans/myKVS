@@ -1,7 +1,6 @@
 #include "header.h"
 
-Header::Header(uint32_t cs, uint8_t v, uint32_t ts, uint32_t ks, uint32_t vs) {
-    checksum = cs;
+Header::Header(uint8_t v, uint32_t ts, uint32_t ks, uint32_t vs) {
     version = v;
     timestamp = ts;
     keySize = ks;
@@ -15,7 +14,6 @@ void Header::serialize(std::vector<char>& buf) const {
     if (buf.size() < HEADER_SIZE)
         throw std::invalid_argument("Buffer too small to serialize header - check call site.");
         
-    std::memcpy(buf.data(), &checksum, CHECKSUM_SIZE);
     std::memcpy(buf.data() + VERSION_OFFSET, &version, VERSION_SIZE);
     std::memcpy(buf.data() + TIMESTAMP_OFFSET, &timestamp, TIMESTAMP_SIZE);
     std::memcpy(buf.data() + KEYSIZE_OFFSET, &keySize, KEYSIZE_SIZE);

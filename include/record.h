@@ -20,7 +20,7 @@ class Record {
         std::vector<char> serialize();
         static Record deserialize(std::istream& in);
 
-        uint32_t computeChecksum(std::vector<char> header);
+        [[nodiscard]] uint32_t getComputedChecksum(std::vector<char> header) const;
 
         [[nodiscard]] size_t getRecordSize() const;
 
