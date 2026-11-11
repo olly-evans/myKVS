@@ -37,6 +37,10 @@ uint32_t Record::getComputedChecksum(std::vector<char> buf) const {
     return static_cast<uint32_t>(result.checksum());   
 }
 
+uint32_t Record::getTimestamp() const {
+    return header.getTimestamp();
+}
+
 size_t Record::getRecordSize() const {
     return header.getRecordSize();
 }

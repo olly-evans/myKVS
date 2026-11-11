@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "versions.h"
 #include "header.h"
 
@@ -23,6 +25,8 @@ class Record {
         [[nodiscard]] uint32_t getComputedChecksum(std::vector<char> header) const;
 
         [[nodiscard]] size_t getRecordSize() const;
+
+        [[nodiscard]] uint32_t getTimestamp() const;
 
         [[nodiscard]] uint32_t getKeySize() const;
         [[nodiscard]] uint32_t getValueSize() const;
