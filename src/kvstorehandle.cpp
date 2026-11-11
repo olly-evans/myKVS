@@ -99,7 +99,7 @@ Record KVStoreHandle::readRecord(std::ifstream& in, const uint64_t recFileOffset
 
     Record rec(key, val);
 
-    if (rec.getExpectedCRC32(timestamp) != crc)
+    if (rec.verifyChecksum(crc))
         throw std::runtime_error("Read CRC and expected CRC not equal.");
         
     return rec;

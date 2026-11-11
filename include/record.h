@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <span>
 
 #include "versions.h"
 #include "header.h"
@@ -20,11 +20,15 @@ class Record {
         ~Record() = default;
         
         std::vector<char> serialize();
-        static Record deserialize(std::istream& in);
+        static Record deserialize(std::vector<char> buf);
 
-        [[nodiscard]] uint32_t getComputedChecksum(std::vector<char> header) const;
+        [[nodiscard]] bool verifyChecksum(uint32_t checksum);
+
+        [[nodiscard]] uint32_t getComputedChecksum(const char* buf, const size_t size) const;
 
         [[nodiscard]] size_t getRecordSize() const;
+
+        [[nodiscard]] uint32_t getChecksum() const;
 
         [[nodiscard]] uint32_t getTimestamp() const;
 

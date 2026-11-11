@@ -143,7 +143,8 @@ KVResult KVStore::get(KVStoreHandle& stH, const std::string key) {
     activeInputStream.seekg(crcOff, std::ios_base::beg);
     uint32_t crc = stH.readField<uint32_t>(activeInputStream);
 
-    if (rec.getExpectedChecksum(entry.tstamp) != crc)
+    // this will always be false, crc set at serialization, also ts will be different.
+    if (rec.verifyChecksum(crc))
         return std::unexpected(KVError{KVErrorCode::MismatchedCRC, 
                                       "CRC mismatch - data may be corrupt."});
     

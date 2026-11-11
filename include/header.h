@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <chrono>
 #include <boost/crc.hpp>
+#include <vector>
 
 class Header {
 
