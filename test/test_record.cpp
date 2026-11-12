@@ -2,7 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("Record constructor sets values, equal crc for same data", "Record()") {
+TEST_CASE("Equal checksum for the same data", "Record()") {
 
     std::string key = "key";
     std::string val = "val";

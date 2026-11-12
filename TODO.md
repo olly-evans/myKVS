@@ -1,6 +1,8 @@
 # Immediate
 
-- Big/little endian encoding support.
+- Big/little endian encoding support, convert all to le for now perhaps.
+- vector serialization with spans of larger vec.
+
 - A record should know its metadata such as file id its located in, valoffset etc..
 - A record should have a header which is serialized in one write() followed by the key and value size.
 

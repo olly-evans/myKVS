@@ -11,11 +11,12 @@ Header::Header(uint8_t v, uint32_t ts, uint32_t ks, uint32_t vs) {
 
 void Header::serialize(std::vector<char>& buf) const {
 
+    // dont like passing in vec ref.
     if (buf.size() < HEADER_SIZE)
         throw std::invalid_argument("Buffer too small to serialize header - check call site.");
-        
-    std::memcpy(buf.data() + VERSION_OFFSET, &version, VERSION_SIZE);
+    
     std::memcpy(buf.data() + TIMESTAMP_OFFSET, &timestamp, TIMESTAMP_SIZE);
+    std::memcpy(buf.data() + VERSION_OFFSET, &version, VERSION_SIZE);
     std::memcpy(buf.data() + KEYSIZE_OFFSET, &keySize, KEYSIZE_SIZE);
     std::memcpy(buf.data() + VALUESIZE_OFFSET, &valSize, VALUESIZE_SIZE);
 }

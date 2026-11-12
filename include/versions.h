@@ -6,8 +6,9 @@
     CURRENT_DATA_FILE_VERSION 0
     
     crc
-    version
     timestamp
+    version
+    
     
 */
 namespace Versions {

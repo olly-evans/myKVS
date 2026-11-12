@@ -48,8 +48,8 @@ class Header {
     public:
 
         static constexpr size_t CHECKSUM_SIZE  = sizeof(checksum);
-        static constexpr size_t VERSION_SIZE   = sizeof(version);
         static constexpr size_t TIMESTAMP_SIZE = sizeof(timestamp);
+        static constexpr size_t VERSION_SIZE   = sizeof(version);
         static constexpr size_t KEYSIZE_SIZE   = sizeof(keySize);
         static constexpr size_t VALUESIZE_SIZE = sizeof(valSize);
 
@@ -58,8 +58,8 @@ class Header {
                                             VALUESIZE_SIZE;
 
         static constexpr size_t CHECKSUM_OFFSET = 0;
-        static constexpr size_t VERSION_OFFSET = CHECKSUM_OFFSET + CHECKSUM_SIZE;
-        static constexpr size_t TIMESTAMP_OFFSET = VERSION_OFFSET + TIMESTAMP_SIZE;
+        static constexpr size_t TIMESTAMP_OFFSET = CHECKSUM_OFFSET + CHECKSUM_SIZE;
+        static constexpr size_t VERSION_OFFSET = TIMESTAMP_OFFSET + TIMESTAMP_SIZE;
         static constexpr size_t KEYSIZE_OFFSET = TIMESTAMP_OFFSET + KEYSIZE_SIZE;
         static constexpr size_t VALUESIZE_OFFSET = KEYSIZE_OFFSET + VALUESIZE_SIZE;
 

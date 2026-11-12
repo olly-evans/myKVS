@@ -5,10 +5,13 @@
 #include "versions.h"
 #include "header.h"
 
+struct RecordMetadata {};
+
 class Record {
     private:
 
         // Precomputed metadata.
+        RecordMetadata metadata;
 
         Header header;
 

@@ -24,7 +24,7 @@ std::vector<char> Record::serialize() {
     std::memcpy(buf.data() + header.HEADER_SIZE, key.data(), getKeySize());
     std::memcpy(buf.data() + header.HEADER_SIZE + getKeySize(), value.data(), getValueSize());
 
-    uint32_t crc = getComputedChecksum(buf.data() + header.VERSION_OFFSET, 
+    uint32_t crc = getComputedChecksum(buf.data() + header.TIMESTAMP_OFFSET, 
                                        getRecordSize() - header.CHECKSUM_SIZE); 
     header.setChecksum(crc);
 
