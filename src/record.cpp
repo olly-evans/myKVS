@@ -1,6 +1,6 @@
 #include "record.h"
 
-/* Each object is responsible for its own serialization and desrerialization. */
+/* Each object is responsible for its own serialization and de-serialization. */
 
 Record::Record(std::string k, std::string v) :
     key(std::move(k)),

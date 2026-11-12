@@ -75,7 +75,8 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
     if (fs::file_size(df) + rec.getRecordSize() <= getMaxDatafileBytes()) {
         // If program crash occurs between serialize and entry, flush() occurs and we can load from disk.
         stH.updateActiveDatafileID(dataDir);
-        rec.serialize(activeOutputStream);
+
+        activeOutputStream.write(rec.serialize().data(), rec.getRecordSize());
 
         uint64_t fileSize = fs::file_size(stH.getActiveDatafilePath());
         stH.setKeyDirEntry(stH.getActiveDatafilePath(), rec, fileSize - rec.getValueSize());
@@ -89,7 +90,7 @@ KVResult KVStore::put(KVStoreHandle& stH, const std::string key, const std::stri
 
     updateActiveOutputStream(stH.getActiveDatafilePath());
     
-    rec.serialize(activeOutputStream);
+    activeOutputStream.write(rec.serialize().data(), rec.getRecordSize());
 
     uint64_t fileSize = fs::file_size(stH.getActiveDatafilePath());
     stH.setKeyDirEntry(stH.getActiveDatafilePath(), rec, fileSize - rec.getValueSize());
