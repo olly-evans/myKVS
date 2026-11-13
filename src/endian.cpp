@@ -3,34 +3,18 @@
 
 namespace Endian {
 
-    static constexpr bool IS_LITTLE_ENDIAN = std::endian::native == std::endian::little;
-
-    uint8_t htoleU8(uint8_t value) {
-        return value; 
+    uint16_t htoleU16(uint16_t host16Bits) {
+        if constexpr (std::endian::native == std::endian::little) return std::byteswap(host16Bits);
+        else return host16Bits;
     }
 
-    uint16_t htoleU16(uint16_t value) {
-        if constexpr (IS_LITTLE_ENDIAN) {
-            return value;
-        } else {
-            return std::byteswap(value);
-        }
+    uint32_t htoleU32(uint32_t host32Bits) {
+        if constexpr (std::endian::native == std::endian::little) return std::byteswap(host32Bits);
+        else return host32Bits;
     }
 
-    uint32_t htoleU32(uint32_t value) {
-        if constexpr (IS_LITTLE_ENDIAN) {
-            return value;
-        } else {
-            return std::byteswap(value);
-        }
+    uint64_t htoleU64(uint64_t host64Bits) {
+        if constexpr (std::endian::native == std::endian::little) return std::byteswap(host64Bits);
+        else return host64Bits;
     }
-
-    uint64_t htoleU64(uint64_t value) {
-        if constexpr (IS_LITTLE_ENDIAN) {
-            return value;
-        } else {
-            return std::byteswap(value);
-        }
-    }
-
 }
